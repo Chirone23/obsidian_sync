@@ -1,1287 +1,1093 @@
-# 📚 Biblio WordPress Template 2026 — Enterprise Edition
+# Biblio — Template WordPress (InfinityFree)
 
-> **Template WordPress + WooCommerce + Digital Distribution** per la piattaforma di noleggio/vendita ebook Biblio.  
-> Architettura moderna, sicurezza enterprise, performance ottimizzata per Lighthouse, automazioni avanzate.
+> Template operativo per mettere su il sito Biblio su **InfinityFree** + WordPress + WooCommerce.
+> File pronti da caricare, configurazioni realistiche per shared hosting gratuito, workaround documentati.
+>
+> ⚠️ Questo NON è un template "enterprise". Rispetta i vincoli reali di InfinityFree.
+
+---
+
+## 🚨 Limitazioni InfinityFree — leggere PRIMA di tutto
+
+InfinityFree è hosting **gratuito** con limiti severi. Alcune cose che normalmente daresti per scontate su WordPress **non funzioneranno**.
+
+| Vincolo | Limite InfinityFree | Impatto su Biblio |
+|---|---|---|
+| **Connessioni esterne (cURL outbound)** | Bloccato verso gran parte dei domini esterni | ❌ **Stripe / WooPayments reali non funzionano** — solo modalità "test" o pagamento manuale / bonifico |
+| **Cron job reali** | Non disponibili (solo `wp-cron` via traffico web) | Scadenze noleggi si aggiornano solo se arriva traffico. Serve workaround |
+| **max_execution_time** | ~10 secondi | Import Excel grandi possono fallire. Serve splittare in batch |
+| **memory_limit** | 256 MB (hard cap) | Page builder pesanti (Elementor Pro) vanno stretti — usa blocchi Gutenberg |
+| **SSH / WP-CLI** | Non disponibili | Tutto va fatto da dashboard o via FTP/File Manager |
+| **Redis / Memcached** | Non disponibili | Niente object caching — solo page caching file-based |
+| **Database** | Max ~400 MB, max 10 connessioni simultanee | Indicizza le custom tables, evita query N+1 |
+| **Upload file** | Max 10 MB di default | PDF sopra 10 MB → caricare via FTP, non da WP admin |
+| **Daily hits** | ~50.000/giorno | Sufficiente per MVP di test, non per produzione vera |
+| **SSL** | Let's Encrypt via pannello interno | Funziona ma setup manuale |
+| **Email (mail())** | Spesso bloccata / inaffidabile | Serve SMTP esterno (Brevo, Mailtrap, Gmail SMTP) |
+| **File index obbligatorio** | Ogni directory deve avere `index.html` o `index.php` | Pulito — nulla da modificare per WP |
+
+### Conseguenza pratica per Biblio MVP
+
+Per il **progetto ITS di dimostrazione**, InfinityFree va bene se:
+- I pagamenti possono essere **mockati** (modalità test Stripe) oppure gestiti in modo manuale (bonifico, contrassegno)
+- Non ci sono clienti reali che aspettano ordini
+- Il PDF di test è <10 MB, o viene caricato via FTP
+
+Se in futuro il progetto va in produzione reale → **migrare a hosting con cURL libero** (es. SiteGround StartUp ~4€/mese, Keliweb, IONOS).
 
 ---
 
 ## 📋 Indice
 
-1. [Stack Tecnologico](#stack-tecnologico)
-2. [Hosting & Infrastructure](#hosting--infrastructure)
-3. [Configurazione WordPress Core](#configurazione-wordpress-core)
-4. [Security Hardening Checklist](#security-hardening-checklist)
-5. [WooCommerce Configuration](#woocommerce-configuration)
-6. [Plugin Stack Consigliato](#plugin-stack-consigliato)
-7. [Database Schema Custom](#database-schema-custom)
-8. [Performance & Lighthouse Optimization](#performance--lighthouse-optimization)
-9. [Theme Setup (Child Theme Moderno)](#theme-setup-child-theme-moderno)
-10. [API Endpoints & Custom Post Types](#api-endpoints--custom-post-types)
-11. [Digital Products Workflow](#digital-products-workflow)
-12. [Automazioni & Cron Jobs](#automazioni--cron-jobs)
-13. [Backup & Disaster Recovery](#backup--disaster-recovery)
-14. [Testing & CI/CD](#testing--cicd)
+1. [Setup iniziale WordPress su InfinityFree](#1-setup-iniziale)
+2. [Configurazione wp-config.php](#2-wp-config)
+3. [Plugin stack leggero](#3-plugin-stack)
+4. [Child Theme Biblio — file completi](#4-child-theme)
+5. [Template pagine principali](#5-template-pagine)
+6. [Shortcode per il catalogo](#6-shortcode-catalogo)
+7. [Workaround per i limiti di InfinityFree](#7-workaround)
+8. [Troubleshooting comune](#8-troubleshooting)
 
 ---
 
-## Stack Tecnologico
+## 1. Setup iniziale
 
-```
-┌─────────────────────────────────────────────────────┐
-│           BIBLIO WORDPRESS 2026 STACK              │
-├─────────────────────────────────────────────────────┤
-│ OS: Ubuntu 22.04 LTS | PHP 8.3+ | MySQL 8.0+      │
-│ Web Server: Nginx (reverse proxy + caching)         │
-│ Cache Layer: Redis 7.0+ (object + session cache)    │
-│ CDN: Cloudflare (images + static assets)            │
-│ Database: MySQL 8.0 (custom tables + InnoDB)        │
-│ File Storage: S3-compatible (Wasabi / Backblaze)    │
-├─────────────────────────────────────────────────────┤
-│ WordPress: 6.6+ (Latest)                            │
-│ WooCommerce: 9.1+ (Latest)                          │
-│ Theme: Blocksy / Neve (block-based, FSE-ready)      │
-│ Payment: WooPayments + Stripe               │
-└─────────────────────────────────────────────────────┘
-```
+### 1.1 Crea account + dominio
+1. Registrati su [dash.infinityfree.com](https://dash.infinityfree.com)
+2. Crea un nuovo hosting account
+3. Usa il sottodominio gratuito `biblio.rf.gd` (o simile) per iniziare — puoi collegare un dominio custom dopo
+4. Annota: **FTP host, FTP user, password**, URL del **control panel** del singolo account
 
----
+### 1.2 Attiva SSL (Let's Encrypt)
+1. Control panel → **SSL/TLS Certificates**
+2. Seleziona il dominio → **Free Let's Encrypt Certificate**
+3. Aspetta ~15 minuti per l'emissione
+4. In **Force HTTPS** → abilita
 
-## Hosting & Infrastructure
+### 1.3 Crea il database
+1. Control panel → **MySQL Databases**
+2. Crea un nuovo database (es. `epiz_XXXX_biblio`)
+3. Annota: **host, nome db, user, password**
 
-### Raccomandazioni
+### 1.4 Installa WordPress
+**Opzione A — Softaculous (consigliata):**
+1. Control panel → **Softaculous Apps Installer**
+2. Cerca "WordPress" → **Install Now**
+3. Compila:
+   - Protocol: `https://`
+   - Directory: lascia vuoto (= root)
+   - Site Name: `Biblio`
+   - Admin username: **NON** `admin` (es. `biblio_admin`)
+   - Admin password: usa password manager, minimo 20 caratteri
+4. Installa
 
-| Aspetto | Scelta | Motivo |
-|---------|--------|--------|
-| **Hosting** | Managed WordPress (Kinsta, WP Engine, Pagely) | PHP 8.3, Redis incluso, backup automatici, CDN |
-| **Database** | MySQL 8.0 con Percona (per performance) | Migliore per complex queries, custom tables |
-| **Caching** | Redis + Nginx Fastcgi Cache | Object caching + page caching + query caching |
-| **CDN** | Cloudflare Pro | DDoS protection, image optimization, automatic WebP |
-| **File Storage** | Wasabi S3 + WP Offload Media | Backup offsite, riduce carico server |
-| **Monitoring** | Datadog / New Relic | APM, error tracking, performance insights |
-| **Backup** | UpdraftPlus + Wasabi | Incremental, crittografato, testato settimanalmente |
+**Opzione B — Manuale via FTP:**
+1. Scarica `wordpress-latest.zip` da wordpress.org
+2. Carica via FTP su `/htdocs/`
+3. Estrai
+4. Visita il dominio → setup wizard
 
-### Nginx Configuration (Fastcgi Cache)
-
-```nginx
-# /etc/nginx/conf.d/biblio-cache.conf
-fastcgi_cache_path /var/run/nginx-cache levels=1:2 keys_zone=BIBLIO:100m 
-                   inactive=60m use_temp_path=off;
-
-# WP Cache Headers
-add_header X-Cache-Status $upstream_cache_status;
-add_header X-Response-Time $request_time;
-
-server {
-    # ... server config ...
-    
-    location ~ \.php$ {
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-        
-        # Skip cache per admin, cart, checkout
-        set $skip_cache 0;
-        if ($request_uri ~* "/wp-admin/|/wp-login.php|/cart/|/checkout/|/my-account/") {
-            set $skip_cache 1;
-        }
-        if ($request_method = POST) {
-            set $skip_cache 1;
-        }
-        
-        fastcgi_cache BIBLIO;
-        fastcgi_cache_valid 200 60m;
-        fastcgi_cache_bypass $skip_cache;
-        fastcgi_no_cache $skip_cache;
-        fastcgi_cache_methods GET HEAD;
-    }
-}
-```
+### 1.5 Verifica versioni
+Dopo il login WP admin, vai in **Strumenti → Stato di salute del sito → Info**:
+- WordPress: 6.6+
+- PHP: 8.1+ (se InfinityFree offre versioni recenti — verifica in Control Panel → PHP Selector)
+- MySQL: 5.7+ o MariaDB 10.3+
 
 ---
 
-## Configurazione WordPress Core
+## 2. wp-config.php
 
-### wp-config.php — Hardening & Optimization
+Modifica `wp-config.php` via FTP o File Manager. Configurazione realistica per shared hosting.
 
 ```php
 <?php
-// Biblio wp-config.php — Security + Performance hardened
+// ==============================================
+// BIBLIO — wp-config.php per InfinityFree
+// ==============================================
 
-// ===== SECURITY =====
-// Salts and Keys (generate via https://api.wordpress.org/secret-key/1.1/salt/)
-define('AUTH_KEY',         'your-unique-key-here');
-define('SECURE_AUTH_KEY',  'your-unique-key-here');
-define('LOGGED_IN_KEY',    'your-unique-key-here');
-define('NONCE_KEY',        'your-unique-key-here');
-define('AUTH_SALT',        'your-unique-key-here');
-define('SECURE_AUTH_SALT', 'your-unique-key-here');
-define('LOGGED_IN_SALT',   'your-unique-key-here');
-define('NONCE_SALT',       'your-unique-key-here');
+// DATABASE (valori dal pannello InfinityFree MySQL Databases)
+define( 'DB_NAME',     'epiz_XXXX_biblio' );
+define( 'DB_USER',     'epiz_XXXX' );
+define( 'DB_PASSWORD', 'la-tua-password' );
+define( 'DB_HOST',     'sqlXXX.infinityfree.com' );
+define( 'DB_CHARSET',  'utf8mb4' );
+define( 'DB_COLLATE',  '' );
 
-// Disable file editing
-define('DISALLOW_FILE_EDIT', true);
+// SALTS — rigenera da https://api.wordpress.org/secret-key/1.1/salt/
+define( 'AUTH_KEY',         '...' );
+define( 'SECURE_AUTH_KEY',  '...' );
+define( 'LOGGED_IN_KEY',    '...' );
+define( 'NONCE_KEY',        '...' );
+define( 'AUTH_SALT',        '...' );
+define( 'SECURE_AUTH_SALT', '...' );
+define( 'LOGGED_IN_SALT',   '...' );
+define( 'NONCE_SALT',       '...' );
 
-// Disable unfiltered uploads (security risk)
-define('DISALLOW_UNFILTERED_UPLOADS', true);
+// PREFISSO TABELLE — non usare wp_ di default
+$table_prefix = 'bibl_';
 
-// Force HTTPS
-define('FORCE_SSL_ADMIN', true);
-if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) {
+// ====== SICUREZZA MINIMA ======
+define( 'DISALLOW_FILE_EDIT', true );          // No editing plugin/theme da admin
+define( 'WP_POST_REVISIONS',  3 );             // Limita revisioni (DB small)
+define( 'EMPTY_TRASH_DAYS',   7 );
+define( 'AUTOSAVE_INTERVAL',  120 );           // Auto-save ogni 2 min invece di 60s
+
+// ====== CRON ======
+// wp-cron via HTTP è instabile su InfinityFree → disabilitalo qui
+// e chiamalo da un cron esterno (vedi sezione Workaround)
+define( 'DISABLE_WP_CRON', true );
+
+// ====== MEMORIA ======
+define( 'WP_MEMORY_LIMIT',     '128M' );       // Stare sotto il cap InfinityFree
+define( 'WP_MAX_MEMORY_LIMIT', '256M' );
+
+// ====== DEBUG (spegnere in prod) ======
+define( 'WP_DEBUG',         false );
+define( 'WP_DEBUG_LOG',     false );
+define( 'WP_DEBUG_DISPLAY', false );
+
+// ====== HTTPS DIETRO PROXY ======
+// InfinityFree termina SSL a monte → forza WP a capirlo
+if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https' ) {
     $_SERVER['HTTPS'] = 'on';
 }
+define( 'FORCE_SSL_ADMIN', true );
 
-// Hide WordPress version
-define('WP_AUTO_UPDATE_CORE', 'minor');
-
-// ===== PERFORMANCE =====
-// Object Caching (Redis)
-define('WP_CACHE', true);
-define('WP_CACHE_KEY_SALT', 'biblio_');
-
-// Database optimization
-define('EMPTY_TRASH_DAYS', 7);
-define('WP_POST_REVISIONS', 3);
-
-// Disable auto-save for performance
-define('AUTOSAVE_INTERVAL', false);
-
-// ===== DEBUGGING (disable in production) =====
-define('WP_DEBUG', false);
-define('WP_DEBUG_DISPLAY', false);
-define('WP_DEBUG_LOG', false);
-
-// ===== MEMORY =====
-define('WP_MEMORY_LIMIT', '256M');
-define('WP_MAX_MEMORY_LIMIT', '512M');
-
-// Database
-define('DB_NAME', 'biblio_prod');
-define('DB_USER', 'biblio_user');
-define('DB_PASSWORD', 'your-secure-password');
-define('DB_HOST', 'localhost');
-define('DB_CHARSET', 'utf8mb4');
-define('DB_COLLATE', 'utf8mb4_unicode_ci');
-
-// Table prefix (non-standard for security)
-$table_prefix = 'bibl_';
+// ====== BOOTSTRAP ======
+if ( ! defined( 'ABSPATH' ) ) {
+    define( 'ABSPATH', __DIR__ . '/' );
+}
+require_once ABSPATH . 'wp-settings.php';
 ```
 
-### .htaccess — Security + Caching
+### .htaccess base
 
 ```apache
-# .htaccess — Biblio Security + Performance
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+# END WordPress
 
-# Disable directory listing
-<FilesMatch "^\.">
+# Blocca accesso a file sensibili
+<FilesMatch "^(wp-config\.php|\.htaccess|\.user\.ini)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Prevent PHP execution in uploads
-<Directory wp-content/uploads>
+# Blocca esecuzione PHP in uploads (anti-shell)
+<Directory "wp-content/uploads">
     <FilesMatch "\.php$">
         Order Deny,Allow
         Deny from all
     </FilesMatch>
 </Directory>
 
-# Disable XML-RPC (DDoS vector)
+# Disabilita XML-RPC (vettore brute force)
 <Files xmlrpc.php>
     Order Deny,Allow
     Deny from all
 </Files>
-
-# Block access to sensitive files
-<FilesMatch "(wp-config\.php|wp-content/plugins/.*\.php|\.env)">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Browser caching headers
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresDefault "access plus 30 days"
-    ExpiresByType text/html "access plus 1 day"
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
-</IfModule>
-
-# GZIP compression
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
-</IfModule>
-
-# WordPress permalink structure
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-    RewriteRule ^index\.php$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.php [L]
-</IfModule>
 ```
 
----
+### .user.ini (limiti PHP)
 
-## Security Hardening Checklist
-
-### 🔐 Pre-Launch Security
-
-- [ ] **SSL/TLS Certificate** — Let's Encrypt (auto-renew via certbot)
-  ```bash
-  certbot certonly --webroot -w /var/www/biblio -d biblio.com -d www.biblio.com --agree-tos -m admin@biblio.com
-  ```
-
-- [ ] **Two-Factor Authentication (2FA)**
-  - Install: Two-Factor (official WP plugin)
-  - Enforce for all admin/shop manager accounts
-  - Use authenticator app (Google Authenticator / Authy), not SMS
-
-- [ ] **User Roles & Capabilities**
-  ```php
-  // In functions.php
-  remove_cap('editor', 'unfiltered_html');
-  remove_cap('author', 'upload_files');
-  // Add custom role 'librarian'
-  add_role('librarian', 'Librarian', [
-      'read' => true,
-      'manage_product' => true,
-      'edit_products' => true,
-  ]);
-  ```
-
-- [ ] **Firewall & Rate Limiting**
-  - Install: Wordfence Security (basic) + Cloudflare WAF (advanced)
-  - Rules: Block brute force (5 fails = 1h lockout), SQL injection, XSS
-
-- [ ] **File & Directory Permissions**
-  ```bash
-  # Correct permissions
-  find /var/www/biblio -type d -exec chmod 755 {} \;
-  find /var/www/biblio -type f -exec chmod 644 {} \;
-  chmod 600 /var/www/biblio/wp-config.php
-  chmod 755 /var/www/biblio/wp-content/uploads
-  ```
-
-- [ ] **SSH Hardening**
-  ```bash
-  # /etc/ssh/sshd_config
-  Port 22xxx # Change default port
-  PermitRootLogin no
-  PasswordAuthentication no
-  PubkeyAuthentication yes
-  X11Forwarding no
-  MaxAuthTries 3
-  LoginGraceTime 20
-  ```
-
-- [ ] **Database Security**
-  ```sql
-  -- Separate user for WP (limited privileges)
-  CREATE USER 'biblio_wp'@'localhost' IDENTIFIED BY 'strong_password';
-  GRANT SELECT, INSERT, UPDATE, DELETE ON biblio_prod.* TO 'biblio_wp'@'localhost';
-  
-  -- Backup user (read-only)
-  CREATE USER 'biblio_backup'@'localhost' IDENTIFIED BY 'backup_password';
-  GRANT SELECT ON biblio_prod.* TO 'biblio_backup'@'localhost';
-  ```
-
-- [ ] **Content Security Policy (CSP) Header**
-  ```nginx
-  add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' fonts.googleapis.com;" always;
-  ```
-
-- [ ] **Regular Updates**
-  - WordPress Core: Auto-update minors + notifications for majors
-  - Plugins: Enable auto-update for security patches
-  - Theme: Manual review before updating
-  - PHP: Schedule updates quarterly
-
-- [ ] **Monitoring & Logging**
-  ```php
-  // wp-config.php
-  define('WP_DEBUG_LOG', true);
-  define('WP_DEBUG_DISPLAY', false);
-  define('WP_LOG_DEBUG_ON', __DIR__ . '/wp-content/debug.log');
-  ```
-
----
-
-## WooCommerce Configuration
-
-### Configurazione Core
-
-**WooCommerce → Settings:**
-
-| Sezione | Configurazione | Valore |
-|---------|---|---|
-| **General** | Store Address | Complete with country |
-| | Currency | EUR (o rilevante) |
-| | Online Store Language | it_IT |
-| **Products** | Manage Product Data Tabs | Disable "Downloadable" se non usato |
-| **Inventory** | Stock Management | Enable per tutti i prodotti |
-| | Low Stock Threshold | 5 |
-| | Out of Stock Status | Hidden from catalog |
-| **Shipping** | Shipping Zones | Setup: Domestic + International |
-| | Shipping Methods | Free over €50, Standard €5 |
-| **Payments** | Primary Gateway | WooPayments (built-in) |
-| | Secondary Gateway | Stripe (fallback) |
-| **Checkout** | Guest Checkout | Enabled |
-| | Account Creation | Optional |
-| | Checkout Pages | Use block-based checkout |
-| **Account** | My Account Pages | Use block-based templates |
-
-### Custom Product Types — Biblio
-
-```php
-// In functions.php (or custom plugin)
-
-add_filter('woocommerce_product_class_name', function($classname, $product_type) {
-    if ($product_type == 'biblio_ebook') {
-        return 'WC_Product_Biblio_Ebook';
-    }
-    return $classname;
-}, 10, 2);
-
-class WC_Product_Biblio_Ebook extends WC_Product_Download {
-    public $product_type = 'biblio_ebook';
-    
-    public function get_purchase_note() {
-        return sprintf(
-            __('Accedi alla tua libreria digitale: %s', 'biblio'),
-            home_url('/my-library/')
-        );
-    }
-    
-    public function get_file_download_path($download_id) {
-        // Streaming via custom endpoint (no direct access)
-        return home_url('/api/v1/download/' . $download_id);
-    }
-}
+Crea `.user.ini` in `/htdocs/`:
+```ini
+upload_max_filesize = 10M
+post_max_size = 12M
+memory_limit = 256M
+max_execution_time = 30
+max_input_time = 30
 ```
 
+> Nota: InfinityFree impone comunque i suoi limiti. Questi valori **non possono superare** il cap del piano.
+
 ---
 
-## Plugin Stack Consigliato
+## 3. Plugin stack leggero
 
-### 🔴 Essenziali (Must-Have)
+Solo plugin che funzionano bene in **shared hosting senza cURL outbound**.
 
-| Plugin | Versione | Uso | Alternativa |
-|--------|----------|-----|-----------|
-| **WooCommerce** | 9.1+ | E-commerce core | Magento (overkill) |
-| **WP Rocket** | Latest | Caching + Performance | W3 Total Cache |
-| **Wordfence** | Latest | Security scanning | Sucuri |
-| **Yoast SEO** | Latest | SEO optimization | Rank Math |
-| **Akismet** | Latest | Comment spam | Antispam Bee |
+### Essenziali
 
-### 🟠 Recommended (Highly Useful)
+| Plugin | Perché | Note InfinityFree |
+|---|---|---|
+| **WooCommerce** | E-commerce core | Disabilita "WooCommerce Analytics" se rallenta (Settings → Advanced → Features) |
+| **Astra** (free) | Tema base leggero | Usato come parent del child theme Biblio |
+| **WP Super Cache** | Page cache file-based | **Preferibile a WP Rocket** su InfinityFree (gratis, meno overhead) |
+| **WPS Hide Login** | Cambia URL di login | Riduce drasticamente brute force |
+| **Two-Factor** | 2FA ufficiale WP | Obbligatorio per admin |
+| **UpdraftPlus** | Backup | Destinazione: Google Drive (gratuito, funziona da WP → browser → GD, non serve outbound diretto) |
+
+### Utili
 
 | Plugin | Uso |
-|--------|-----|
-| **Elementor** (free) | Page builder (fallback if blocks aren't enough) |
-| **Advanced Custom Fields (ACF)** | Custom fields for books, authors |
-| **WooCommerce Subscriptions** | Subscription management (if offering memberships) |
-| **Mailchimp for WooCommerce** | Email marketing automation |
-| **MonsterInsights** | Google Analytics integration |
-| **Backup & Migration** (All-in-One WP Migration) | Easy migrations + backups |
+|---|---|
+| **Advanced Custom Fields (ACF)** free | Campi extra per libri (ISBN, autore, etc.) |
+| **WP Mail SMTP** | Per mandare email (config con Brevo/Mailtrap) |
+| **Classic Editor** | Se preferisci editor classico per form semplici |
+| **Query Monitor** | Solo in dev — spegnere in produzione |
 
-### 🟡 Performance & Optimization
+### Plugin da EVITARE su InfinityFree
 
-| Plugin | Uso |
-|--------|-----|
-| **ShortPixel** | Image compression + WebP conversion |
-| **Imagify** | Automated image optimization |
-| **UpdraftPlus** | Incremental backups (+ cloud storage) |
-| **Query Monitor** | Debug queries + performance profiling |
-| **Asset Cleanup** | Disable unnecessary scripts/styles per page |
+- ❌ **Wordfence** free: scansiona ogni file, consuma CPU → rallenta il sito e rischi sospensione
+- ❌ **WP Rocket** (a pagamento + overhead): WP Super Cache è sufficiente
+- ❌ **Elementor Pro** pesante: usa blocchi Gutenberg nativi
+- ❌ **JetPack** con tutti i moduli attivi: tantissime chiamate outbound (bloccate da IF)
+- ❌ **iThemes Security Pro**: troppo aggressivo per shared hosting
+- ❌ Plugin che richiedono **webhook da servizi esterni** (Mailchimp sync automatico, etc.)
 
-### 🟢 Custom / Niche
+### Sicurezza leggera (sostituisce Wordfence)
 
-| Plugin | Uso |
-|--------|-----|
-| **BiblioDB Custom** (custom plugin) | Integration con custom tables |
-| **REST API custom endpoints** | API per mobile app futura |
-| **n8n integration** | Automazioni workflow |
-
-### Plugins da EVITARE
-
-- ❌ Too many security plugins (Wordfence alone is enough)
-- ❌ Page builders con caching disabled (Elementor Pro in some cases)
-- ❌ Multiple SEO plugins (Yoast OR Rank Math, non entrambi)
-- ❌ Unnecessary "optimization" plugins (slow down WP)
+Combinazione:
+- **WPS Hide Login** (URL admin non prevedibile)
+- **Two-Factor** (2FA TOTP)
+- **Limit Login Attempts Reloaded** (blocca brute force)
+- `.htaccess` che blocca `xmlrpc.php` (vedi sopra)
 
 ---
 
-## Database Schema Custom
+## 4. Child Theme Biblio — file completi
 
-### Tabelle Essenziali per Biblio
-
-```sql
--- ===== BIBLIO CUSTOM TABLES =====
-
--- 1. Libri metadata (supplementare ai WP posts)
-CREATE TABLE IF NOT EXISTS biblio_libri (
-  book_id         VARCHAR(50)   PRIMARY KEY,
-  wp_post_id      BIGINT        UNIQUE,
-  isbn            VARCHAR(20)   UNIQUE,
-  autore_cognome  VARCHAR(100),
-  autore_nome     VARCHAR(100),
-  editore         VARCHAR(100),
-  anno_pubblicazione INT,
-  numero_pagine   INT,
-  lingua          VARCHAR(10)   DEFAULT 'it',
-  genre_tag       VARCHAR(255),
-  synopsis        LONGTEXT,
-  pdf_hash        VARCHAR(64),  -- SHA-256 del PDF
-  pdf_presente    TINYINT(1)    DEFAULT 0,
-  ebook_presente  TINYINT(1)    DEFAULT 0,
-  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-  updated_at      TIMESTAMP     ON UPDATE CURRENT_TIMESTAMP,
-  INDEX idx_isbn (isbn),
-  INDEX idx_post_id (wp_post_id),
-  INDEX idx_autore (autore_cognome, autore_nome)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 2. Modalità disponibili (Cartaceo, eBook Acquisto, eBook Noleggio)
-CREATE TABLE IF NOT EXISTS biblio_modalita (
-  modalita_id     VARCHAR(50)   PRIMARY KEY,
-  book_id         VARCHAR(50)   NOT NULL,
-  tipo_modalita   ENUM('cartaceo', 'ebook_acquisto', 'ebook_noleggio'),
-  prezzo          DECIMAL(10,2),
-  woo_product_id  BIGINT,       -- Link a WooCommerce product
-  attivo          TINYINT(1)    DEFAULT 1,
-  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (book_id) REFERENCES biblio_libri(book_id),
-  INDEX idx_book (book_id),
-  INDEX idx_woo (woo_product_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 3. Piani di noleggio (solo per ebook_noleggio)
-CREATE TABLE IF NOT EXISTS biblio_piani_noleggio (
-  piano_id        VARCHAR(50)   PRIMARY KEY,
-  modalita_id     VARCHAR(50)   NOT NULL,
-  durata_giorni   INT,
-  prezzo          DECIMAL(10,2),
-  attivo          TINYINT(1)    DEFAULT 1,
-  FOREIGN KEY (modalita_id) REFERENCES biblio_modalita(modalita_id),
-  INDEX idx_modalita (modalita_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 4. Accessi eBook per utente (noleggio + acquisto)
-CREATE TABLE IF NOT EXISTS biblio_accessi_ebook (
-  accesso_id      BIGINT        AUTO_INCREMENT PRIMARY KEY,
-  user_id         BIGINT        NOT NULL,
-  book_id         VARCHAR(50)   NOT NULL,
-  tipo_accesso    ENUM('acquisto', 'noleggio'),
-  data_inizio     DATETIME,
-  data_scadenza   DATETIME,     -- NULL se acquisto perpetuo
-  stato           ENUM('attivo', 'scaduto', 'revocato') DEFAULT 'attivo',
-  download_count  INT           DEFAULT 0,
-  last_accessed   DATETIME,
-  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES wp_users(ID),
-  FOREIGN KEY (book_id) REFERENCES biblio_libri(book_id),
-  INDEX idx_user_book (user_id, book_id),
-  INDEX idx_scadenza (data_scadenza),
-  INDEX idx_stato (stato)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 5. Conversioni noleggio → acquisto
-CREATE TABLE IF NOT EXISTS biblio_conversioni (
-  conversione_id  BIGINT        AUTO_INCREMENT PRIMARY KEY,
-  user_id         BIGINT        NOT NULL,
-  book_id         VARCHAR(50)   NOT NULL,
-  accesso_noleggio_id BIGINT,
-  prezzo_upgrade  DECIMAL(10,2),
-  data_conversione DATETIME,
-  woo_order_id    BIGINT,
-  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES wp_users(ID),
-  FOREIGN KEY (book_id) REFERENCES biblio_libri(book_id),
-  FOREIGN KEY (accesso_noleggio_id) REFERENCES biblio_accessi_ebook(accesso_id),
-  INDEX idx_user_book (user_id, book_id),
-  INDEX idx_order (woo_order_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 6. Log dei download (compliance + analytics)
-CREATE TABLE IF NOT EXISTS biblio_download_log (
-  log_id          BIGINT        AUTO_INCREMENT PRIMARY KEY,
-  user_id         BIGINT        NOT NULL,
-  book_id         VARCHAR(50)   NOT NULL,
-  accesso_id      BIGINT,
-  ip_address      VARCHAR(45),
-  user_agent      TEXT,
-  file_size       BIGINT,
-  download_time_s INT,
-  http_status     INT,
-  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES wp_users(ID),
-  FOREIGN KEY (accesso_id) REFERENCES biblio_accessi_ebook(accesso_id),
-  INDEX idx_user (user_id),
-  INDEX idx_timestamp (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
-
----
-
-## Performance & Lighthouse Optimization
-
-### Obiettivi Lighthouse
+Struttura da creare in `/htdocs/wp-content/themes/astra-biblio/`:
 
 ```
-┌─────────────────────────────────┐
-│   TARGET SCORES (Desktop)       │
-├─────────────────────────────────┤
-│ Performance:      90+  (LCP<2.5s)│
-│ Accessibility:    95+            │
-│ Best Practices:   95+            │
-│ SEO:              95+            │
-│ PWA (opzionale):  80+            │
-└─────────────────────────────────┘
+astra-biblio/
+├── style.css
+├── functions.php
+├── screenshot.png       (opzionale, 1200x900)
+├── page-catalogo.php
+├── single-biblio_book.php
+├── page-libreria.php
+└── assets/
+    ├── css/
+    │   └── biblio.css
+    └── js/
+        └── biblio.js
 ```
 
-### Ottimizzazioni Core
-
-#### 1. **LCP (Largest Contentful Paint)** — Target: <2.5s
-
-```php
-// In functions.php
-// Prioritize hero image
-add_filter('wp_calculate_image_srcset_meta', function($srcset_data) {
-    if (is_front_page()) {
-        add_filter('wp_lazyload_enabled', '__return_false');
-    }
-    return $srcset_data;
-});
-
-// Preload critical resources
-add_action('wp_head', function() {
-    echo '<link rel="preload" as="image" href="' . get_template_directory_uri() . '/images/hero-bg.webp">';
-    echo '<link rel="preconnect" href="https://fonts.googleapis.com">';
-    echo '<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">';
-});
-
-// Inline critical CSS
-add_action('wp_head', function() {
-    $critical_css = file_get_contents(get_template_directory() . '/css/critical.css');
-    echo '<style>' . wp_strip_all_tags($critical_css) . '</style>';
-}, 1);
-```
-
-#### 2. **Image Optimization**
-
-```php
-// WP Rocket settings
-define('WP_ROCKET_SLUG', 'wp-rocket');
-
-// In wp-config.php
-// Force WebP via ShortPixel
-add_filter('image_editor_default_mime_type', function() {
-    return 'image/webp';
-});
-
-// Responsive images (srcset)
-add_filter('wp_calculate_image_srcset', function($sources) {
-    // Force modern formats
-    return array_filter($sources, function($src) {
-        return strpos($src, '.webp') !== false || strpos($src, '.jpg') !== false;
-    });
-});
-```
-
-#### 3. **Code Splitting & Lazy Loading**
-
-```php
-// Defer non-critical JavaScript
-add_filter('script_loader_tag', function($tag, $handle) {
-    if (in_array($handle, ['stripe-js', 'google-analytics', 'secondary-script'])) {
-        return str_replace('src=', 'defer src=', $tag);
-    }
-    return $tag;
-}, 10, 2);
-
-// Lazy load iframes
-add_filter('wp_iframe_tag_post_default_html', function($html) {
-    return str_replace('<iframe', '<iframe loading="lazy"', $html);
-});
-```
-
-#### 4. **CLS (Cumulative Layout Shift)** — Target: <0.1
+### 4.1 `style.css`
 
 ```css
-/* In child theme style.css */
+/*
+ Theme Name:   Biblio Child
+ Template:     astra
+ Theme URI:    https://biblio.rf.gd
+ Description:  Child theme Astra per Biblio — catalogo noleggio/vendita ebook
+ Author:       Alessandro D'Alessandro
+ Version:      1.0.0
+ Text Domain:  biblio
+*/
 
-/* Prevent layout shift for images */
-img {
-    max-width: 100%;
-    height: auto;
-    aspect-ratio: attr(width) / attr(height);
+/* ========================================
+   DESIGN TOKENS — "Editorial Contemporary"
+   ======================================== */
+:root {
+  --color-inchiostro:     #1a1a1a;
+  --color-avorio:         #faf7f2;
+  --color-sabbia:         #e8dfd3;
+  --color-terracotta:     #c67b5c;
+  --color-grigio-caldo:   #8a8075;
+  --color-bianco:         #ffffff;
+
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body:    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-card:  4px;
+  --shadow-card:  0 2px 8px rgba(26, 26, 26, 0.06);
+  --shadow-hover: 0 8px 24px rgba(26, 26, 26, 0.12);
+  --transition:   200ms ease;
 }
 
-/* Add size containers for dynamic content */
+/* Base */
+body {
+  font-family: var(--font-body);
+  color: var(--color-inchiostro);
+  background: var(--color-avorio);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; }
+
+a { color: var(--color-terracotta); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--color-inchiostro); }
+
+/* Header override Astra */
+.site-header { background: var(--color-inchiostro) !important; }
+.main-header-bar { background: var(--color-inchiostro) !important; }
+.main-header-menu a, .site-title a { color: var(--color-avorio) !important; }
+
+/* Hero catalogo */
+.biblio-hero {
+  background: var(--color-inchiostro);
+  color: var(--color-avorio);
+  padding: 64px 24px;
+  text-align: center;
+}
+.biblio-hero h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  font-style: italic;
+  margin-bottom: 12px;
+  color: var(--color-avorio);
+}
+.biblio-hero p {
+  max-width: 560px;
+  margin: 0 auto;
+  color: var(--color-sabbia);
+  font-size: 17px;
+}
+
+/* Griglia catalogo */
+.biblio-catalogo {
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+.biblio-filtri {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-sabbia);
+}
+.biblio-filtro-btn {
+  background: transparent;
+  border: 1.5px solid var(--color-sabbia);
+  color: var(--color-grigio-caldo);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.biblio-filtro-btn:hover,
+.biblio-filtro-btn.active {
+  background: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+  color: white;
+}
+
+.biblio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 28px;
+}
+
+/* Card libro */
 .biblio-card {
-    aspect-ratio: 1/1.5;
-    overflow: hidden;
+  background: var(--color-bianco);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition);
+  display: block;
+  color: inherit;
+}
+.biblio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+.biblio-card-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--color-sabbia);
+  display: block;
+}
+.biblio-card-body { padding: 14px 16px 18px; }
+.biblio-card-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+.biblio-card-author {
+  font-size: 13px;
+  color: var(--color-grigio-caldo);
+  margin: 0 0 10px;
+}
+.biblio-card-modalita {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.biblio-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--color-sabbia);
+  color: var(--color-inchiostro);
 }
 
-/* Font loading strategy */
-@font-face {
-    font-family: 'Merriweather';
-    font-display: swap; /* Show fallback immediately */
-    src: url(...);
+/* Pagina singolo libro */
+.biblio-single {
+  max-width: 1000px;
+  margin: 48px auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+}
+@media (max-width: 720px) {
+  .biblio-single { grid-template-columns: 1fr; }
+}
+.biblio-single-cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.biblio-single h1 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.biblio-single-author {
+  color: var(--color-grigio-caldo);
+  font-size: 17px;
+  margin-bottom: 24px;
+}
+.biblio-modalita-box {
+  border: 1px solid var(--color-sabbia);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  margin-bottom: 14px;
+  background: var(--color-bianco);
+}
+.biblio-modalita-box h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.biblio-modalita-prezzo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-terracotta);
+  margin: 8px 0 14px;
+}
+
+/* Libreria utente */
+.biblio-libreria {
+  max-width: 1100px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+.biblio-libreria-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--color-grigio-caldo);
+}
+
+.biblio-stato {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.biblio-stato.attivo   { background: #d4edda; color: #155724; }
+.biblio-stato.scaduto  { background: #f8d7da; color: #721c24; }
+.biblio-stato.convertito { background: #d1ecf1; color: #0c5460; }
+
+/* Bottoni */
+.biblio-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--color-terracotta);
+  color: white;
+  border: none;
+  border-radius: var(--radius-card);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+  text-decoration: none;
+}
+.biblio-btn:hover { background: var(--color-inchiostro); color: white; }
+.biblio-btn-secondary {
+  background: transparent;
+  color: var(--color-inchiostro);
+  border: 1.5px solid var(--color-inchiostro);
 }
 ```
 
-#### 5. **Caching Strategy (multi-layer)**
-
-```
-┌──────────────────────────────────────┐
-│   CACHING LAYERS (Biblio)            │
-├──────────────────────────────────────┤
-│ 1. Browser Cache (1 year for assets) │
-│ 2. Cloudflare Edge Cache (30m)       │
-│ 3. Redis Object Cache (1h)           │
-│ 4. Nginx Fastcgi Cache (60m)         │
-│ 5. WordPress Query Cache (via Redis) │
-└──────────────────────────────────────┘
-```
-
-**WP Rocket Configuration:**
-- Cache lifespan: 10 hours
-- Mobile cache: Enabled (separate)
-- Minify CSS/JS: Enabled
-- Remove unused CSS: Enabled (safe mode)
-- Lazy load: Images + iframes + videos
-
----
-
-## Theme Setup (Child Theme Moderno)
-
-### Struttura di base
-
-```
-/wp-content/themes/biblio-child/
-├── style.css               # Theme metadata + base styles
-├── functions.php           # Hooks, filters, CPT registration
-├── template-parts/
-│   ├── header/
-│   │   ├── header.html
-│   │   └── nav.html
-│   ├── footer/
-│   │   └── footer.html
-│   ├── content/
-│   │   ├── single-product.html
-│   │   ├── archive-product.html
-│   │   └── search.html
-│   └── library/
-│       ├── my-library.html
-│       └── book-item.html
-├── patterns/               # Reusable blocks (FSE)
-│   ├── hero.php
-│   ├── cta-section.php
-│   └── testimonials.php
-├── css/
-│   ├── critical.css        # Inlined in <head>
-│   ├── main.css
-│   ├── responsive.css
-│   └── print.css
-├── js/
-│   ├── main.js
-│   ├── library.js          # My Library functionality
-│   └── checkout.js
-└── readme.txt
-```
-
-### functions.php — Setup Completo
+### 4.2 `functions.php`
 
 ```php
 <?php
 /**
- * Biblio Child Theme — Functions
- * 
- * @package biblio
+ * Biblio Child Theme — functions.php
+ * Compatibile con shared hosting InfinityFree (nessuna dipendenza esterna)
  */
 
-// Enqueue parent theme
-add_action('wp_enqueue_scripts', function() {
-    wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
-});
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-// ===== CUSTOM POST TYPES =====
+// ============================================
+// 1. ENQUEUE STYLES
+// ============================================
+add_action( 'wp_enqueue_scripts', function() {
+    // Parent Astra
+    wp_enqueue_style( 'astra-parent', get_template_directory_uri() . '/style.css' );
+    // Child Biblio
+    wp_enqueue_style(
+        'biblio-child',
+        get_stylesheet_directory_uri() . '/style.css',
+        array( 'astra-parent' ),
+        '1.0.0'
+    );
+}, 20 );
 
-// CPT: Book (supplementa WC Product)
-register_post_type('biblio_book', [
-    'labels' => ['name' => 'Books', 'singular_name' => 'Book'],
-    'public' => true,
-    'show_in_rest' => true,
-    'has_archive' => true,
-    'supports' => ['title', 'editor', 'thumbnail', 'excerpt'],
-]);
+// ============================================
+// 2. REGISTRA CPT biblio_book (supplementa WC)
+// ============================================
+add_action( 'init', function() {
+    register_post_type( 'biblio_book', array(
+        'label'          => 'Libri Biblio',
+        'public'         => true,
+        'has_archive'    => true,
+        'show_in_rest'   => true,
+        'supports'       => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        'menu_icon'      => 'dashicons-book-alt',
+        'rewrite'        => array( 'slug' => 'libro' ),
+    ) );
 
-// ===== CUSTOM TAXONOMIES =====
+    register_taxonomy( 'biblio_genere', 'biblio_book', array(
+        'label'        => 'Genere',
+        'hierarchical' => true,
+        'show_in_rest' => true,
+        'rewrite'      => array( 'slug' => 'genere' ),
+    ) );
+} );
 
-register_taxonomy('biblio_genre', 'biblio_book', [
-    'labels' => ['name' => 'Genere'],
-    'show_in_rest' => true,
-    'hierarchical' => true,
-]);
+// ============================================
+// 3. HELPER QUERY SU CUSTOM TABLES
+// ============================================
 
-// ===== ADMIN ENHANCEMENTS =====
-
-// Hide non-essential post types
-add_filter('register_post_type_args', function($args, $post_type) {
-    if (in_array($post_type, ['attachment', 'revision'])) {
-        $args['show_in_menu'] = false;
-    }
-    return $args;
-}, 10, 2);
-
-// Custom admin columns for books
-add_filter('manage_biblio_book_posts_columns', function($columns) {
-    unset($columns['date']);
-    $columns['isbn'] = 'ISBN';
-    $columns['author'] = 'Autore';
-    $columns['date'] = 'Data';
-    return $columns;
-});
-
-// ===== PERFORMANCE =====
-
-// Disable emojis (reduce HTTP requests)
-remove_action('wp_head', 'print_emoji_detection_script', 7);
-remove_action('wp_print_styles', 'print_emoji_styles');
-
-// Disable dashicons for non-admin
-if (!is_admin()) {
-    wp_deregister_style('dashicons');
+/**
+ * Recupera tutte le modalità attive per un book_id.
+ */
+function biblio_get_modalita( $book_id ) {
+    global $wpdb;
+    return $wpdb->get_results( $wpdb->prepare(
+        "SELECT * FROM biblio_modalita WHERE book_id = %s AND attivo = 1",
+        $book_id
+    ) );
 }
 
-// Remove unnecessary meta tags
-remove_action('wp_head', 'wp_generator');
-remove_action('wp_head', 'wlwmanifest_link');
-remove_action('wp_head', 'rsd_link');
-
-// ===== SECURITY =====
-
-// Remove REST API endpoints for non-authenticated users
-add_filter('rest_authentication_errors', function($result) {
-    if (!is_user_logged_in() && !in_array($_SERVER['REQUEST_METHOD'], ['GET'])) {
-        return new WP_Error('rest_forbidden', 'API write requires authentication', ['status' => 403]);
-    }
-    return $result;
-});
-
-// ===== CUSTOM FILTERS & ACTIONS =====
-
-// Hook: When order is completed, grant ebook access
-add_action('woocommerce_payment_complete', function($order_id) {
-    $order = wc_get_order($order_id);
-    foreach ($order->get_items() as $item) {
-        $product = $item->get_product();
-        $book_id = get_post_meta($product->get_id(), '_biblio_book_id', true);
-        if ($book_id) {
-            grant_ebook_access($order->get_customer_id(), $book_id, 'acquisto');
-        }
-    }
-});
-
-// Cron: Clean expired ebook access
-add_action('wp_scheduled_event_biblio_cleanup', function() {
+/**
+ * Recupera accessi attivi di un utente.
+ */
+function biblio_get_user_accessi( $user_id ) {
     global $wpdb;
-    $wpdb->query("UPDATE {$wpdb->prefix}biblio_accessi_ebook 
-                  SET stato='scaduto' 
-                  WHERE data_scadenza < NOW() AND stato='attivo'");
-});
-
-if (!wp_next_scheduled('wp_scheduled_event_biblio_cleanup')) {
-    wp_schedule_event(time(), 'hourly', 'wp_scheduled_event_biblio_cleanup');
-}
-```
-
----
-
-## API Endpoints & Custom Post Types
-
-### REST API Endpoints (v1)
-
-```php
-// In functions.php
-add_action('rest_api_init', function() {
-    // GET /wp-json/biblio/v1/books
-    register_rest_route('biblio/v1', '/books', [
-        'methods' => 'GET',
-        'callback' => 'biblio_get_books',
-        'permission_callback' => '__return_true',
-    ]);
-    
-    // GET /wp-json/biblio/v1/user/library
-    register_rest_route('biblio/v1', '/user/library', [
-        'methods' => 'GET',
-        'callback' => 'biblio_get_user_library',
-        'permission_callback' => 'is_user_logged_in',
-    ]);
-    
-    // POST /wp-json/biblio/v1/download/(?P<accesso_id>\d+)
-    register_rest_route('biblio/v1', '/download/(?P<accesso_id>\d+)', [
-        'methods' => 'POST',
-        'callback' => 'biblio_download_ebook',
-        'permission_callback' => 'is_user_logged_in',
-        'args' => ['accesso_id' => ['validate_callback' => 'is_numeric']],
-    ]);
-});
-
-function biblio_get_books($request) {
-    global $wpdb;
-    $genre = $request->get_param('genre');
-    $limit = min($request->get_param('per_page') ?? 20, 100);
-    $offset = $request->get_param('offset') ?? 0;
-    
-    $query = "SELECT b.*, m.modalita_id, m.prezzo 
-              FROM {$wpdb->prefix}biblio_libri b
-              LEFT JOIN {$wpdb->prefix}biblio_modalita m ON b.book_id = m.book_id
-              WHERE b.ebook_presente = 1";
-    
-    if ($genre) {
-        $query .= $wpdb->prepare(" AND b.genre_tag LIKE %s", '%' . $genre . '%');
-    }
-    
-    $query .= " LIMIT $limit OFFSET $offset";
-    $results = $wpdb->get_results($query);
-    
-    return new WP_REST_Response($results, 200);
-}
-
-function biblio_get_user_library($request) {
-    $user_id = get_current_user_id();
-    global $wpdb;
-    
-    $accessi = $wpdb->get_results($wpdb->prepare(
-        "SELECT a.*, b.*, m.modalita_id 
-         FROM {$wpdb->prefix}biblio_accessi_ebook a
-         JOIN {$wpdb->prefix}biblio_libri b ON a.book_id = b.book_id
-         LEFT JOIN {$wpdb->prefix}biblio_modalita m ON b.book_id = m.book_id
-         WHERE a.user_id = %d AND a.stato = 'attivo'
-         ORDER BY a.last_accessed DESC",
+    return $wpdb->get_results( $wpdb->prepare(
+        "SELECT * FROM biblio_accessi_ebook
+         WHERE user_id = %d AND stato = 'attivo'
+         ORDER BY created_at DESC",
         $user_id
-    ));
-    
-    return new WP_REST_Response($accessi, 200);
+    ) );
 }
 
-function biblio_download_ebook($request) {
-    $accesso_id = $request['accesso_id'];
-    $user_id = get_current_user_id();
+/**
+ * Verifica se l'utente ha accesso attivo a un libro.
+ */
+function biblio_user_has_access( $user_id, $book_id ) {
     global $wpdb;
-    
-    // Verify ownership
-    $accesso = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}biblio_accessi_ebook WHERE accesso_id = %d",
-        $accesso_id
-    ));
-    
-    if (!$accesso || $accesso->user_id != $user_id) {
-        return new WP_Error('forbidden', 'Access denied', ['status' => 403]);
-    }
-    
-    if ($accesso->stato !== 'attivo') {
-        return new WP_Error('expired', 'Ebook access expired', ['status' => 410]);
-    }
-    
-    // Log download
-    $wpdb->insert("{$wpdb->prefix}biblio_download_log", [
-        'user_id' => $user_id,
-        'book_id' => $accesso->book_id,
-        'accesso_id' => $accesso_id,
-        'ip_address' => $_SERVER['REMOTE_ADDR'],
-        'http_status' => 200,
-    ]);
-    
-    // Get file from S3 (via WP Offload Media)
-    // ... implement streaming
-    
-    return new WP_REST_Response(['status' => 'downloading'], 200);
+    $count = $wpdb->get_var( $wpdb->prepare(
+        "SELECT COUNT(*) FROM biblio_accessi_ebook
+         WHERE user_id = %d AND book_id = %s AND stato = 'attivo'
+         AND ( data_fine IS NULL OR data_fine > NOW() )",
+        $user_id, $book_id
+    ) );
+    return $count > 0;
 }
-```
 
----
+// ============================================
+// 4. HOOK — ORDINE PAGATO → CREA ACCESSO
+// ============================================
+add_action( 'woocommerce_order_status_completed', function( $order_id ) {
+    $order = wc_get_order( $order_id );
+    if ( ! $order ) return;
 
-## Digital Products Workflow
+    global $wpdb;
+    $user_id = $order->get_user_id();
+    if ( ! $user_id ) return;  // guest checkout — da gestire separatamente
 
-### 1. **Creazione Prodotto WooCommerce**
-
-```php
-// Script per crear un prodotto ebook in WC
-$product = new WC_Product_Download();
-$product->set_name('L\'Algoritmo del Silenzio — eBook Acquisto');
-$product->set_price(9.99);
-$product->set_downloadable(true);
-$product->set_status('publish');
-
-// File di download
-$download = [
-    'name' => 'L_Algoritmo_Silenzio.pdf',
-    'file' => 's3://biblio-ebooks/L_Algoritmo_Silenzio.pdf',
-];
-$product->add_file('_download_1', $download);
-$product->set_download_limit(null); // Unlimited downloads
-$product->set_download_expiry(365); // 1 year access
-
-$product_id = $product->save();
-
-// Link a custom table
-add_post_meta($product_id, '_biblio_book_id', 'BLIB-001');
-add_post_meta($product_id, '_biblio_modalita_id', 'MOD-001-EA');
-```
-
-### 2. **Gestione dei Download**
-
-```php
-// Custom download handler (non direct access)
-// Rerouta a: GET /wp-json/biblio/v1/download/{accesso_id}
-
-add_filter('woocommerce_download_file_force_download', function($file) {
-    // Stream da S3 via presigned URL
-    $s3_client = ...;
-    $cmd = $s3_client->getCommand('GetObject', [
-        'Bucket' => 'biblio-ebooks',
-        'Key' => basename($file),
-    ]);
-    $request = $s3_client->createPresignedRequest($cmd, '+20 minutes');
-    return (string)$request->getUri();
-});
-```
-
-### 3. **Conversione Noleggio → Acquisto**
-
-```php
-add_action('woocommerce_thankyou', function($order_id) {
-    $order = wc_get_order($order_id);
-    
-    foreach ($order->get_items() as $item) {
+    foreach ( $order->get_items() as $item ) {
         $product = $item->get_product();
-        $book_id = get_post_meta($product->get_id(), '_biblio_book_id', true);
-        
-        // Check if noleggio before
-        $existing = get_user_meta(
-            $order->get_customer_id(),
-            "_biblio_noleggio_{$book_id}",
-            true
-        );
-        
-        if ($existing) {
-            // Calculate upgrade cost
-            global $wpdb;
-            $wpdb->insert("{$wpdb->prefix}biblio_conversioni", [
-                'user_id' => $order->get_customer_id(),
-                'book_id' => $book_id,
-                'woo_order_id' => $order_id,
-                'data_conversione' => current_time('mysql'),
-            ]);
-            
-            // Grant perpetual access
-            grant_ebook_access($order->get_customer_id(), $book_id, 'acquisto', null);
+        $woo_product_id = $product->get_id();
+
+        // Cerca modalità collegata a questo prodotto WC
+        $modalita = $wpdb->get_row( $wpdb->prepare(
+            "SELECT * FROM biblio_modalita WHERE woo_product_id = %d",
+            $woo_product_id
+        ) );
+        if ( ! $modalita ) continue;
+
+        // Cartaceo → nessun accesso digitale
+        if ( $modalita->tipo_modalita === 'cartaceo' ) continue;
+
+        // Calcola scadenza per noleggio
+        $data_fine = null;
+        $piano_id  = null;
+        if ( $modalita->tipo_modalita === 'ebook_noleggio' ) {
+            $piano = $wpdb->get_row( $wpdb->prepare(
+                "SELECT * FROM biblio_piani_noleggio
+                 WHERE modalita_id = %s AND attivo = 1 LIMIT 1",
+                $modalita->modalita_id
+            ) );
+            if ( $piano ) {
+                $data_fine = date( 'Y-m-d H:i:s', strtotime( '+' . $piano->durata_giorni . ' days' ) );
+                $piano_id  = $piano->piano_id;
+            }
+        }
+
+        $wpdb->insert( 'biblio_accessi_ebook', array(
+            'user_id'      => $user_id,
+            'book_id'      => $modalita->book_id,
+            'modalita_id'  => $modalita->modalita_id,
+            'piano_id'     => $piano_id,
+            'tipo_accesso' => $modalita->tipo_modalita === 'ebook_acquisto' ? 'acquisto' : 'noleggio',
+            'data_inizio'  => current_time( 'mysql' ),
+            'data_fine'    => $data_fine,
+            'stato'        => 'attivo',
+            'order_id'     => $order_id,
+        ) );
+    }
+} );
+
+// ============================================
+// 5. SCADENZA NOLEGGI — chiamato via wp-cron o endpoint manuale
+// ============================================
+add_action( 'biblio_cron_scadenze', 'biblio_aggiorna_scadenze' );
+function biblio_aggiorna_scadenze() {
+    global $wpdb;
+    $wpdb->query(
+        "UPDATE biblio_accessi_ebook
+         SET stato = 'scaduto'
+         WHERE stato = 'attivo'
+           AND data_fine IS NOT NULL
+           AND data_fine < NOW()"
+    );
+}
+if ( ! wp_next_scheduled( 'biblio_cron_scadenze' ) ) {
+    wp_schedule_event( time(), 'hourly', 'biblio_cron_scadenze' );
+}
+
+// Endpoint manuale (per cron esterno — vedi sezione Workaround)
+add_action( 'init', function() {
+    if ( isset( $_GET['biblio_cron_key'] ) && $_GET['biblio_cron_key'] === 'METTI_UNA_CHIAVE_SEGRETA_QUI' ) {
+        biblio_aggiorna_scadenze();
+        wp_die( 'Scadenze aggiornate.', 'OK', array( 'response' => 200 ) );
+    }
+} );
+
+// ============================================
+// 6. VALIDAZIONE CARRELLO — ordine di un solo tipo
+// ============================================
+add_filter( 'woocommerce_add_to_cart_validation', function( $valid, $product_id ) {
+    global $wpdb;
+
+    $nuovo_tipo = $wpdb->get_var( $wpdb->prepare(
+        "SELECT tipo_modalita FROM biblio_modalita WHERE woo_product_id = %d LIMIT 1",
+        $product_id
+    ) );
+    if ( ! $nuovo_tipo ) return $valid;
+
+    foreach ( WC()->cart->get_cart() as $cart_item ) {
+        $esistente = $wpdb->get_var( $wpdb->prepare(
+            "SELECT tipo_modalita FROM biblio_modalita WHERE woo_product_id = %d LIMIT 1",
+            $cart_item['product_id']
+        ) );
+        if ( $esistente && $esistente !== $nuovo_tipo ) {
+            wc_add_notice(
+                'Il carrello contiene già un prodotto di tipo diverso. Completa l\'ordine o svuota il carrello.',
+                'error'
+            );
+            return false;
         }
     }
-});
+    return $valid;
+}, 10, 2 );
+
+// ============================================
+// 7. PERFORMANCE — rimuovi roba inutile
+// ============================================
+remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+remove_action( 'wp_print_styles', 'print_emoji_styles' );
+remove_action( 'wp_head', 'wp_generator' );
+remove_action( 'wp_head', 'wlwmanifest_link' );
+remove_action( 'wp_head', 'rsd_link' );
+
+// Disabilita embed ovunque (riduce JS)
+add_action( 'init', function() {
+    remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+    remove_filter( 'rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10 );
+    remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+    remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+} );
 ```
 
 ---
 
-## Automazioni & Cron Jobs
+## 5. Template pagine principali
 
-### n8n Workflow Integration
+### 5.1 `page-catalogo.php`
 
-```yaml
-# Biblio Automations via n8n
-
-workflows:
-  - id: sync-inventory
-    trigger: daily-6am
-    steps:
-      1. Fetch WooCommerce inventory
-      2. Update biblio_libri stock counts
-      3. Alert if low stock (<5)
-  
-  - id: cleanup-expired-access
-    trigger: hourly
-    steps:
-      1. Query biblio_accessi_ebook WHERE data_scadenza < NOW()
-      2. Update stato='scaduto'
-      3. Send email notification to user
-  
-  - id: generate-monthly-report
-    trigger: 1st of month at 8am
-    steps:
-      1. Count new users
-      2. Count downloads
-      3. Revenue summary
-      4. Email to admin
-```
-
-### WordPress Cron Jobs
+Crea la pagina in WP Admin (Pagine → Aggiungi → slug `catalogo`) e assegna questo template.
 
 ```php
-// In functions.php
+<?php
+/**
+ * Template Name: Biblio — Catalogo
+ */
+get_header();
 
-// 1. Cleanup expired rentals (hourly)
-add_action('wp_scheduled_event_biblio_expire_rentals', function() {
-    global $wpdb;
-    $wpdb->query("UPDATE {$wpdb->prefix}biblio_accessi_ebook 
-                  SET stato='scaduto' 
-                  WHERE data_scadenza < NOW() AND tipo_accesso='noleggio'");
-});
-if (!wp_next_scheduled('wp_scheduled_event_biblio_expire_rentals')) {
-    wp_schedule_event(time(), 'hourly', 'wp_scheduled_event_biblio_expire_rentals');
-}
+global $wpdb;
+$libri = $wpdb->get_results(
+    "SELECT DISTINCT m.book_id, p.ID as wp_post_id
+     FROM biblio_modalita m
+     LEFT JOIN {$wpdb->posts} p ON p.post_type = 'biblio_book' AND p.post_status = 'publish'
+     WHERE m.attivo = 1"
+);
+?>
 
-// 2. Generate daily sales report (daily at 7am)
-add_action('wp_scheduled_event_biblio_daily_report', function() {
-    $yesterday = date('Y-m-d', strtotime('-1 day'));
-    $orders = wc_get_orders([
-        'after' => $yesterday . ' 00:00:00',
-        'before' => $yesterday . ' 23:59:59',
-        'status' => 'completed',
-    ]);
-    
-    $report = [
-        'date' => $yesterday,
-        'total_orders' => count($orders),
-        'revenue' => array_sum(array_map(fn($o) => $o->get_total(), $orders)),
-        'unique_books' => count_unique_books($orders),
-    ];
-    
-    wp_mail('admin@biblio.com', "Daily Report - $yesterday", json_encode($report, JSON_PRETTY_PRINT));
-});
-if (!wp_next_scheduled('wp_scheduled_event_biblio_daily_report')) {
-    wp_schedule_event(strtotime('07:00:00'), 'daily', 'wp_scheduled_event_biblio_daily_report');
-}
+<section class="biblio-hero">
+    <h1>Catalogo Biblio</h1>
+    <p>Scopri i nostri titoli. Cartaceo, ebook in acquisto o in noleggio temporaneo.</p>
+</section>
 
-// 3. Database optimization (weekly)
-add_action('wp_scheduled_event_biblio_db_optimize', function() {
-    global $wpdb;
-    $tables = ['biblio_libri', 'biblio_modalita', 'biblio_accessi_ebook', 'biblio_download_log'];
-    foreach ($tables as $table) {
-        $wpdb->query("OPTIMIZE TABLE {$wpdb->prefix}{$table}");
-    }
+<section class="biblio-catalogo">
+    <div class="biblio-filtri">
+        <button class="biblio-filtro-btn active" data-filtro="tutti">Tutti</button>
+        <button class="biblio-filtro-btn" data-filtro="cartaceo">Cartaceo</button>
+        <button class="biblio-filtro-btn" data-filtro="ebook_acquisto">Ebook acquisto</button>
+        <button class="biblio-filtro-btn" data-filtro="ebook_noleggio">Noleggio</button>
+    </div>
+
+    <div class="biblio-grid">
+        <?php foreach ( $libri as $libro ):
+            $post = get_post( $libro->wp_post_id );
+            if ( ! $post ) continue;
+            $titolo    = get_the_title( $post );
+            $autore    = get_post_meta( $post->ID, 'autore', true );
+            $copertina = get_the_post_thumbnail_url( $post, 'medium' ) ?: get_stylesheet_directory_uri() . '/assets/placeholder.jpg';
+            $modalita  = biblio_get_modalita( $libro->book_id );
+            $tipi      = wp_list_pluck( $modalita, 'tipo_modalita' );
+        ?>
+            <a href="<?php echo get_permalink( $post ); ?>" class="biblio-card" data-tipi="<?php echo esc_attr( implode( ',', $tipi ) ); ?>">
+                <img src="<?php echo esc_url( $copertina ); ?>" alt="<?php echo esc_attr( $titolo ); ?>" class="biblio-card-cover" loading="lazy">
+                <div class="biblio-card-body">
+                    <h3 class="biblio-card-title"><?php echo esc_html( $titolo ); ?></h3>
+                    <p class="biblio-card-author"><?php echo esc_html( $autore ); ?></p>
+                    <div class="biblio-card-modalita">
+                        <?php foreach ( $tipi as $tipo ): ?>
+                            <span class="biblio-tag"><?php echo esc_html( str_replace( '_', ' ', $tipo ) ); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<script>
+document.querySelectorAll('.biblio-filtro-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.biblio-filtro-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filtro = btn.dataset.filtro;
+        document.querySelectorAll('.biblio-card').forEach(card => {
+            const tipi = card.dataset.tipi.split(',');
+            card.style.display = (filtro === 'tutti' || tipi.includes(filtro)) ? '' : 'none';
+        });
+    });
 });
-if (!wp_next_scheduled('wp_scheduled_event_biblio_db_optimize')) {
-    wp_schedule_event(time(), 'weekly', 'wp_scheduled_event_biblio_db_optimize');
-}
+</script>
+
+<?php get_footer(); ?>
 ```
 
----
-
-## Backup & Disaster Recovery
-
-### Backup Strategy
-
-```
-┌─────────────────────────────────────┐
-│   BIBLIO BACKUP ARCHITECTURE        │
-├─────────────────────────────────────┤
-│ Daily Incremental    → Wasabi S3    │
-│ Weekly Full          → Backblaze B2 │
-│ Monthly Archive      → Google Cloud │
-│ Retention: 90 days (rolling)        │
-└─────────────────────────────────────┘
-```
-
-### UpdraftPlus Configuration
+### 5.2 `single-biblio_book.php`
 
 ```php
-// WP Admin → Settings → UpdraftPlus
+<?php
+/**
+ * Template singolo libro
+ */
+get_header();
+while ( have_posts() ): the_post();
+    $book_id   = get_post_meta( get_the_ID(), 'book_id', true );
+    $autore    = get_post_meta( get_the_ID(), 'autore', true );
+    $isbn      = get_post_meta( get_the_ID(), 'isbn', true );
+    $modalita  = biblio_get_modalita( $book_id );
+?>
 
-// Backup schedule
-- Full backup: Daily at 2 AM (off-peak)
-- Database: Every 6 hours
-- Incremental: Every 2 hours
+<article class="biblio-single">
+    <div>
+        <?php the_post_thumbnail( 'large', array( 'class' => 'biblio-single-cover' ) ); ?>
+    </div>
+    <div>
+        <h1><?php the_title(); ?></h1>
+        <p class="biblio-single-author"><?php echo esc_html( $autore ); ?></p>
 
-// Storage
-- Primary: Wasabi S3 (redundant, 10x cheaper than AWS)
-  - Bucket: biblio-backups
-  - Prefix: wordpress/
-  - Lifecycle: 90-day retention
-  
-- Secondary: Backblaze B2 (cold storage)
-  - Bucket: biblio-archive
-  - Lifecycle: 1-year retention
+        <?php if ( $isbn ): ?>
+            <p><strong>ISBN:</strong> <?php echo esc_html( $isbn ); ?></p>
+        <?php endif; ?>
 
-// Test restore monthly (simulate disaster)
+        <div class="biblio-descrizione"><?php the_content(); ?></div>
+
+        <h2>Scegli la modalità</h2>
+        <?php foreach ( $modalita as $m ):
+            $label = array(
+                'cartaceo'        => 'Cartaceo',
+                'ebook_acquisto'  => 'Ebook — Acquisto definitivo',
+                'ebook_noleggio'  => 'Ebook — Noleggio',
+            )[ $m->tipo_modalita ];
+        ?>
+            <div class="biblio-modalita-box">
+                <h3><?php echo esc_html( $label ); ?></h3>
+
+                <?php if ( $m->tipo_modalita === 'ebook_noleggio' ):
+                    global $wpdb;
+                    $piani = $wpdb->get_results( $wpdb->prepare(
+                        "SELECT * FROM biblio_piani_noleggio WHERE modalita_id = %s AND attivo = 1",
+                        $m->modalita_id
+                    ) );
+                ?>
+                    <?php foreach ( $piani as $p ): ?>
+                        <p><?php echo esc_html( $p->durata_giorni ); ?> giorni — <strong>€ <?php echo number_format( $p->prezzo, 2, ',', '.' ); ?></strong></p>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="biblio-modalita-prezzo">€ <?php echo number_format( $m->prezzo, 2, ',', '.' ); ?></p>
+                <?php endif; ?>
+
+                <?php if ( $m->woo_product_id ): ?>
+                    <a href="<?php echo esc_url( add_query_arg( 'add-to-cart', $m->woo_product_id, wc_get_cart_url() ) ); ?>" class="biblio-btn">
+                        Aggiungi al carrello
+                    </a>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</article>
+
+<?php endwhile; get_footer(); ?>
 ```
 
-### Disaster Recovery Runbook
+### 5.3 `page-libreria.php`
 
-```markdown
-# DR Runbook — Biblio WordPress
+Pagina "La mia libreria" (slug `libreria`, richiede login).
 
-## Scenario 1: Data Loss (Database corruption)
-1. Stop WP (put in maintenance mode)
-2. Restore latest backup from Wasabi
-3. Verify biblio_* custom tables integrity
-4. Run database optimization
-5. Test critical flows (purchase, download)
+```php
+<?php
+/**
+ * Template Name: Biblio — Libreria utente
+ */
+get_header();
 
-## Scenario 2: Security Breach (malware)
-1. Take site offline
-2. Restore from Wasabi backup (before breach date)
-3. Audit database for unauthorized users
-4. Update all passwords + keys
-5. Re-scan with Wordfence
-6. Deploy code fixes (if patch available)
-
-## Scenario 3: Server Failure
-1. Provision new server (same specs)
-2. Deploy OS + PHP 8.3 + MySQL 8.0
-3. Restore WP files from S3
-4. Restore database from UpdraftPlus
-5. Update DNS to new IP
-6. Verify SSL certificate
-7. Run smoke tests
-
-## Recovery Time Objective (RTO): 4 hours
-## Recovery Point Objective (RPO): 1 hour
-```
-
----
-
-## Testing & CI/CD
-
-### Automated Testing
-
-```yaml
-# .github/workflows/biblio-tests.yml
-
-name: Biblio CI/CD
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: biblio_test
-          MYSQL_ROOT_PASSWORD: test
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup PHP 8.3
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mysqli, imagick, zip
-      
-      - name: Install dependencies
-        run: |
-          composer install
-          npm install
-      
-      - name: PHP Lint
-        run: find . -name '*.php' -exec php -l {} \;
-      
-      - name: PHPCS (Code style)
-        run: phpcs --standard=PSR12 wp-content/themes/biblio-child/
-      
-      - name: PHPUnit
-        run: phpunit --testdox
-      
-      - name: JS Tests
-        run: npm test
-      
-      - name: Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v9
-        with:
-          configPath: './lighthouserc.json'
-      
-      - name: Performance Report
-        run: |
-          echo "Performance audit completed"
-          # Upload to artifact
-```
-
-### Lighthouse Config
-
-```json
-{
-  "ci": {
-    "collect": {
-      "numberOfRuns": 3,
-      "url": ["https://biblio.com/", "https://biblio.com/shop/"],
-      "settings": {
-        "chromeFlags": ["--no-sandbox"],
-        "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]
-      }
-    },
-    "upload": {
-      "target": "temporary-public-storage"
-    },
-    "assert": {
-      "preset": "lighthouse:recommended",
-      "assertions": {
-        "categories:performance": ["error", {"minScore": 0.9}],
-        "categories:accessibility": ["error", {"minScore": 0.95}],
-        "categories:best-practices": ["error", {"minScore": 0.95}],
-        "categories:seo": ["error", {"minScore": 0.95}]
-      }
-    }
-  }
+if ( ! is_user_logged_in() ) {
+    echo '<div class="biblio-libreria-empty">';
+    echo '<p>Devi <a href="' . esc_url( wp_login_url( get_permalink() ) ) . '">accedere</a> per vedere la tua libreria.</p>';
+    echo '</div>';
+    get_footer();
+    return;
 }
+
+$user_id = get_current_user_id();
+$accessi = biblio_get_user_accessi( $user_id );
+?>
+
+<section class="biblio-libreria">
+    <h1>La mia libreria</h1>
+
+    <?php if ( empty( $accessi ) ): ?>
+        <div class="biblio-libreria-empty">
+            <p>Non hai ancora libri nella tua libreria.</p>
+            <a href="/catalogo" class="biblio-btn">Sfoglia il catalogo</a>
+        </div>
+    <?php else: ?>
+        <div class="biblio-grid">
+        <?php foreach ( $accessi as $acc ):
+            // Trova il post collegato
+            $posts = get_posts( array(
+                'post_type'  => 'biblio_book',
+                'meta_key'   => 'book_id',
+                'meta_value' => $acc->book_id,
+                'numberposts' => 1,
+            ) );
+            if ( empty( $posts ) ) continue;
+            $post = $posts[0];
+            $copertina = get_the_post_thumbnail_url( $post->ID, 'medium' );
+        ?>
+            <div class="biblio-card">
+                <img src="<?php echo esc_url( $copertina ); ?>" alt="" class="biblio-card-cover" loading="lazy">
+                <div class="biblio-card-body">
+                    <h3 class="biblio-card-title"><?php echo esc_html( get_the_title( $post ) ); ?></h3>
+                    <span class="biblio-stato <?php echo esc_attr( $acc->stato ); ?>"><?php echo esc_html( $acc->stato ); ?></span>
+                    <?php if ( $acc->data_fine ): ?>
+                        <p class="biblio-card-author">Scade: <?php echo esc_html( date_i18n( 'd/m/Y', strtotime( $acc->data_fine ) ) ); ?></p>
+                    <?php endif; ?>
+                    <?php if ( $acc->stato === 'attivo' ): ?>
+                        <a href="/reader?accesso=<?php echo (int) $acc->accesso_id; ?>" class="biblio-btn">Leggi</a>
+                    <?php elseif ( $acc->stato === 'scaduto' ): ?>
+                        <a href="<?php echo esc_url( get_permalink( $post ) ); ?>" class="biblio-btn biblio-btn-secondary">Rinnova / Acquista</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</section>
+
+<?php get_footer(); ?>
 ```
 
 ---
 
-## Checklist Pre-Launch
+## 6. Shortcode catalogo (alternativa al template)
 
-- [ ] SSL/TLS configured (HTTPS everywhere)
-- [ ] 2FA enabled for all admin accounts
-- [ ] Database users with limited privileges
-- [ ] File permissions hardened (644 files, 755 dirs)
-- [ ] wp-config.php secured (600 permissions)
-- [ ] WP_DEBUG = false in production
-- [ ] Backups tested (restore from backup once)
-- [ ] Lighthouse scores: all >90
-- [ ] Load testing passed (100+ concurrent users)
-- [ ] Security scanning clean (Wordfence + manual)
-- [ ] SEO verified (sitemap, robots.txt, structured data)
-- [ ] Analytics configured (Google Analytics + Hotjar)
-- [ ] Email configuration tested (transactional + marketing)
-- [ ] Payment gateway tested (test + live)
-- [ ] Mobile responsiveness verified
-- [ ] Custom API endpoints tested
-- [ ] Cron jobs running (verify in logs)
-- [ ] CDN / Cache purge working
-- [ ] Monitoring & alerting active (Datadog)
+Se preferisci inserire il catalogo in una pagina Gutenberg invece di usare un template custom, aggiungi questo shortcode in `functions.php`:
+
+```php
+add_shortcode( 'biblio_catalogo', function() {
+    ob_start();
+    include get_stylesheet_directory() . '/page-catalogo.php';
+    return ob_get_clean();
+} );
+```
+
+Poi in una pagina qualunque scrivi: `[biblio_catalogo]`
 
 ---
 
-## Summary
+## 7. Workaround per i limiti di InfinityFree
 
-Questo template WordPress **2026-ready** per Biblio offre:
+### 7.1 wp-cron inaffidabile → cron esterno gratuito
 
-✅ **Architettura moderna** — Block themes, FSE, custom post types  
-✅ **Security enterprise** — 2FA, hardening completo, compliance-ready  
-✅ **Performance ottimizzata** — Lighthouse 90+, caching multi-layer  
-✅ **Scalabilità** — Custom database schema, Redis, CDN  
-✅ **Automazioni** — n8n + WP Cron jobs, compliance workflows  
-✅ **Disaster recovery** — 3-tier backup strategy, RTO 4h  
-✅ **Digital products** — Ebook rental + acquisto, access control  
+Su InfinityFree `wp-cron.php` gira solo quando arriva traffico. Soluzione:
 
-**Next Steps:**
-1. Adatta i nomi/URL al tuo dominio
-2. Configura S3 (Wasabi) + Cloudflare
-3. Installa plugin stack (WP Rocket, Wordfence, ACF)
-4. Copia schema database
-5. Test su staging environment
-6. Esegui Lighthouse audit
-7. Deploy a produzione
+1. In `wp-config.php`: `define( 'DISABLE_WP_CRON', true );` (già fatto sopra)
+2. Registrati su **[cron-job.org](https://cron-job.org)** (gratis)
+3. Crea un job che chiami ogni 15 min:
+   `https://biblio.rf.gd/wp-cron.php?doing_wp_cron`
+4. In aggiunta, per lo scadenzario Biblio specifico (vedi endpoint in `functions.php`):
+   `https://biblio.rf.gd/?biblio_cron_key=LA_TUA_CHIAVE_SEGRETA`
+
+### 7.2 Email (mail() inaffidabile) → SMTP esterno
+
+1. Installa **WP Mail SMTP**
+2. Usa **Brevo** (ex Sendinblue) — piano gratuito 300 email/giorno, nessun outbound bloccato perché è un servizio che *riceve* le chiamate dal server
+3. Configura: Host `smtp-relay.brevo.com`, Port `587`, TLS, user + API key da account Brevo
+
+### 7.3 Pagamenti — Stripe bloccato
+
+Scelte possibili per MVP:
+
+**Opzione A — Stripe in modalità test only:**
+- Funziona limitatamente perché InfinityFree blocca cURL verso api.stripe.com
+- **Verifica prima** se sul tuo account Stripe riesce a completare pagamenti test (probabilmente no)
+
+**Opzione B — Bonifico bancario / "pagamento manuale" (realistica per MVP ITS):**
+- WooCommerce → Pagamenti → Bonifico bancario → Abilita
+- L'ordine va in stato "in attesa", admin completa manualmente
+- Per la dimostrazione ITS basta — nessuno sta aspettando soldi veri
+
+**Opzione C — PayPal:**
+- PayPal ha bridge che a volte bypassa il blocco cURL (non garantito)
+- Test con account sandbox
+
+### 7.4 Backup → UpdraftPlus + Google Drive
+
+- UpdraftPlus usa OAuth browser-based per Google Drive
+- Non serve cURL outbound diretto (il browser dell'admin fa da ponte)
+- Schedula backup settimanale del sito + database
+
+### 7.5 Upload PDF > 10 MB
+
+1. Carica via **File Manager InfinityFree** o FTP in `/htdocs/wp-content/uploads/ebooks/`
+2. Registra il path nel DB custom (`biblio_libri.pdf_path`)
+3. Servi con endpoint protetto PHP che verifica accesso prima di stream
 
 ---
 
-*Template versione: 2.0 (2026-04-24)*  
-*Mantenuto in: [[Biblio WordPress MOC]]*  
-*Backlinks: [[skill/WordPress]], [[skill/WooCommerce]], [[skill/Security]]*
+## 8. Troubleshooting comune
+
+| Sintomo | Causa probabile | Soluzione |
+|---|---|---|
+| "Error establishing database connection" | Host DB sbagliato in wp-config | Ricontrolla in InfinityFree → MySQL Databases |
+| 403 Forbidden su /wp-admin | IP flaggato da anti-DDoS IF | Aspetta 10 min o cambia IP / VPN off |
+| 500 su pagine specifiche | max_execution_time superato | Splitta operazione (batch), aumenta .user.ini |
+| Plugin update fallisce | cURL bloccato verso wordpress.org | Scarica zip manualmente, carica via FTP |
+| Email WP non arrivano | mail() bloccata | Configura WP Mail SMTP + Brevo |
+| White screen dopo modifica functions.php | Errore PHP fatale | Ripristina via FTP, attiva `WP_DEBUG_LOG` |
+| "413 Request Entity Too Large" | File oltre 10 MB | Carica via FTP, non da WP admin |
+| Cron Biblio non parte | wp-cron disabilitato e nessun cron esterno configurato | Setup cron-job.org (vedi 7.1) |
+| Astra child non si attiva | `Template: astra` scritto male in style.css | Verifica che header CSS sia esatto |
+
+---
+
+## Checklist finale pre-consegna
+
+- [ ] SSL Let's Encrypt attivo + Force HTTPS
+- [ ] URL di login cambiato (WPS Hide Login)
+- [ ] Admin user **non** è `admin` + 2FA attivo
+- [ ] `wp-config.php` con salts rigenerati + `DISALLOW_FILE_EDIT`
+- [ ] `.htaccess` blocca xmlrpc, wp-config, esecuzione PHP in uploads
+- [ ] WP Super Cache attivo
+- [ ] UpdraftPlus schedulato su Google Drive
+- [ ] SMTP configurato (Brevo o simile)
+- [ ] Cron esterno cron-job.org attivo su `wp-cron.php` + endpoint Biblio
+- [ ] Custom tables Biblio create (vedi `BIBLIO_SETUP_GUIDE`)
+- [ ] 5 libri di prova caricati come `biblio_book` + prodotti WC collegati
+- [ ] Child theme `astra-biblio` attivo
+- [ ] Pagine create: Home, Catalogo, Libreria, Carrello, Checkout, Account
+- [ ] Menu navigazione configurato
+- [ ] WooCommerce: metodo pagamento "Bonifico bancario" attivo
+- [ ] Test: acquisto cartaceo → ordine creato
+- [ ] Test: acquisto ebook → accesso creato in `biblio_accessi_ebook`
+- [ ] Test: noleggio ebook → `data_fine` calcolata
+- [ ] Test: login → libreria visibile
+
+---
+
+## Come aggiustare dopo
+
+Questo template è una base. Modifiche frequenti:
+
+**Cambiare colori / stile:**
+→ Modifica le variabili CSS in `style.css` (`:root { --color-... }`)
+
+**Aggiungere un campo custom al libro (es. "casa editrice"):**
+1. In `functions.php`: aggiungi `register_post_meta()` o usa ACF
+2. In `single-biblio_book.php`: stampa con `get_post_meta()`
+
+**Cambiare durate piani noleggio:**
+→ `UPDATE biblio_piani_noleggio SET durata_giorni = X WHERE piano_id = '...'`
+
+**Aggiungere filtri al catalogo (es. per prezzo):**
+→ Estendi `biblio-filtri` in `page-catalogo.php` + JS
+
+**Aggiungere genere al catalogo:**
+→ Usa la tassonomia `biblio_genere` già registrata in `functions.php`
+
+**Migrare a hosting serio (quando serve):**
+1. UpdraftPlus: crea backup completo
+2. Su nuovo host: installa WP pulito
+3. UpdraftPlus: ripristina backup
+4. Aggiorna DNS
+5. Rimuovi workaround InfinityFree (cron esterno, SMTP se non serve più)
+
+---
+
+*Template v1.1 — allineato a hosting InfinityFree + Astra child + `BIBLIO_SETUP_GUIDE`*
+*Per i passi di setup database vedi [[BIBLIO_SETUP_GUIDE]]*
+*Per la spec funzionale vedi [[biblio_specs_funzionale_mvp]]*

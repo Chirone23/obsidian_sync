@@ -1,211 +1,118 @@
-# 📚 Biblio Project MOC
+# Biblio Project MOC
 
-> **Mappa di contenuto** per il progetto Biblio (piattaforma di noleggio + vendita ebook)
+> Mappa di contenuto per il progetto **Biblio** (piattaforma noleggio + vendita ebook).
+> Target deploy: **InfinityFree** (hosting gratuito) + WordPress + WooCommerce.
 
 ---
 
-## 📋 Documenti Principali
+## Documenti principali
 
 ### Specifiche
-- [[biblio_specs_funzionale_mvp|Spec Funzionale MVP]] — Requisiti business + use cases
-- [[biblio_spec_tecnica_mvp_v0_1|Spec Tecnica MVP v0.1]] — Architettura tecnica MVP
+- [[biblio_specs_funzionale_mvp]] — Requisiti funzionali MVP
+- [[biblio_spec_tecnica_mvp_v0_1]] — Architettura tecnica MVP (decisioni + punti aperti)
 
-### Template & Implementazione
-- [[BIBLIO_WORDPRESS_TEMPLATE_2026|WordPress Template 2026 — Enterprise Edition]] ⭐ **START HERE**
-  - Stack tecnico, security hardening, performance optimization
-  - Database schema completo, API endpoints, digital products workflow
-  - Backup strategy, disaster recovery, CI/CD
-  - Best practices 2026 from WooCommerce, WordPress dev docs
+### Setup & template operativi
+- [[BIBLIO_SETUP_GUIDE]] — Setup iniziale: DB custom, prodotti di prova, plugin, WooCommerce
+- [[BIBLIO_WORDPRESS_TEMPLATE_2026]] — Template WordPress + child theme Astra + workaround InfinityFree
 
-- [[BIBLIO_SETUP_GUIDE|Setup Guide Completo]] — Istruzioni step-by-step per MVP
-
-### Assets & Media
-- `Bibliò_Neural_Reading_Ecosystem.pdf` — Concept doc AI/chatbot
-- `biblio_spec_tecnica_mvp_v0_1.md.pdf` — Versione printabile spec tecnica
+### Asset
+- `Bibliò_Neural_Reading_Ecosystem.pdf` — Concept MyBibliò (chatbot AI)
 
 ---
 
-## 🎯 Decisioni Architetturali Bloccate
+## Stack confermato
+
+| Componente | Scelta |
+|---|---|
+| Hosting | **InfinityFree** (gratuito) |
+| CMS | WordPress 6.6+ |
+| E-commerce | WooCommerce 9.x |
+| Tema | Astra (parent) + `astra-biblio` (child) |
+| Cache | WP Super Cache (file-based) |
+| Backup | UpdraftPlus → Google Drive |
+| Email | WP Mail SMTP + Brevo (300 email/giorno gratis) |
+| Cron | cron-job.org esterno (wp-cron disabilitato) |
+| Pagamento MVP | Bonifico bancario (WooCommerce integrato) |
+
+---
+
+## Decisioni bloccate
 
 | Decisione | Status | Note |
-|-----------|--------|------|
-| WordPress + WooCommerce | ✅ Confermato | MVP commerciale proven stack |
-| Custom tabelle Biblio | ✅ Confermato | Per accessi, noleggi, modalità |
-| PDF viewer protetto | ✅ Confermato | Accesso server-side, no URL pubblici |
-| MyBiblio (chatbot) | ✅ Confermato | Retrieval SQL + LLM per risposta naturale |
-| Hosting managed | ✅ Confermato | PHP 8.3+, Redis, backup automatici |
-| Opzione A: prodotto WC per modalità | ✅ Consigliato | Più semplice, checkout lineare |
+|---|---|---|
+| Stack WordPress + WooCommerce | ✅ | Da spec tecnica §2 |
+| Tabelle custom (modalità, piani, accessi) | ✅ | Definite in `BIBLIO_SETUP_GUIDE` |
+| PDF viewer server-side (no URL pubblici) | ✅ | Requisito da spec tecnica §10, §14 |
+| MyBibliò = retrieval SQL + LLM (no vector DB) | ✅ | Da spec tecnica §15 |
+| Un prodotto WooCommerce per modalità | ✅ | Opzione A raccomandata in spec tecnica §8.2 |
+| Regola carrello di un solo tipo | ✅ | Implementata in `functions.php` del child theme |
 
 ---
 
-## ❓ Punti Aperti (pre-implementazione)
+## Punti ancora aperti (vedi spec tecnica §22)
 
-1. **Mapping WooCommerce esatto** — Confermare se un prodotto per ogni modalità
-2. **Regola rinnovo noleggio** — Estensione da scadenza o da pagamento?
-3. **Gestione rimborsi** — Cosa succede agli accessi digitali?
-4. **Storage PDF** — Media library standard vs percorso custom?
-5. **Copertina immagini** — URL esterno vs media WordPress?
-
----
-
-## 🚀 Flussi Principali Implementati
-
-### 1. Acquisto Cartaceo
-WooCommerce → Ordine → Admin spedizione manuale
-
-### 2. Acquisto eBook Definitivo
-WooCommerce → Ordine completato → Hook crea accesso perpetuo → Libreria digitale
-
-### 3. Noleggio eBook
-WooCommerce → Ordine completato → Hook crea accesso temporaneo (started_at + expires_at)
-
-### 4. Scadenza Noleggio
-Cron job orario → Aggiorna stato accessi → UI mostra "Rinnova" / "Acquista definitivo"
-
-### 5. Conversione Noleggio → Acquisto Definitivo
-Utente clicca "Acquista definitivo" → Calcolo upgrade → Nuovo checkout → Accesso perpetuo
-
-### 6. MyBiblio (Chatbot)
-Utente invia domanda → SQL retrieval catalogo → Prompt + libri candidati → LLM → Risposta naturale
+1. **Regola rinnovo noleggio** — estensione da `expires_at` o da `now`?
+2. **Gestione rimborsi** — cosa succede agli accessi in caso di rimborso WooCommerce?
+3. **Storage PDF** — media library vs cartella protetta custom?
+4. **Copertina libro** — URL esterno vs media library?
+5. **Pagamento online reale** — Stripe non funziona su InfinityFree; MVP usa bonifico. Migrare a hosting cURL-libero quando serve accettare carte?
 
 ---
 
-## 🔧 Stack Tecnico Confermato
+## Limiti noti InfinityFree da tenere a mente
 
-```
-┌──────────────────────────────────────┐
-│   BIBLIO 2026 TECH STACK             │
-├──────────────────────────────────────┤
-│ OS: Ubuntu 22.04 LTS                 │
-│ Web: Nginx (fastcgi cache + reverse) │
-│ PHP: 8.3+ (managed hosting)          │
-│ Database: MySQL 8.0 + custom tables  │
-│ Cache: Redis 7.0+                    │
-│ CDN: Cloudflare (images + static)    │
-│ WP Core: 6.6+                        │
-│ WooCommerce: 9.1+                    │
-│ Theme: Blocksy/Neve (FSE-ready)      │
-│ Payment: WooPayments + Stripe        │
-│ AI: OpenAI/Anthropic (via API)       │
-│ Storage: S3-compatible (Wasabi)      │
-└──────────────────────────────────────┘
-```
+- ❌ cURL outbound bloccato → niente Stripe/Mailchimp/webhook esterni
+- ❌ No cron reali → wp-cron via traffico o cron-job.org
+- ❌ Memory limit 256 MB, execution time ~10s → evitare plugin pesanti
+- ❌ Upload max 10 MB dal WP admin → PDF grandi via FTP
+- ❌ DB max ~400 MB → indici necessari sulle custom tables
+- ❌ Email `mail()` inaffidabile → SMTP esterno obbligatorio
+
+Se il progetto deve andare in produzione reale con clienti paganti, **migrare a hosting con cURL libero** (es. SiteGround, Keliweb, IONOS).
 
 ---
 
-## 📊 Database Schema Principale
+## Flussi implementati nel template
 
-### Custom Tables
-1. **biblio_libri** — Metadata editoriale (title, author, ISBN, pages, etc.)
-2. **biblio_modalita** — Modalità vendibili (cartaceo, ebook_acquisto, ebook_noleggio)
-3. **biblio_piani_noleggio** — Piani temporali (7gg, 30gg, 90gg + prezzo)
-4. **biblio_accessi_ebook** — Accessi utente (user_id, book_id, tipo, scadenza, stato)
-5. **biblio_conversioni** — History noleggio → acquisto
-6. **biblio_download_log** — Audit dei download (compliance)
-
----
-
-## 📦 Plugin Stack MVP
-
-### Must-Have
-- **WooCommerce** — Core commerce
-- **WP Rocket** — Caching + performance
-- **Wordfence** — Security + firewall
-- **Yoast SEO** — SEO optimization
-- **Akismet** — Spam filtering
-
-### Recommended
-- **Advanced Custom Fields (ACF)** — Custom fields
-- **UpdraftPlus** — Backup management
-- **Mailchimp for WooCommerce** — Email automation
-- **ShortPixel** — Image optimization
-- **Query Monitor** — Debug + profiling
+| Flusso | Dove |
+|---|---|
+| Acquisto cartaceo | WooCommerce standard, nessun accesso digitale creato |
+| Acquisto ebook definitivo | Hook `woocommerce_order_status_completed` in `functions.php` → riga in `biblio_accessi_ebook` |
+| Noleggio ebook | Stesso hook, con `data_fine` calcolata dal piano |
+| Scadenza noleggio | `biblio_aggiorna_scadenze()` via cron-job.org |
+| Blocco carrello misto | Filter `woocommerce_add_to_cart_validation` |
+| Libreria utente | Template `page-libreria.php` (richiede login) |
+| Catalogo | Template `page-catalogo.php` + filtri JS |
+| Conversione noleggio → acquisto | ⏳ Non ancora implementato (vedi spec §12.6) |
+| MyBibliò chatbot | ⏳ Fase successiva |
+| PDF viewer protetto | ⏳ Da sviluppare — endpoint `/reader?accesso=...` |
 
 ---
 
-## 🔐 Security Checklist
+## Custom tables (nomi reali in uso)
 
-- [ ] SSL/TLS (Let's Encrypt)
-- [ ] 2FA for all admin accounts
-- [ ] Wordfence security scanning
-- [ ] File permissions hardened
-- [ ] Database user with limited privileges
-- [ ] wp-config.php secured (600)
-- [ ] Backup strategy tested
-- [ ] WAF Cloudflare enabled
-- [ ] SSH hardened (no root, key-only)
+Definite in `BIBLIO_SETUP_GUIDE` → STEP 1. Allineati ai nomi del setup guide (non a quelli della spec tecnica v0.1 che proponeva `biblio_books` / `biblio_user_accesses`).
 
----
+- `biblio_libri` — metadati editoriali
+- `biblio_modalita` — cartaceo / ebook_acquisto / ebook_noleggio (link a `woo_product_id`)
+- `biblio_piani_noleggio` — durata + prezzo per ogni modalità noleggio
+- `biblio_accessi_ebook` — accessi utente (attivo / scaduto / convertito)
+- `biblio_conversioni` — storico noleggio → acquisto
 
-## 📈 Performance Targets
-
-| Metrica | Target |
-|---------|--------|
-| Lighthouse Performance | 90+ |
-| Lighthouse Accessibility | 95+ |
-| Lighthouse Best Practices | 95+ |
-| Lighthouse SEO | 95+ |
-| LCP (Largest Contentful Paint) | <2.5s |
-| CLS (Cumulative Layout Shift) | <0.1 |
-| FID/INP | <100ms |
+> **Nota di coerenza:** i nomi tabelle in `BIBLIO_SETUP_GUIDE` e quelli proposti nella `biblio_spec_tecnica_mvp_v0_1` §7 divergono. Il template `BIBLIO_WORDPRESS_TEMPLATE_2026` segue il setup guide. Decidere quale diventa la source of truth prima dell'implementazione definitiva.
 
 ---
 
-## 🧪 Test Minimi Richiesti
+## Prossimi passi consigliati
 
-### Funzionali
-- [ ] Acquisto cartaceo → Ordine WC
-- [ ] Acquisto ebook → Accesso permanente creato
-- [ ] Noleggio ebook → Accesso temporaneo creato
-- [ ] Scadenza noleggio → Stato aggiornato a "scaduto"
-- [ ] Conversione noleggio → acquisto → Accesso permanente
-- [ ] Blocco accesso non autorizzato al PDF
-
-### Admin
-- [ ] Import Excel titoli validi
-- [ ] Import con referenze rotte → Errori segnalati
-- [ ] Upload PDF → Collegamento al titolo
-
-### Chatbot
-- [ ] Domanda con match nel catalogo → Risultati rilevanti
-- [ ] Domanda senza match → "Non ho risultati"
+1. Allineare nomi tabelle tra spec tecnica e setup guide
+2. Chiudere i 5 punti aperti (§22 della spec tecnica)
+3. Deploy iniziale su InfinityFree seguendo `BIBLIO_WORDPRESS_TEMPLATE_2026`
+4. Caricare i 5 libri di prova (`BIBLIO_SETUP_GUIDE` STEP 2)
+5. Testare i 3 flussi: acquisto cartaceo, acquisto ebook, noleggio ebook
+6. Implementare PDF viewer protetto
+7. Solo dopo: affrontare MyBibliò (chatbot AI)
 
 ---
 
-## 📞 Contatti & Ownership
-
-- **Progetto** — Alessandro D'Alessandro (frontend lead)
-- **Backend** — [Chi?]
-- **Database** — [Chi?]
-- **Security** — [Chi?]
-
----
-
-## 📅 Timeline Consigliato
-
-| Fase | Durata | Milestone |
-|------|--------|-----------|
-| Setup + Deploy staging | 1w | WP installato, MySQL pronto |
-| Import catalogo + tabelle custom | 1-2w | Dati di test caricati |
-| Plugin + theme child | 1w | Child theme + caching funzionante |
-| Core flows (carrello → ordine → accesso) | 2w | MVP transazioni funzionante |
-| PDF viewer + libreria digitale | 1-2w | Lettura ebook working |
-| MyBiblio chatbot | 1-2w | Integration con LLM |
-| Testing + security audit | 1w | Wordfence clean, tests passati |
-| **Go-live** | - | 🚀 |
-
----
-
-## 🎓 Learning Resources (Linked)
-
-Vedi anche:
-- [[skill/WordPress]] — Setup + best practices
-- [[skill/WooCommerce]] — e-commerce specifico
-- [[skill/Database Design]] — Schema + optimization
-- [[skill/Security]] — Hardening checklist
-
----
-
-*MOC versione: 1.0 (2026-04-24)*  
-*Last updated: 2026-04-24*  
-*Backlinks: [[ITS/]], [[Automation MOC]], [[Front-end MOC]]*
+*MOC v1.1 — allineato a target hosting InfinityFree*
