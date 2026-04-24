@@ -136,3 +136,111 @@ Libri personalizzati AR per bambini. Questa è la documentazione tecnica di arch
 - [[Idee MOC]] — Idee a cui applicare copywriting e context engineering
 - [[Index MOC]]
 
+
+## EU AI Act (Reg. UE 2024/1689) e Governance IA
+
+**Fonte:** NotebookLM notebook "EU AI Act e Compliance PA" — 29 fonti integrate (Reg. UE 2024/1689, DDL AI 132/2025, linee guida AgID, manuali verifica giornalistica, studi integrità scientifica)
+
+### 5 Pilastri Tematici
+
+#### 1. Quadro Regolatorio Europeo — Classificazione del Rischio
+
+| Livello | Definizione | Esempi | Obblighi |
+|---------|-------------|--------|---------|
+| **Inaccettabile** | Sistemi vietati per minaccia ai diritti fondamentali | Social scoring, manipolazione subliminale, identificazione biometrica remota non autorizzata, sfruttamento minori | Divieto assoluto, sanzioni fino a €35M o 7% fatturato |
+| **Alto Rischio** | Sistemi in settori critici | Infrastrutture, istruzione, selezione personale, servizi pubblici, giustizia | Conformità ex ante: governance dati, documentazione tecnica, logging, supervisione umana |
+| **Limitato** | Sistemi che richiedono trasparenza | Chatbot, deepfake, IA generativa | Informare utenti; etichettare contenuti sintetici |
+| **Minimo** | Applicazioni a impatto trascurabile | Filtri antispam, videogiochi | Libertà di utilizzo |
+
+**Timeline di Entrata in Vigore:**
+- **1 Agosto 2024**: Entrata in vigore formale
+- **2 Febbraio 2025**: Divieti per rischio inaccettabile + AI Literacy obbligatoria
+- **2 Agosto 2025**: Norme GPAI (modelli fondazionali) + sanzioni
+- **2 Agosto 2026**: Piena applicazione sistemi ad alto rischio
+- **2 Agosto 2027**: Conformità per IA integrata in prodotti regolati (es. dispositivi medici)
+
+#### 2. Implementazione Italiana — DDL AI (Legge 132/2025)
+
+**Autorità e Responsabilità:**
+- **AgID** (Agenzia Italia Digitale): Innovazione nella PA, linee guida procurement, sviluppo IA nella PA
+- **ACN** (Agenzia Cybersicurezza Nazionale): Vigilanza, cybersecurity, poteri ispettivi e sanzionatori
+
+**Nuovi Reati (Sanzioni Penali):**
+- Diffusione deepfake illeciti: reclusione 1-5 anni
+- Aggravanti per reati commessi tramite IA
+
+**Settori Specifici:**
+- **Sanità**: IA come supporto diagnostico (mai sostitutiva del medico); piattaforma nazionale Agenas
+- **Giustizia**: IA per ricerca documentale e analisi precedenti; decisione finale al giudice
+- **Lavoro**: Obbligo informare lavoratori su sistemi IA (trasparenza algoritmica)
+
+**Investimenti**: ~€1 miliardo per startup/PMI nel settore IA e calcolo quantistico
+
+#### 3. Framework Operativi di Compliance
+
+| Framework | Nome Completo | Scopo | Quando Applicare |
+|-----------|---------------|-------|------------------|
+| **FRIA** | Fundamental Rights Impact Assessment | Valutazione obbligatoria dell'impatto su diritti fondamentali | PA e deployer servizi essenziali (alto rischio) |
+| **DPIA** | Data Protection Impact Assessment | Valutazione impatto protezione dati (GDPR) | Sistemi IA che processano dati personali |
+| **GRADE** | Grading of Recommendations Assessment Development and Evaluation | Valutazione certezza prove e qualità evidenze scientifiche | Sintesi evidenze scientifiche e revisioni |
+| **CRAAP Test** | Currency, Relevance, Authority, Accuracy, Purpose | Valutazione critica fonti + metacognizione | Information literacy e verifica fonti |
+| **Modello Classico (Cooke)** | Cooke's Classical Model | Validazione giudizio esperti in assenza dati empirici | Decisioni con expertise limitata |
+
+**Procedura FRIA — 5 Step:**
+1. Descrizione processi: Come il sistema IA sarà integrato nei flussi di lavoro
+2. Ambito temporale: Periodo e frequenza di utilizzo prevista
+3. Categorie interessate: Elencare persone fisiche/gruppi influenzati
+4. Valutazione rischi: Individuare potenziali danni ai diritti (dignità, non discriminazione, privacy)
+5. Misure mitigazione: Supervisione umana effettiva + meccanismi ricorso cittadini
+
+#### 4. Checklist di Conformità per Alto Rischio
+
+- [ ] **Governance Dati**: Dataset rappresentativi e privi di bias
+- [ ] **Documentazione Tecnica**: Fascicolo aggiornato prima della messa in servizio
+- [ ] **Logging Automatico**: Tracciamento operazioni; conservazione log ≥ 6 mesi
+- [ ] **Supervisione Umana**: Operatori con autorità di arresto/correzione (Pulsante di Stop)
+- [ ] **Cybersecurity**: Robustezza contro attacchi avversariali
+- [ ] **Registrazione UE**: Inserimento banca dati dell'Unione Europea
+
+**Dichiarazione di Conformità UE** (Allegato V) — Elementi richiesti:
+1. Nome e tipo del sistema
+2. Indirizzo del fornitore
+3. Attestazione responsabilità esclusiva
+4. Conformità al regolamento
+5. Conformità GDPR
+6. Riferimento norme armonizzate
+7. Dettagli organismo notificato
+8. Luogo, data, firma
+
+#### 5. Integrità Scientifica e Information Literacy
+
+**Crisi nelle Ritrattazioni:**
+- Aumento preoccupante in Life Sciences (falsificazione, manipolazione immagini)
+- Pressioni per finanziamento + "Paper Mills"
+
+**Metodologie di Validazione:**
+- **GRADE**: Classificare qualità evidenze (HIGH ⊕⊕⊕⊕ → VERY LOW ⊕)
+- **Letteratura Grigia vs Peer-Reviewed**: Non escludere dati critici in letteratura non indicizzata
+
+**Protocollo Verifica UGC (4 Pilastri):**
+1. **Provenienza**: Dove/come è stato creato il contenuto
+2. **Fonte**: Chi ha creato/pubblicato
+3. **Data**: Quando è stato creato
+4. **Luogo**: Contesto geografico/fisico
+
+**Strumenti di Verifica Digitale:**
+- Ricerca inversa (Google Images)
+- Analisi metadati (EXIF, geolocalizzazione via Google Earth/Wikimapia)
+- Controllo meteorologico storico (Wolfram Alpha)
+
+**Data Literacy — Interpretazione Grafici:**
+1. Revisione titoli/assi/legende
+2. Identificazione tendenze
+3. Connessione a obiettivi decisionali
+4. Proposta step successivi
+
+### Connessioni
+
+- [[ITS MOC]] — Compliance PA per progetti pubblici
+- [[Skill MOC]] — Information literacy e verifica fonti
+- [[Agenti IA Design Patterns MOC]] — Governance di sistemi agentici

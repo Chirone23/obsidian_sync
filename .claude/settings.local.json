@@ -37,7 +37,19 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git pull *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep '\\\\.md$')",
+      "Bash(xargs -r git add)",
+      "Bash(grep -E '\\\\.\\(md|pdf\\)$')",
+      "mcp__obsidian-mcp__obsidian_simple_search",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/4c3b6ee3-040a-45e0-b333-f22124f56e4a\" --question \"What is the content of this notebook? What topics and sources are covered? Provide a complete overview briefly.\")",
+      "Bash(python scripts/run.py notebook_manager.py add --url https://notebooklm.google.com/notebook/4c3b6ee3-040a-45e0-b333-f22124f56e4a --name 'EU AI Act e Compliance PA' --description 'Guida completa sull'\\\\''EU AI Act \\(Reg. UE 2024/1689\\), attuazione italiana \\(DDL AI\\), compliance per la Pubblica Amministrazione, FRIA, integrità scientifica e information literacy. 29 fonti integrate: normativa, linee guida AgID, manuali di verifica, studi su ritrattazioni' --topics 'EU AI Act,Governance IA,PA Compliance,FRIA,Information Literacy,Integrity Scientifica')",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Fornisci un overview completo e dettagliato di TUTTE le 29 fonti/elementi presenti in questo notebook. Per ciascuna fonte indica: *)",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Dal contenuto del notebook, estrai e organizza in modo strutturato: *)",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Dal notebook, estrai TUTTI gli esempi pratici, casi studio, template, protocolli operativi e checklist effettive presenti. Per ciascuno fornisci: *)",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Analizza criticamente il notebook e rispondi: *)",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Analizza criticamente il notebook e rispondi a questi 4 punti: *)",
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Estrai TUTTI i dati numerici e le date critiche presenti nel notebook: *)"
     ]
   }
 }

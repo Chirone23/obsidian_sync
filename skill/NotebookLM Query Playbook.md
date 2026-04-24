@@ -32,8 +32,7 @@ presenti in questo notebook. Per ciascuna fonte indica:
 4) concetti chiave trattati
 
 Sii esaustivo: voglio una mappa completa di tutti i contenuti,
-senza escludere niente. Se ci sono foto/slide di lezione estrai il
-testo visibile e i concetti mostrati.
+senza escludere niente. Se ci sono foto/slide di lezione estrai il testo visibile e i concetti mostrati.
 ```
 
 **Output atteso:** lista numerata 1…N con bullet strutturati per fonte.
