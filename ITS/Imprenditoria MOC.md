@@ -185,7 +185,7 @@ Guide per l'interpretazione efficace di grafici e tabelle a supporto di decision
 
 ## Progetti Pratici
 
-- [[ITS/Lorenzo - Imprenditoriale/AI ACT]] — Materiali AI ACT specifici
+- [[AI ACT]] — Materiali AI ACT specifici
 
 ---
 

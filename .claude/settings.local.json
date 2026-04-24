@@ -49,7 +49,9 @@
       "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Dal notebook, estrai TUTTI gli esempi pratici, casi studio, template, protocolli operativi e checklist effettive presenti. Per ciascuno fornisci: *)",
       "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Analizza criticamente il notebook e rispondi: *)",
       "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Analizza criticamente il notebook e rispondi a questi 4 punti: *)",
-      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Estrai TUTTI i dati numerici e le date critiche presenti nel notebook: *)"
+      "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Estrai TUTTI i dati numerici e le date critiche presenti nel notebook: *)",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-id \"eu-ai-act-e-compliance-pa\" --question \"Quali sono i numeri e le date esatte menzionate nel notebook? Elenca: sanzioni in euro, percentuali di fatturato, date di entrata in vigore, anni di reclusione, soglie FLOPs, mesi di conservazione log, importi di investimento.\")",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/4c3b6ee3-040a-45e0-b333-f22124f56e4a\" --question \"Quali sono tutti i numeri specifici citati nel notebook? Sanzioni, date, percentuali, importi, anni, mesi, soglie tecniche. Elenca ogni numero con il suo significato.\")"
     ]
   }
 }
