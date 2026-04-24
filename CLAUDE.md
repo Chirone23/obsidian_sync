@@ -89,11 +89,27 @@ Quando l'utente porta un link NotebookLM da integrare nel vault:
 
 ---
 
+## Sincronizzazione Git — Regola Obbligatoria
+
+**Per OGNI modifica ai file .md:**
+1. Modifica il file `.md` (via Write/Edit/Patch)
+2. **Immediatamente dopo:** Fai `git add -A && git commit -m "..."` + `git push`
+3. Non lasciare mai file .md uncommitted in locale
+
+**Comando standard:**
+```bash
+git add -A && git commit -m "Update: [tipo modifica] [file interessato]" && git push
+```
+
+**Eccezioni:** Solo per modifiche incomplete o in fase di debug (ma comunque pushare entro sessione)
+
+---
+
 ## Cosa NON fare
 
 - Non creare note isolate senza backlink ai MOC
 - Non sovrascrivere direttive esistenti senza chiedere
-- Non committare su git manualmente — il plugin Obsidian Git lo fa automaticamente
+- ~~Non committare su git manualmente~~ **→ ORA DEVI farlo per ogni .md**
 - Non generare contenuto nel vault senza che l'utente abbia fornito la fonte — "Agents read, humans write"
 
 ---
