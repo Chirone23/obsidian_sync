@@ -199,6 +199,6 @@ Agente che **auto-modifica il proprio codice sorgente** per migliorare capacità
 
 - [[ITS/Imprenditoria MOC]] — Compliance e regolamentazione AI (EU AI Act, FRIA, DDL settori)
 - [[ITS/Progettistica AI MOC]] — Specifiche progettuale sistemi AI
-- [[moc/Skill MOC]] — n8n Avanzato, Agent Builder, orchestrazione
+- [[Skill MOC]] — n8n Avanzato, Agent Builder, orchestrazione
 - [[Knowledge MOC]] — AI e automazione
 - [[Index MOC]]

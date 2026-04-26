@@ -508,9 +508,9 @@ Utilizzato per verificare contenuti generati dagli utenti durante **crisi e emer
 ## Connessioni e Backlink
 
 > **Nota:** Questo MOC è collegato a:
-> - [[moc/Knowledge MOC]] — Sezione EU AI Act (versione sintetizzata)
+> - [[Knowledge MOC]] — Sezione EU AI Act (versione sintetizzata)
 > - [[moc/Agenti IA Design Patterns MOC]] — Governance sistemi agentici
-> - [[moc/ITS MOC]] — Progetti che implicano compliance PA
+> - [[ITS MOC]] — Progetti che implicano compliance PA
 
 ---
 
