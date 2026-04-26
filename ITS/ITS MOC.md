@@ -6,12 +6,12 @@ Indice delle materie ITS — ogni materia ha il suo MOC con contenuto teorico e 
 
 ## Materie
 
-- [[ITS/Prompting MOC]] — Framework prompting, C.I.A.R.E., tecniche avanzate (Riccardo Raponi)
-- [[ITS/Front-end MOC]] — Sviluppo front-end, progetti UI (Alessandro D'Alessandro)
-- [[ITS/Back-end MOC]] — Architettura back-end, API, database (Fabrizio Lombardi)
-- [[ITS/Automation MOC]] — Automazione, workflow, integrazione sistemi (Fabio Cicciarelli)
-- [[ITS/Imprenditoria MOC]] — Business, modelli di revenue, pitch (Lorenzo)
-- [[ITS/Progettistica AI MOC]] — Specifiche di progetto con AI, requirements (Melanie)
+- [[Prompting MOC]] — Framework prompting, C.I.A.R.E., tecniche avanzate (Riccardo Raponi)
+- [[Front-end MOC]] — Sviluppo front-end, progetti UI (Alessandro D'Alessandro)
+- [[Back-end MOC]] — Architettura back-end, API, database (Fabrizio Lombardi)
+- [[Automation MOC]] — Automazione, workflow, integrazione sistemi (Fabio Cicciarelli)
+- [[Imprenditoria MOC]] — Business, modelli di revenue, pitch (Lorenzo)
+- [[Progettistica AI MOC]] — Specifiche di progetto con AI, requirements (Melanie)
 
 ---
 

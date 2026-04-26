@@ -194,5 +194,5 @@ Guide per l'interpretazione efficace di grafici e tabelle a supporto di decision
 - [[ITS MOC]]
 - [[Knowledge MOC]] — Copywriting, pitch, modelli di revenue
 - [[Idee MOC]] — Da idea a business regolamentato
-- [[ITS/Progettistica AI MOC]] — Specifiche tecniche conformi all'AI Act
+- [[Progettistica AI MOC]] — Specifiche tecniche conformi all'AI Act
 - [[Agenti IA Design Patterns MOC]] — Implementazione tecnica sistemi AI conformi compliance

@@ -154,5 +154,5 @@ Test a risposta multipla, 7 moduli:
 
 - [[ITS MOC]]
 - [[Skill MOC]] — n8n, Claude Code, automazioni complementari a GHL
-- [[ITS/Imprenditoria MOC]] — CRM e sales pipeline nel contesto business
-- [[ITS/Back-end MOC]] — API, webhooks, infrastruttura server
+- [[Imprenditoria MOC]] — CRM e sales pipeline nel contesto business
+- [[Back-end MOC]] — API, webhooks, infrastruttura server

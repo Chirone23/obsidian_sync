@@ -21,4 +21,4 @@ Materia ITS — Architettura back-end.
 ## Connessioni
 
 - [[ITS MOC]]
-- [[ITS/Front-end MOC]] — Integrazione front/back
+- [[Front-end MOC]] — Integrazione front/back

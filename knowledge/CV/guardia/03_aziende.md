@@ -401,7 +401,7 @@ Se fai il corso da GM Academy:
 
 Questo file elenca **SOLO aziende che assumono guardie giurate non armate** (security roles), NON ruoli generici di supermercato (cassiere, scaffalista, commesso).
 
-Se cerchi ruoli diversi (cassiere GDO, magazzino, etc.), riferisci alla cartella [[../supermercato|supermercato]].
+Se cerchi ruoli diversi (cassiere GDO, magazzino, etc.), riferisci alla cartella supermercato.
 
 **Questo file** = Opportunità di carriera nella **sicurezza aziendale**
 

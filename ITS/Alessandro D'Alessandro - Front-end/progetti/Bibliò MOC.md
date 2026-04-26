@@ -1,7 +1,7 @@
 # Bibliò MOC
 
 Progetto pratico ITS — Neural Reading Ecosystem.
-**Materia:** [[ITS/Front-end MOC]]
+**Materia:** [[Front-end MOC]]
 
 ---
 
@@ -25,5 +25,5 @@ Ecosistema di lettura potenziata da AI. Progetto sviluppato nell'ambito del perc
 
 ## Connessioni
 
-- [[ITS/Front-end MOC]]
+- [[Front-end MOC]]
 - [[ITS MOC]]

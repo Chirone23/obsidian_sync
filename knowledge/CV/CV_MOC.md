@@ -6,7 +6,7 @@ Questa è la **mappa principale** per la gestione della carriera e candidature i
 
 ## 📚 Tre Pilastri Principali
 
-### 🟢 [[fondamentali/README_fondamentali|FONDAMENTALI]] - Universal & Universale
+### 🟢 [[fondamentali_MOC|FONDAMENTALI]] - Universal & Universale
 **Risorse applicabili a TUTTI i settori**
 
 Contiene guide universali per:

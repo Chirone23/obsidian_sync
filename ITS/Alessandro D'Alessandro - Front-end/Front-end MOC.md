@@ -170,6 +170,6 @@ I Big Tech operano come **entità sovranazionali** immuni alle leggi tradizional
 ## Connessioni
 
 - [[ITS MOC]]
-- [[ITS/Back-end MOC]] — Server-side, API, database
-- [[ITS/Automation MOC]] — Webhooks, API communication pattern
+- [[Back-end MOC]] — Server-side, API, database
+- [[Automation MOC]] — Webhooks, API communication pattern
 - [[Knowledge MOC]] — Context Engineering, AI frameworks
