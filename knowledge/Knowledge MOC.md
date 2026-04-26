@@ -244,4 +244,4 @@ Libri personalizzati AR per bambini. Questa è la documentazione tecnica di arch
 - [[ITS MOC]] — Compliance PA per progetti pubblici
 - [[Skill MOC]] — Information literacy e verifica fonti
 - [[Agenti IA Design Patterns MOC]] — Governance di sistemi agentici
-- CV MOC — 
+- [[CV/CV_MOC]] — Gestione carriera e candidature (Fondamentali, Guardia, Supermercato)
