@@ -51,7 +51,20 @@
       "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Analizza criticamente il notebook e rispondi a questi 4 punti: *)",
       "Bash(python scripts/run.py ask_question.py --notebook-id eu-ai-act-e-compliance-pa --question 'Estrai TUTTI i dati numerici e le date critiche presenti nel notebook: *)",
       "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-id \"eu-ai-act-e-compliance-pa\" --question \"Quali sono i numeri e le date esatte menzionate nel notebook? Elenca: sanzioni in euro, percentuali di fatturato, date di entrata in vigore, anni di reclusione, soglie FLOPs, mesi di conservazione log, importi di investimento.\")",
-      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/4c3b6ee3-040a-45e0-b333-f22124f56e4a\" --question \"Quali sono tutti i numeri specifici citati nel notebook? Sanzioni, date, percentuali, importi, anni, mesi, soglie tecniche. Elenca ogni numero con il suo significato.\")"
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/4c3b6ee3-040a-45e0-b333-f22124f56e4a\" --question \"Quali sono tutti i numeri specifici citati nel notebook? Sanzioni, date, percentuali, importi, anni, mesi, soglie tecniche. Elenca ogni numero con il suo significato.\")",
+      "Bash(python -c \"import pdfplumber; print\\('ok'\\)\")",
+      "Bash(python -c \"import pypdf; print\\('ok pypdf'\\)\")",
+      "Bash(python -c \"import fitz; print\\('ok fitz'\\)\")",
+      "Bash(python -c \"import PyPDF2; print\\('ok PyPDF2'\\)\")",
+      "Bash(python *)",
+      "mcp__obsidian-mcp__obsidian_delete_file",
+      "mcp__obsidian-mcp__obsidian_batch_get_file_contents",
+      "PowerShell(Get-WmiObject *)",
+      "PowerShell(python --version; where python)",
+      "PowerShell($env:COMPUTERNAME)",
+      "PowerShell(pip show *)",
+      "PowerShell(Get-Command *)",
+      "PowerShell([System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\"\\) | ForEach-Object { if \\($_\\) { \"ANTHROPIC_API_KEY: SET\" } else { \"ANTHROPIC_API_KEY: NOT SET\" } })"
     ]
   }
 }

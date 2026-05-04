@@ -51,7 +51,6 @@ Health:    HealthKit / Google Fit
 7. CTA investitori / early adopters
 
 ---
-
 ## App OBD Auto *(idea grezza — 2 righe, da sviluppare)*
 
 App mobile che legge dati dalla porta OBD2 dell'auto. Nucleo dell'idea: diagnostica personale senza officina.

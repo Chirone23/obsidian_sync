@@ -249,3 +249,21 @@ Protocolli interni che standardizzano il modo in cui Claude interagisce col vaul
 - [[Knowledge MOC]] — Context Engineering e uso AI per automazioni
 - [[ITS MOC]] — Applicazione pratica di n8n nei progetti ITS
 - [[Index MOC]]
+
+---
+
+## Sviluppare con l'AI nel 2026
+
+**Fonte:** [[skill/Sviluppare con l'AI nel 2026|Sviluppare con l'AI nel 2026]] — trascrizione video
+
+Framework a 3 blocchi per ottenere output consistenti e funzionanti dall'AI:
+
+| Blocco | Cosa fa |
+|--------|---------|
+| **Obiettivo** | Definisce "done" in modo non ambiguo |
+| **Contesto** | Stack, file esistenti, input/output attesi, limiti performance |
+| **Non fare (Guard Rails)** | Cosa non toccare, quali tech non introdurre, quando fermarsi e chiedere |
+
+**Review Driven Development:** l'AI genera il piano → tu revisioni e commenti → l'AI aggiorna → solo dopo il tuo OK si genera codice.
+
+**Guard rail anti-allucinazione:** `"Utilizza solo le informazioni presenti nel contesto o nelle fonti esplicite. Motiva sempre le tue risposte."`
