@@ -12,6 +12,7 @@
 
 | Sezione | Modifica |
 |---|---|
+| §1 Sintesi | Aggiunta sezione Competitive Positioning (Mikeoss, Harvey, Legora analysis) |
 | §6 Comportamento AI | Aggiunto prompt di sistema completo (Ruolo + Task + Formato + Vincoli + Esclusioni) |
 | §6 Comportamento AI | Aggiunti few-shot examples (Regola #4 prompt engineering) |
 | §6 Comportamento AI | Aggiunta strategia multi-model routing e parametri modello |
@@ -32,6 +33,18 @@
 **Valore prodotto:** Ridurre il rischio di firmare contratti con clausole sfavorevoli senza averle comprese, senza pagare un avvocato per ogni documento.
 
 **Posizionamento AI Act:** Sistema di *decision-support*, non di consulenza legale. Ogni output include disclaimer esplicito. L'utente mantiene piena responsabilità decisionale.
+
+### Competitive Positioning
+
+**Landscape:** Il mercato legal-AI include competitor come Harvey, Legora (proprietari, enterprise-focused), e Mikeoss (open-source, self-hosted, lawyer-centric). 
+
+**Differenziazione:** SpecterAI non compete direttamente in quella categoria perché:
+- **Target diverso**: Mikeoss/Harvey/Legora sono lawyer-centric e firm-scale; SpecterAI è SMB-first e non-lawyer-focused
+- **Linguaggio e UX**: SpecterAI è Italian-first con plain-language output; Mikeoss/Harvey/Legora sono English-prioritized e legal-jargon-heavy
+- **Use case**: Harvey/Legora sono per drafting e full contract lifecycle; SpecterAI è per reading and risk-analysis (decision-support)
+- **Audience localization**: Nessun competitor mainstream ha validato traction nel mercato italiano SMB/freelancer
+
+**Conclusione:** SpecterAI occupa una **sub-niche indifesa**: Italian-speaking, non-lawyer, SMB-budget decision-support tool. Non è cannibalizzata da competitor in quella fascia.
 
 ---
 
