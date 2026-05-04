@@ -64,7 +64,8 @@
       "PowerShell($env:COMPUTERNAME)",
       "PowerShell(pip show *)",
       "PowerShell(Get-Command *)",
-      "PowerShell([System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\"\\) | ForEach-Object { if \\($_\\) { \"ANTHROPIC_API_KEY: SET\" } else { \"ANTHROPIC_API_KEY: NOT SET\" } })"
+      "PowerShell([System.Environment]::GetEnvironmentVariable\\(\"ANTHROPIC_API_KEY\"\\) | ForEach-Object { if \\($_\\) { \"ANTHROPIC_API_KEY: SET\" } else { \"ANTHROPIC_API_KEY: NOT SET\" } })",
+      "PowerShell(pip install *)"
     ]
   }
 }
