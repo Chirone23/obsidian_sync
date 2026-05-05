@@ -1,4 +1,4 @@
-# Verifica PC — ARROW
+# Verifica PC — \*personale
 
 **Data:** 2026-05-04  
 **Ambiente:** Casa / Academy (dedotto da: sviluppo SpecterAI)
