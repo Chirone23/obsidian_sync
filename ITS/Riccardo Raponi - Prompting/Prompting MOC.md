@@ -115,6 +115,46 @@ Prima di inviare un prompt critico, verifica:
 
 ---
 
+## Edge Cases — Quando il Framework C.I.A.R.E. Fallisce
+
+Estratto dalle fonti del notebook (Prompting_Strategico_Aziendale, il piccolo manuale, Fare la domanda giusta).
+
+| Edge case | Sintomo | Mitigazione |
+|-----------|---------|-------------|
+| **Soggettività interpretativa** | Termini come "interessante", "accattivante", "professionale" non sono interpretabili univocamente dall'IA | Sostituire con criteri misurabili (lunghezza, tono specifico, lessico vincolato) |
+| **Mancanza di Ground Truth** | L'Intento (I) non è ancorato a documenti di riferimento → allucinazioni verosimili ma false | Allegare fonti o usare RAG; vincolare con "rispondi solo se presente nelle fonti" |
+| **Contesto ambiguo** | Background (C) contraddittorio → output incoerente | Esplicitare priorità tra informazioni in conflitto |
+| **Sovrapposizione informativa** | Troppe Regole (R) o Esempi (E) contrastanti → "deriva" del modello | Limitare regole a 3-5 max; esempi coerenti tra loro |
+
+**Regola operativa:** dopo 5-6 round di raffinamento senza miglioramento, ripartire da prompt pulito basato sui feedback raccolti (Sentinelli/Placa).
+
+---
+
+## Esempi Prima/Dopo (5 Casi Concreti)
+
+| Dominio | Prompt mal scritto | Prompt riscritto | Fonte |
+|---------|-------------------|------------------|-------|
+| **Marketing** | *"Scrivi un post social sull'AI."* | *"Agisci come Social Media Manager fintech. Post LinkedIn (max 150 parole) su come la funzione X risolve Y per team accounting. 1 emoji, 3 hashtag (#Fintech #AI #Automazione), link placeholder."* | Prompting_Strategico_Aziendale |
+| **Sales** | *"Dammi idee per una chiamata di vendita."* | *"Script di 5 domande aperte per discovery call con Direttore Marketing. Obiettivo: capire sfide su lead generation. Domande sequenziali a narrazione."* | idem |
+| **Customer Care** | *"Come rispondo a un cliente insoddisfatto?"* | *"Cliente si lamenta che funzione X non funziona. Policy: assistenza tecnica → rimborso. Risposta in 3 passaggi, partendo da validazione del problema."* | idem |
+| **Image Gen** | *"Crea un'immagine di un gatto."* | *"Foto realistica di gatto soriano arancione acciambellato su lino bianco, luce dorata mattino da finestra. Stile cinematografico, focus superficiale, 35mm."* | Prompt_Engineering_AI_Results |
+| **Legale** | *"Precedenti giudiziari su violazione brevetti in casi simili."* | *"Precedenti su violazione brevetti settore tecnologico, prodotti simili a quello dell'azienda A."* | Fare la domanda giusta (Sentinelli/Placa) |
+
+**Metrica trasversale (studio BCG citato):** prompting strutturato → +20-40% produttività individuale, +40% qualità output.
+
+---
+
+## Tensioni tra Fonti (Senso Critico)
+
+Le fonti del notebook non concordano su tutto. Riconoscere le tensioni evita applicazione meccanica.
+
+| Tema | Posizione A | Posizione B | Quando applicare A vs B |
+|------|------------|------------|-------------------------|
+| **Ruolo assegnato all'IA** | Ruolo tecnico/professionale specifico (es. "avvocato d'impresa") per sbloccare cluster di vocabolario (Raponi, Sentinelli) | Relazione "collaboratore personale" / assistente del Direttore Creativo (Gemini Guide) | A → output verticale tecnico; B → workflow creativi e iterativi |
+| **Iterazione e raffinamento** | Fermarsi dopo 5-6 round, ripartire da prompt pulito (Sentinelli/Placa) | Continuare ricorsivamente fino al risultato perfetto (Active Learning, manuali base) | A → task con criteri misurabili; B → esplorazione creativa |
+
+---
+
 ## Protocollo Triage (Master Prompt Engineer)
 
 **Fase 1 — Classificazione istantanea**
@@ -144,6 +184,11 @@ Modelli moderni processano **testo + immagini + audio + video**. Tre strategie o
 | **Ripetere** | Adattare tono/formato per target diversi (es. tecnico → divulgativo) |
 
 **GPT-5 agentic:** persistenza nel problem-solving, esecuzione autonoma di flussi multi-step (Terminal-Bench). Richiede prompt con **obiettivo finale chiaro + criteri di stop**.
+
+**Reattivo vs Orchestrator (GPT-5 prompting guide):**
+- **Modelli tradizionali** = reattivi: scambio domanda → risposta testuale, l'utente coordina i passi
+- **GPT-5 agentic** = AI Orchestrator: interagisce autonomamente con Web, API, Database, strumenti di comunicazione per raggiungere l'obiettivo
+- **Steerability:** GPT-5 risponde meglio a istruzioni dirette ed esplicite; permette Custom Rules profonde → il prompt diventa "configurazione operativa", non più solo "domanda"
 
 ---
 

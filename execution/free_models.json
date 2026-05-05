@@ -1,20 +1,8 @@
 {
-  "updated_at": 1778008698,
-  "updated_iso": "2026-05-05 21:18:18",
+  "updated_at": 1778010680,
+  "updated_iso": "2026-05-05 21:51:20",
   "count": 22,
   "models": [
-    {
-      "opencode_id": "openrouter/google/gemma-4-26b-a4b-it:free",
-      "id": "google/gemma-4-26b-a4b-it:free",
-      "context": 262144,
-      "name": "Google: Gemma 4 26B A4B  (free)"
-    },
-    {
-      "opencode_id": "openrouter/google/gemma-4-31b-it:free",
-      "id": "google/gemma-4-31b-it:free",
-      "context": 262144,
-      "name": "Google: Gemma 4 31B (free)"
-    },
     {
       "opencode_id": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
       "id": "nvidia/nemotron-3-super-120b-a12b:free",
@@ -134,6 +122,18 @@
       "id": "google/gemma-3-12b-it:free",
       "context": 32768,
       "name": "Google: Gemma 3 12B (free)"
+    },
+    {
+      "opencode_id": "openrouter/google/gemma-4-26b-a4b-it:free",
+      "id": "google/gemma-4-26b-a4b-it:free",
+      "context": 262144,
+      "name": "Google: Gemma 4 26B A4B  (free)"
+    },
+    {
+      "opencode_id": "openrouter/google/gemma-4-31b-it:free",
+      "id": "google/gemma-4-31b-it:free",
+      "context": 262144,
+      "name": "Google: Gemma 4 31B (free)"
     }
   ]
 }

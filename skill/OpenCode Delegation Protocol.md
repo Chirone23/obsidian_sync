@@ -97,6 +97,17 @@ Ogni query deve:
 
 ---
 
+## Caveat Operativi (Windows)
+
+- **Encoding:** prima di lanciare la skill `notebooklm` (e altri script che stampano emoji/UTF-8) impostare `PYTHONIOENCODING=utf-8`, altrimenti Python crasha con `UnicodeEncodeError` su `cp1252`. Esempio:
+  ```bash
+  PYTHONIOENCODING=utf-8 python scripts/run.py auth_manager.py status
+  ```
+- **Modelli lenti deprioritizzati:** `google/gemma-4-26b-a4b-it:free` e `google/gemma-4-31b-it:free` vanno in timeout sistematico → spinti in fondo alla lista in `update_free_models.py` (variabile `DEPRIORITIZE_IDS`). Se nuovi modelli mostrano lo stesso pattern, aggiungerli al set.
+- **Modelli affidabili confermati nei test:** `nvidia/nemotron-3-super-120b-a12b:free` (262k ctx), `z-ai/glm-4.5-air:free` (131k ctx).
+
+---
+
 ## Regole di sicurezza
 
 1. **Mai delegare task con segreti** (.env, token, credenziali) — OpenCode usa provider esterni

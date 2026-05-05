@@ -18,6 +18,13 @@ OPENROUTER_API = "https://openrouter.ai/api/v1/models"
 MIN_CONTEXT = 32_000
 EXCLUDE_KEYWORDS = ("vision", "image", "flux", "audio", "tts", "embedding")
 
+# Modelli noti come lenti/inaffidabili (timeout sistematici).
+# Vengono comunque scaricati ma rilegati in fondo alla lista.
+DEPRIORITIZE_IDS = {
+    "google/gemma-4-26b-a4b-it:free",
+    "google/gemma-4-31b-it:free",
+}
+
 
 def fetch_openrouter_free():
     req = urllib.request.Request(OPENROUTER_API, headers={"User-Agent": "opencode-delegate/1.0"})
@@ -39,7 +46,8 @@ def fetch_openrouter_free():
         if not mid.endswith(":free"):
             continue
         out.append({"id": mid, "context": ctx, "name": m.get("name", mid)})
-    out.sort(key=lambda x: x["context"], reverse=True)
+    # Ordina per affidabilita' (deprioritizzati in fondo) e poi per context desc
+    out.sort(key=lambda x: (x["id"] in DEPRIORITIZE_IDS, -x["context"]))
     return out
 
 
