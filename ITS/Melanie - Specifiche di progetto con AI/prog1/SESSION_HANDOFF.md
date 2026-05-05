@@ -1,116 +1,353 @@
 # SESSION_HANDOFF — SpecterAI
 
-**Progetto:** SpecterAI (AI Contract Analyzer per Non-Avvocati in Italiano)  
+**Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)  
+**Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)  
 **Ultima sessione:** 2026-05-04  
-**Prossima sessione:** TBD  
+**Prossima sessione:** 2026-05-05 (Lezione 3 — MVP Building in Cursor)  
 
 ---
 
-## Completato
+## Riepilogo Storico Completo
 
-- ✅ Specifica Tecnica v1 — Prompt system completo, few-shot examples, 7 categorie di risk
-- ✅ Specifica Tecnica v2 — Aggiunta Competitive Positioning (vs Mikeoss, Harvey, Legora), Green AI section, Multi-model routing
-- ✅ PC Verification — ARROW environment check, API key confermato, Cursor setup completato
-- ✅ Documentazione progetto — PROMPT_LOG.md, INCIDENTS.md, SESSION_HANDOFF.md creati
+### Lezione 1 — Case Study & Setup (2026-04-28)
 
----
+**Compito:** Generare 5 idee di progetto AI con validazione 5-dimensionale.
 
-## In Progress
+**Processo:**
+1. Brainstorming 7 idee iniziali
+2. Scartate 5 per vari motivi (crowded market, complexity, data constraints)
+3. **Selezionata:** SpecterAI — AI Contract Analyzer for Non-Lawyers
 
-- 🔄 Building MVP SpecterAI in Cursor (NOT STARTED)
+**Output:** 
+- ✅ Brainstorming - Validazione Idea.md (5 scartate + 1 scelta con motivazione)
+- ✅ Validazione 5D confermata (Technical: M, Economic: H, Complexity: M, Risk: M-H, Sustainability: H)
 
----
-
-## Prossimi Step (Priorità)
-
-### Fase 1: Progettazione
-1. ✅ Specifica Tecnica v2 completata
-2. ⏳ Review architecture con focus su:
-   - PDF input validation layer
-   - Text extraction robustness
-   - JSON response validation
-   - Claude API integration strategy
-
-### Fase 2: PDF Input Layer
-1. Implementare validation per file PDF
-   - Dimensione max: TBD
-   - Numero pagine max: TBD
-   - Formati supportati: application/pdf only
-2. Setup PyMuPDF per text extraction
-3. Test su dataset iniziale (5-10 contratti vari)
-4. Documentare incidents su INCIDENTS.md
-
-### Fase 3: Regex/Deterministic Layer
-1. Implementare detection deterministico delle 7 categorie
-2. Clausole comuni da riconoscere (auto_renewal patterns, payment terms syntax, ecc.)
-3. Fallback logic se Claude non risponde
-
-### Fase 4: Claude API Integration
-1. Implementare system prompt (da Specifica v2)
-2. Few-shot examples integration
-3. JSON parsing + validation
-4. Error handling (timeout, malformed response, rate limits)
-5. Temperature=0, max_tokens=2048
-
-### Fase 5: Testing & Optimization
-1. Dataset eterogeneo (20-30 contratti)
-2. Misurazione accuracy su 7 categorie
-3. Performance testing (latency, token usage)
-4. Green AI optimization (token efficiency)
+**Deliverable:** Brainstorming note nel vault + idea validation documented
 
 ---
 
-## Stack Tecnico Confermato
+### Lezione 2 — Specifica Tecnica & Prompt Engineering (2026-04-29 → 2026-05-03)
 
-- **Runtime:** Python 3.11
-- **PDF Parsing:** PyMuPDF (fitz)
-- **Claude API:** claude-3-5-sonnet-20241022
-- **Environment:** Cursor IDE + .env per API key
-- **VCS:** Git (push dopo ogni sessione)
+**Compito:** Market research, stress-test idea, write full technical specification with prompt design.
+
+**Fasi:**
+
+#### 2.1 — Market Research (2026-04-29)
+- Query Perplexity: "Italian contract analysis market, non-lawyer SMB"
+- Ricerca competitor: Harvey, Legora, Spellbook, Docusign
+- Market size: ~2.7M freelancer/self-employed in Italy
+- Assumption: 10-20 contratti/anno (no public data)
+- **Risultato:** ✅ Idea viable, medium risk su competitor enterprise-scale
+
+**Deliverable:** Contract Analyzer - Validazione Idea.md
+
+#### 2.2 — Specifica Tecnica v1 (2026-04-30)
+- 11 sezioni complete: problem statement, MVP scope, stack, architecture, 7 risk categories
+- Stack definito: Python 3.12, FastAPI, PyMuPDF, Claude API, Pydantic, Jinja2
+- 7 categorie rischio: payment_terms, auto_renewal, penalties, liability_limitation, termination, governing_law, intellectual_property
+- Edge cases formalizzati (PDF size, encoding, language, density)
+- Rischi identificati con mitigations (PDF parsing, hallucinations, AI Act, scope creep)
+- Pre-build checklist completata
+
+**Deliverable:** Specifica Tecnica v1 - SpecterAI.md (11 sezioni, 470 righe)
+
+#### 2.3 — PC Verification ARROW (2026-05-01)
+- Windows 11 Pro, 16GB RAM, AMD Ryzen 5 PRO 5650U
+- Python 3.12.10 installato
+- Dipendenze installate: fastapi, uvicorn, pymupdf, anthropic, jinja2, python-multipart, python-dotenv, pydantic ✅ 8/8
+- Cursor IDE installato ✅
+- Git 2.53.0 confermato ✅
+- ANTHROPIC_API_KEY: confermato (configurazione pending)
+
+**Deliverable:** Verifica PC - ARROW.md (Status: QUASI PRONTO)
+
+#### 2.4 — Competitive Analysis Mikeoss (2026-05-02)
+- User query: "Mikeoss" competitor discovered
+- Ricerca Perplexity su Mikeoss vs SpecterAI positioning
+- **Risultato:** Medium Risk (Mikeoss = lawyer-centric, firm-scale, self-hosted; SpecterAI = SMB-first, Italian-first, plain-language)
+- Conclusione: Non cannibalize — target diversi
+
+**Deliverable:** Mikeoss competitive analysis (used in Specifica v2 update)
+
+#### 2.5 — Specifica Tecnica v2 (2026-05-03 → 2026-05-04)
+- **5 major improvements aggiunte:**
+  1. Competitive Positioning section (vs Mikeoss, Harvey, Legora)
+  2. Full prompt text (C.I.A.R.E. structure: Ruolo → Task → Formato → Vincoli → DO NOT)
+  3. Few-shot examples (2x per categoria: presente + assente)
+  4. Multi-model routing (task-specific LLM selection)
+  5. Green AI / AI Sustainability section (token optimization, deterministic routing)
+
+- **Prompt final parameters:**
+  - Model: claude-sonnet-4-6
+  - Temperature: 0 (determinism)
+  - Max tokens: 2048
+  - System prompt: full text (600 token)
+  - Few-shot: 14 examples total (2x7 categories)
+
+- **Green AI optimizations:**
+  - Text truncation a 40K chars (save ~30% token input)
+  - No LLM for input validation/language detection
+  - Stateless design (no history)
+  - Temperature=0 (no probabilistic overhead)
+
+**Deliverable:** Specifica Tecnica v2 - SpecterAI.md (12 sezioni, 500+ righe, production-ready)
 
 ---
 
-## Parametri Claude Confermati
+### Lezione 3 — Building e Deployment (2026-05-04 → ongoing)
 
-```
-model: claude-3-5-sonnet-20241022
-temperature: 0
-max_tokens: 2048
-system_prompt: [Vedi Specifica v2 per testo completo]
-```
+**Compito:** Implementare MVP in Cursor seguendo Specifica v2. Documentare processo.
+
+#### 3.0 — Documentation Framework Setup (2026-05-04)
+- Creati 3 file di documentazione:
+  - ✅ **PROMPT_LOG.md** — Iterazioni prompt, v0 (brainstorming) → v1 (specifica v1) → v1-final (specifica v2)
+  - ✅ **INCIDENTS.md** — Registro errori: INC-000a/b/c (resolved), INC-001/2/3 (pending testing)
+  - ✅ **SESSION_HANDOFF.md** — Stato progetto tra sessioni (questo file)
+
+**Deliverable:** 3 documentation files + git commit
+
+#### 3.1 — MVP Fase 1: Skeleton Project (2026-05-05, TBD)
+- [ ] Setup Cursor project structure
+- [ ] Git init + first commit
+- [ ] requirements.txt with all deps
+- [ ] .env.example for API key
+
+#### 3.2 — MVP Fase 2: PDF Input Validation (2026-05-05, TBD)
+- [ ] Validazione file size (≤10MB)
+- [ ] Validazione MIME type (application/pdf)
+- [ ] Test apertura PDF con PyMuPDF
+- [ ] Unit tests: valid PDF, corrupted, oversized
+- [ ] Monitor INC-001 (PyMuPDF edge cases)
+
+#### 3.3 — MVP Fase 3: Text Extraction + Regex Layer (2026-05-06, TBD)
+- [ ] PyMuPDF text extraction
+- [ ] Regex for dates, amounts, scadenze
+- [ ] UTF-8 validation (monitor INC-003)
+- [ ] Language detection heuristic
+- [ ] Unit tests: 5 test cases
+
+#### 3.4 — MVP Fase 4: Claude API Integration (2026-05-07, TBD)
+- [ ] System prompt injection (from Specifica v2)
+- [ ] Few-shot examples loading
+- [ ] JSON schema validation (Pydantic)
+- [ ] Error handling: timeout, malformed JSON
+- [ ] Retry logic with backoff (monitor INC-002)
+- [ ] Integration test: 1 real contract
+
+#### 3.5 — MVP Fase 5: End-to-End Testing (2026-05-08, TBD)
+- [ ] Load 5+ real contracts (diverse types)
+- [ ] Latency measurement
+- [ ] Accuracy spot-check vs manual
+- [ ] Document results
+- [ ] Resolve any INC-001/2/3 findings
+
+#### 3.6 — MVP Fase 6: Final Documentation (2026-05-09, TBD)
+- [ ] README.md with setup instructions
+- [ ] API documentation (request/response)
+- [ ] Known limitations
+- [ ] Update PROMPT_LOG.md with v2 testing results
+- [ ] Update INCIDENTS.md with resolved incidents
+- [ ] Final git commit + push
 
 ---
 
-## 7 Categorie di Risk (Verificare)
+## Task Completati (Lezioni 1-2)
 
-1. **payment_terms** — Termini di pagamento, clock handling, ritardi
+| # | Task | Data | File/Deliverable | Status |
+|---|---|---|---|---|
+| 1 | Brainstorming 7 idee | 2026-04-28 | Brainstorming - Validazione Idea.md | ✅ |
+| 2 | 5D validation on SpecterAI | 2026-04-28 | (same file) | ✅ |
+| 3 | Market research (Perplexity) | 2026-04-29 | Contract Analyzer - Validazione Idea.md | ✅ |
+| 4 | Specifica Tecnica v1 (11 sezioni) | 2026-04-30 | Specifica Tecnica v1 - SpecterAI.md | ✅ |
+| 5 | PC verification ARROW | 2026-05-01 | Verifica PC - ARROW.md | ✅ |
+| 6 | Competitive analysis Mikeoss | 2026-05-02 | (used in Specifica v2) | ✅ |
+| 7 | Specifica Tecnica v2 (+5 improvements) | 2026-05-03-04 | Specifica Tecnica v2 - SpecterAI.md | ✅ |
+| 8 | Documentation framework (PROMPT_LOG, INCIDENTS, SESSION_HANDOFF) | 2026-05-04 | 3 files in prog1/ | ✅ |
+
+**Total progress:** 100% specification phase complete, 0% building phase
+
+---
+
+## Task In Progress (Lezione 3)
+
+| # | Task | Fase | Prerequisiti | Status |
+|---|---|---|---|---|
+| 9 | MVP Skeleton project | Fase 1 | None | ⏳ PENDING |
+| 10 | PDF input validation layer | Fase 2 | #9 | ⏳ PENDING |
+| 11 | Text extraction + regex | Fase 3 | #10 | ⏳ PENDING |
+| 12 | Claude API integration | Fase 4 | #11 | ⏳ PENDING |
+| 13 | End-to-end testing | Fase 5 | #12 | ⏳ PENDING |
+| 14 | Final documentation | Fase 6 | #13 | ⏳ PENDING |
+
+**Total progress:** 0% building phase
+
+---
+
+## Documento Architettura Finale (Specifica v2)
+
+### 7 Categorie Rischio (Locked)
+
+1. **payment_terms** — Termini di pagamento, clock, ritardi, interessi
 2. **auto_renewal** — Rinnovo automatico, exit clauses, notice periods
-3. **penalties** — Penalty clauses, breach consequences, limitazioni
-4. **liability_limitation** — Cap di liability, esclusi danni
-5. **termination** — Termination clauses, early exit, wind-down obligations
+3. **penalties** — Penali per inadempimento, breach consequences
+4. **liability_limitation** — Cap responsabilità, esclusioni danni
+5. **termination** — Condizioni recesso, early exit, wind-down
 6. **governing_law** — Legge applicabile, giurisdizione, dispute resolution
 7. **intellectual_property** — IP ownership, usage rights, derivative works
 
----
+### Stack Confermato (Locked)
 
-## File da Sincronizzare
+```
+Linguaggio:          Python 3.12+
+Framework web:       FastAPI (async, lightweight)
+PDF parsing:         PyMuPDF (fitz) — production-ready
+Template:            Jinja2 (built-in FastAPI)
+Regex:               stdlib re module
+Validazione schema:  Pydantic v2
+LLM provider:        Anthropic Claude API (sonnet-4-6)
+Code editor:         Cursor (con AI integrata)
+VCS:                 Git + GitHub
+Deploy MVP:          localhost (uvicorn)
 
-- ✅ prog1/PROMPT_LOG.md
-- ✅ prog1/INCIDENTS.md
-- ✅ prog1/SESSION_HANDOFF.md
-- ✅ prog1/Specifica Tecnica v2 - SpecterAI.docx (già committato)
+Dependencies (8 required, all installed):
+  - fastapi
+  - uvicorn
+  - pymupdf
+  - anthropic
+  - pydantic
+  - jinja2
+  - python-multipart
+  - python-dotenv
+```
+
+### Parametri Claude (Locked)
+
+```python
+model="claude-sonnet-4-6"
+temperature=0              # Determinism for technical task
+max_tokens=2048           # Sufficient for 7 categories + explanations
+system_prompt=[full text] # 600 token from Specifica v2
+top_p=1.0                 # Default
+```
+
+### Prompt System Structure (Locked — from Specifica v2)
+
+```
+RUOLO: Specialized contract analyst for non-lawyers
+
+TASK: Extract 7 risk categories from contract text
+
+OUTPUT FORMAT: Valid JSON only, exact schema matching
+
+CONSTRAINTS: If category absent → "present": false; 
+            raw_excerpt must be verbatim quote; risk_level ∈ {low, medium, high}
+
+DO NOT: Invent clauses; use legal jargon; advise sign/don't sign; 
+        output text outside JSON
+```
+
+### Few-shot Examples (Locked — 14 total, 2x7 categories)
+
+Ogni categoria ha 2 esempi:
+1. Clausola PRESENTE (high risk) — example from real contract language
+2. Clausola ASSENTE — example of what absence means
+
+Tutti gli esempi sono nel file Specifica v2 §6.
 
 ---
 
 ## Blocchi / Domande in Sospeso
 
-- [ ] Nessuno al momento — procedi con Fase 2
+| # | Domanda | Componente | Impacto | Stato |
+|---|---|---|---|---|
+| Q1 | OCR per PDF scansionati (Tesseract vs Vision API vs reject)? | INC-001 (PyMuPDF) | High | Decide during testing |
+| Q2 | Rate limit strategy (queue vs batch vs sequential)? | INC-002 (Claude API) | Medium | Decide during testing |
+| Q3 | JSON encoding (ensure_ascii=False sufficient)? | INC-003 (UTF-8) | Medium | Decide during testing |
+| Q4 | Multi-model routing: implement in MVP or post-v1? | Architecture | Low | Design decision: v2 only |
+| Q5 | Database storage: MVP stateless or add persistence? | Scope | Medium | Design decision: stateless MVP |
 
 ---
 
-## Note per Prossima Sessione
+## File da Sincronizzare (Git)
 
-- Se trovi un incident durante Fase 2+: aggiorna INCIDENTS.md immediatamente
-- Se modifichi il prompt: aggiorna PROMPT_LOG.md con nuova versione
-- Ogni modifica .md → git add -A && git commit -m "..." && git push (OBBLIGATORIO)
-- Ricorda: "Agents read, humans write" — non aggiungere contenuto al vault senza fonte
+Tutti i file .md in prog1/ devono essere committati dopo ogni sessione:
+
+```bash
+git add -A && git commit -m "Update: [tipo] [descrizione]" && git push
+```
+
+**File tracked:**
+- ✅ Specifica Tecnica v1 - SpecterAI.md
+- ✅ Specifica Tecnica v2 - SpecterAI.md
+- ✅ Brainstorming - Validazione Idea.md
+- ✅ Contract Analyzer - Validazione Idea.md
+- ✅ Verifica PC - ARROW.md
+- ✅ PROMPT_LOG.md
+- ✅ INCIDENTS.md
+- ✅ SESSION_HANDOFF.md
+
+**Not tracked:**
+- .env (never commit, contains API key)
+- credentials.json, token.json (OAuth files)
+- __pycache__/, venv/ (Python artifacts)
+
+---
+
+## Metriche di Successo MVP
+
+| Metrica | Target | Status |
+|---|---|---|
+| Latency (single contract) | <15 sec | TBD (pending Fase 4-5) |
+| Accuracy (red flags detected) | >80% | TBD (pending Fase 5) |
+| Error rate (malformed PDFs) | <5% | TBD (pending Fase 5) |
+| JSON output validation | 100% valid schema | TBD (pending Fase 4) |
+| Category coverage | 7/7 always present | TBD (pending Fase 5) |
+
+---
+
+## Git History (Commits on this Branch)
+
+```
+c635c2b Update: Specifica v2 - Aggiunta sezione Competitive Positioning (Mikeoss analysis)
+3b85e85 Update: Verifica PC - ARROW - Dipendenze installate, API key confermata, Cursor verificato
+ea70998 Add: Verifica PC - ARROW environment check
+ed84304 Add: Specifica Tecnica v2 SpecterAI - prompt completo, few-shot, Green AI, multi-model routing
+c6faff1 Add: Specifica Tecnica v1 SpecterAI - Contract Analyzer for Non-Lawyers
+```
+
+Next commit: "Add: Documentazione SpecterAI (PROMPT_LOG, INCIDENTS, SESSION_HANDOFF)"
+
+---
+
+## Prossima Sessione: Checklist di Avvio
+
+Quando inizi la prossima sessione (Lezione 3 — Building):
+
+1. **Leggi questo file** — capisci lo stato attuale e cosa resta da fare
+2. **Apri Cursor** — setup skeleton project (Fase 1)
+3. **Leggi Specifica v2** — familiarizzati con prompt system, 7 categorie, stack
+4. **Leggi PROMPT_LOG.md** — capisci evolution del prompt
+5. **Leggi INCIDENTS.md** — capisci potential blockers (INC-001/2/3)
+6. **Implemen ta Fase 1-2** — PDF input validation layer
+7. **Log progress** — aggiorna PROMPT_LOG, INCIDENTS, SESSION_HANDOFF after each phase
+8. **Commit** — `git add -A && git commit && git push` ogni sessione
+
+---
+
+## Note per Supervisione Umana
+
+Ricorda: **Agents read, humans write.** Questo file deve essere aggiornato manualmente dopo ogni sessione. 
+
+Non è template vuoto — è **documento vivo** che traccia il progetto dal giorno 1 alla presentazione finale.
+
+Ogni sessione di building produce:
+- **Codice:** file Python in src/
+- **Testing:** unit tests
+- **Documentation:** aggiornamenti a PROMPT_LOG, INCIDENTS, SESSION_HANDOFF
+- **Git:** commits
+
+Supervisione critica durante Fase 4-5 (Claude integration): monitora INC-001/2/3, aggiorna INCIDENTS quando si manifestano.
+
+---
+
+**Fine del handoff — pronto per Lezione 3 MVP building.**
