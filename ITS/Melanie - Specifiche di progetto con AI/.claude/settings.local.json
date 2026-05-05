@@ -5,7 +5,11 @@
       "Bash(claude status *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "mcp__obsidian-mcp__obsidian_simple_search",
+      "mcp__obsidian-mcp__obsidian_get_file_contents",
+      "mcp__obsidian-mcp__obsidian_patch_content",
+      "mcp__obsidian-mcp__obsidian_append_content"
     ]
   }
 }
