@@ -89,6 +89,21 @@ Quando l'utente porta un link NotebookLM da integrare nel vault:
 
 ---
 
+## Workflow Delega a OpenCode (token-saving)
+
+Per task ciuccia-token (lettura massiva, riassunti lunghi, composizione di artefatti strutturati ripetitivi) delega a `execution/opencode_delegate.py` invece di consumare token in sessione.
+
+**Direttiva completa:** [[skill/OpenCode Delegation Protocol]]
+
+**Regole sintetiche:**
+- Delega: lettura batch, riassunti isolati, composizione query NotebookLM (pattern ibrido)
+- NON delegare: decisioni MOC, scrittura nel vault, workflow con autenticazione (notebooklm, perplexity)
+- Pattern NotebookLM: io seleziono MOC + leggo contesto → OpenCode compone le 4 query → io eseguo skill e integro
+
+**Uso:** `python execution/opencode_delegate.py "<prompt autosufficiente>"` (auto-fallback top-5 modelli free, refresh settimanale)
+
+---
+
 ## Sincronizzazione Git — Regola Obbligatoria
 
 **Per OGNI modifica ai file .md:**
