@@ -30,7 +30,8 @@
       "PowerShell(perplexity *)",
       "PowerShell(npx perplexity-cli --help 2>&1 | Select-Object -First 30)",
       "mcp__obsidian-mcp__obsidian_list_files_in_vault",
-      "mcp__obsidian-mcp__obsidian_list_files_in_dir"
+      "mcp__obsidian-mcp__obsidian_list_files_in_dir",
+      "Bash(where python *)"
     ]
   }
 }
