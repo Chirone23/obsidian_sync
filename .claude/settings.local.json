@@ -68,7 +68,23 @@
       "PowerShell(pip install *)",
       "Bash(find \"ITS/Melanie - Specifiche di progetto con AI/prog1\" -type f)",
       "Bash(dir \"ITS\\\\Melanie - Specifiche di progetto con AI\\\\prog1\" /b)",
-      "Bash(dir \"ITS\\\\Melanie - Specifiche di progetto con AI\" /b)"
+      "Bash(dir \"ITS\\\\Melanie - Specifiche di progetto con AI\" /b)",
+      "Bash(opencode --version)",
+      "Bash(opencode run *)",
+      "Bash(opencode auth *)",
+      "Bash(opencode models *)",
+      "Bash(grep -E \"free$\")",
+      "mcp__claude_ai_Google_Calendar__create_event",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/76f16777-2325-4490-87aa-1f16271fa999\" --question \"Fornisci in una tabella numerata \\(1-14\\) l'elenco delle fonti con titolo, tipo \\(PDF, immagine, manuale, guida tecnica\\) e, per le 3 immagini/infografiche, il testo estratto al loro interno. Includi anche un riepilogo degli argomenti principali trattati in ciascuna fonte.\")",
+      "Bash(cp \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Chirone-Documents-Secondo-Cervello\\\\14511763-99ea-4104-8deb-a73d2549d3b3\\\\tasks\\\\bqsrgwuhl.output\" \"C:\\\\tmp\\\\nblm_q1.txt\")",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/76f16777-2325-4490-87aa-1f16271fa999\" --question \"Analizza le 14 fonti e restituisci in una tabella numerata le seguenti sezioni: a\\) Esempi concreti prima/dopo di prompt mal scritti vs riscritti \\(con punteggio di miglioramento se disponibile\\); b\\) Metriche e numeri quantitativi riportati nei PDF \\(es. 3V Big Data, score confidence\\); c\\) Edge cases dove il framework CIARE fallisce, con spiegazione breve; d\\) Differenze pratiche tra GPT-5 agentic e modelli tradizionali \\(architettura, capacita di prompting\\). Per ciascuna voce indica la fonte di provenienza e, per le 3 immagini/infografiche, includi il testo estratto.\")",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/76f16777-2325-4490-87aa-1f16271fa999\" --question \"Elencare in una lista numerata almeno 5 esempi di prompt male formulati e le loro versioni migliorate tratte dalle 14 fonti. Per ogni esempio includere: il prompt originale, il prompt migliorato, la metrica di efficacia \\(es. aumento percentuale di pertinenza o riduzione di token\\) se riportata, e la fonte. Estrarre inoltre il testo dalle 3 immagini/infografiche e indicare se contengono esempi di prompt.\")",
+      "Bash(PYTHONIOENCODING=utf-8 python scripts/run.py ask_question.py --notebook-url \"https://notebooklm.google.com/notebook/76f16777-2325-4490-87aa-1f16271fa999\" --question \"Identificare in una tabella numerata le contraddizioni o le divergenze di consigli tra le 14 fonti riguardo al prompting \\(es. diverse indicazioni su temperatura, lunghezza del prompt, uso di role-play\\). Per ogni contraddizione riportare: la posizione contrastante, le fonti coinvolte, il contesto, e se possibile un'indicazione su quale sia piu supportata da dati. Estrarre il testo dalle 3 immagini/infografiche e verificare se contengono indicazioni contrastanti.\")",
+      "Bash(.claude/sessions)",
+      "Bash(Get-ChildItem *)",
+      "Bash(grep -a \"pulizia\\\\|cleanup\\\\|delete\\\\|C:\\\\\\\\\\\\\\\\\" \"C:\\\\Users\\\\Chirone\\\\.claude\\\\projects\\\\C--Users-Chirone-Documents-Secondo-Cervello-ITS-Melanie---Specifiche-di-progetto-con-AI\\\\479d50b9-4488-43b6-95a8-8fe6eaad1212.jsonl\")",
+      "PowerShell(python \"C:\\\\Users\\\\Chirone\\\\execution\\\\parse_sessions.py\")",
+      "PowerShell($env:PYTHONIOENCODING='utf-8'; python \"C:\\\\Users\\\\Chirone\\\\execution\\\\parse_sessions.py\")"
     ]
   }
 }

@@ -9,7 +9,28 @@
       "mcp__obsidian-mcp__obsidian_simple_search",
       "mcp__obsidian-mcp__obsidian_get_file_contents",
       "mcp__obsidian-mcp__obsidian_patch_content",
-      "mcp__obsidian-mcp__obsidian_append_content"
+      "mcp__obsidian-mcp__obsidian_append_content",
+      "Bash(gh api *)",
+      "Skill(update-config)",
+      "Bash(export PERPLEXITY_SESSION_TOKEN=\"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Kdiqn1nObFq8bKV5.__blG6WzXqxkT-whH2CL5hHm89Ru3PUZbLXyqNHTekodX_StZishX6V4kDvse3MkWUrxm3Kr5_D-3UiQq1CxRZjgVQL1T3RbEIl2hj3zHlILtltuNddHh5JszIDF3agH2aw5HanXF2xxR4H449VobA7lag97mpZEnij_VfSfJYkFfsmCMIy82-apOuvyuZm-Ch3AnEXerTxQ5WAotv4ijAIPf-ruzAeDEEkiwLtDMnkuzwAG_0LkF97_9NuUin8LTl6St9owmHlM23Odbt1TmCP0gL_cy_WOGEPGqwYs3Rcx_TbiHRV6dglEc_pgLVLTamrAq_yOpLmpNgwLB9ATTmqlevlYwujLDXA8XW2k_EeCwMiRqVs8dSy_l-DdTwGDIIgbyI7HQLtmPZPwoSUcwtIRrP7SYJwJroo36U7iyfy9hx1NVTYibfTQ.JjOb-4BcjVU-cIqdk8FtxQ\")",
+      "Bash(timeout 10 npx -y perplexity-web-api-mcp)",
+      "Bash(timeout 5 python \"C:\\\\Users\\\\Chirone\\\\.claude\\\\mcp-perplexity-wrapper.py\")",
+      "Bash(python -m pip install perplexity-webui-scraper --quiet)",
+      "Bash(python *)",
+      "Bash(timeout 5 cmd /c \"C:\\\\Users\\\\Chirone\\\\.claude\\\\perplexity-mcp-server.bat\")",
+      "PowerShell($env:PERPLEXITY_SESSION_TOKEN = \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Kdiqn1nObFq8bKV5.__blG6WzXqxkT-whH2CL5hHm89Ru3PUZbLXyqNHTekodX_StZishX6V4kDvse3MkWUrxm3Kr5_D-3UiQq1CxRZjgVQL1T3RbEIl2hj3zHlILtltuNddHh5JszIDF3agH2aw5HanXF2xxR4H449VobA7lag97mpZEnij_VfSfJYkFfsmCMIy82-apOuvyuZm-Ch3AnEXerTxQ5WAotv4ijAIPf-ruzAeDEEkiwLtDMnkuzwAG_0LkF97_9NuUin8LTl6St9owmHlM23Odbt1TmCP0gL_cy_WOGEPGqwYs3Rcx_TbiHRV6dglEc_pgLVLTamrAq_yOpLmpNgwLB9ATTmqlevlYwujLDXA8XW2k_EeCwMiRqVs8dSy_l-DdTwGDIIgbyI7HQLtmPZPwoSUcwtIRrP7SYJwJroo36U7iyfy9hx1NVTYibfTQ.JjOb-4BcjVU-cIqdk8FtxQ\"; echo '{\"method\":\"tools/list\"}' | & \"C:\\\\Users\\\\Chirone\\\\.claude\\\\perplexity-mcp-server.ps1\" 2>&1 | Select-Object -First 10)",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"from perplexity_webui_scraper import APIClient; print\\('✅ Importazione OK'\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"import perplexity_webui_scraper; print\\(dir\\(perplexity_webui_scraper\\)\\)\")",
+      "PowerShell($env:PERPLEXITY_SESSION_TOKEN = \"eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..Kdiqn1nObFq8bKV5.__blG6WzXqxkT-whH2CL5hHm89Ru3PUZbLXyqNHTekodX_StZishX6V4kDvse3MkWUrxm3Kr5_D-3UiQq1CxRZjgVQL1T3RbEIl2hj3zHlILtltuNddHh5JszIDF3agH2aw5HanXF2xxR4H449VobA7lag97mpZEnij_VfSfJYkFfsmCMIy82-apOuvyuZm-Ch3AnEXerTxQ5WAotv4ijAIPf-ruzAeDEEkiwLtDMnkuzwAG_0LkF97_9NuUin8LTl6St9owmHlM23Odbt1TmCP0gL_cy_WOGEPGqwYs3Rcx_TbiHRV6dglEc_pgLVLTamrAq_yOpLmpNgwLB9ATTmqlevlYwujLDXA8XW2k_EeCwMiRqVs8dSy_l-DdTwGDIIgbyI7HQLtmPZPwoSUcwtIRrP7SYJwJroo36U7iyfy9hx1NVTYibfTQ.JjOb-4BcjVU-cIqdk8FtxQ\"; '{\"method\":\"tools/list\"}' | & \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" \"C:\\\\Users\\\\Chirone\\\\.claude\\\\mcp-perplexity-wrapper.py\" 2>&1 | Select-Object -First 5)",
+      "PowerShell(head *)",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"from perplexity_webui_scraper import Perplexity; c = Perplexity\\(session_token='test'\\); print\\([m for m in dir\\(c\\) if not m.startswith\\('_'\\)]\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"from perplexity_webui_scraper import Conversation; c = Conversation\\(session_token='test'\\); print\\([m for m in dir\\(c\\) if not m.startswith\\('_'\\) and 'search' in m.lower\\(\\)]\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -c \"from perplexity_webui_scraper import Conversation; print\\([m for m in dir\\(Conversation\\) if not m.startswith\\('_'\\)]\\)\")",
+      "PowerShell(& \"C:\\\\Users\\\\Chirone\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe\" -m perplexity_webui_scraper --help 2>&1 | Select-Object -First 20)",
+      "PowerShell(perplexity *)",
+      "PowerShell(npx perplexity-cli --help 2>&1 | Select-Object -First 30)",
+      "mcp__obsidian-mcp__obsidian_list_files_in_vault",
+      "mcp__obsidian-mcp__obsidian_list_files_in_dir"
     ]
   }
 }

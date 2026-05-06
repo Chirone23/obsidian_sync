@@ -107,3 +107,30 @@ Progetti attivi: LevelUp IRL (app gamification vita reale, Battle Pass €4.99/m
 - Cita sempre le fonti con link cliccabili
 - Preferisci dati aggiornati (ultimi 12 mesi)
 - Niente disclaimer eccessivi o risposte vaghe senza dati concreti
+
+
+---
+
+## Perplexity + Playwright MCP (Setup 2026-05-06)
+
+**Status**: ✅ Pronto per testare  
+**Tipo**: Browser automation MCP server  
+**Auth**: Google OAuth (login manuale una volta)  
+
+### Come usarlo
+
+1. Segui [[SETUP_PLAYWRIGHT]] per l'installazione
+2. Una volta configurato, avrai accesso al tool `perplexity_search` in Claude Code
+3. Queries vanno direttamente a perplexity.ai tramite il tuo browser
+
+### Vantaggi vs precedenti approcci
+
+- ✅ Funziona con Google OAuth (non serve ricavare token scadenti)
+- ✅ Nessun reverse engineering (usa l'interfaccia ufficiale)
+- ✅ Gratis e senza limiti API
+- ✅ Stabile e manutenibile
+
+### File correlati
+
+- `playwright-mcp-server.py` — lo script principale
+- `SETUP_PLAYWRIGHT.md` — guida di installazione
