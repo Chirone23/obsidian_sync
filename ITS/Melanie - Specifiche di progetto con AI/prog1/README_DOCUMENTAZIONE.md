@@ -2,7 +2,7 @@
 
 **Progetto:** SpecterAI (AI Contract Analyzer per Non-Avvocati in Italiano)
 **Fase:** Building (Lezione 3) — review pre-consegna in corso
-**Specifica corrente:** [[Specifica Tecnica v2 - SpecterAI]]
+**Specifica corrente:** [[Specifica Tecnica v3 - SpecterAI]]
 **Ultimo aggiornamento indice:** 2026-05-07
 
 ---
@@ -23,7 +23,8 @@
 | File | Stato |
 |------|-------|
 | [[Specifica Tecnica v1 - SpecterAI]] | Prima bozza (2026-05-04) — superata |
-| [[Specifica Tecnica v2 - SpecterAI]] | **Versione corrente** — base per la consegna |
+| [[Specifica Tecnica v2 - SpecterAI]] | Seconda iterazione (2026-05-04) — superata |
+| [[Specifica Tecnica v3 - SpecterAI]] | **Versione corrente** (2026-05-07) — integra tutti i 13 fix da Review + Meta-Review |
 
 ---
 

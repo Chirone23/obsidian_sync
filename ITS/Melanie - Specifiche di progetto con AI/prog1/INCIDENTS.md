@@ -2,7 +2,7 @@
 
 **Progetto:** SpecterAI (AI Contract Analyzer per Non-Avvocati in Italiano)  
 **Data inizio:** 2026-04-28  
-**Data prima sessione:** 2026-05-04  
+**Data prima sessione:** 2026-05-07  
 
 ---
 

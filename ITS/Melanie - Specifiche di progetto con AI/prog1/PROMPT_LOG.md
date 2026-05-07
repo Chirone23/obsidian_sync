@@ -2,7 +2,7 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)  
 **Data inizio progetto:** 2026-04-28 (brainstorming)  
-**Data prompt v1:** 2026-05-04  
+**Data prompt v1:** 2026-05-07  
 **Versione prompt attuale:** v1  
 **Stato:** Operativo — pronto per MVP testing  
 
