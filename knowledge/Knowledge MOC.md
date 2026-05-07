@@ -245,3 +245,12 @@ Libri personalizzati AR per bambini. Questa è la documentazione tecnica di arch
 - [[Skill MOC]] — Information literacy e verifica fonti
 - [[Agenti IA Design Patterns MOC]] — Governance di sistemi agentici
 - [[CV/CV_MOC]] — Gestione carriera e candidature (Fondamentali, Guardia, Supermercato)
+
+
+---
+
+## Metodo FAST — Bootstrap Imprenditoriale
+
+**Fonte:** Antonio Romano, *"Da Zero a Milioni Senza Investitori"* (NotebookLM)
+
+→ [[Metodo FAST MOC]] — framework Focus/Action/Shift/Traction, 5 framework operativi (Bootstrapping Funnel, Lead Machine Loop, Cash Flow Financing, Social Performance, Adjacency Market Test), glossario CAC/LTV/Payback, 6 casi studio (PrimoTaglio, SpinUp, Infissi, Property Management, Spincare, Fiori artificiali).

@@ -203,3 +203,4 @@ Guide per l'interpretazione efficace di grafici e tabelle a supporto di decision
 ## Materiali Aggiuntivi
 
 - [[Ecosistema AI Moderno - Panoramica]] — Agentic Design Patterns (Gulli), GPT-5, MCP/A2A, impatto AI sul lavoro (NotebookLM)
+- [[Metodo FAST MOC]] — framework bootstrap di Antonio Romano (Focus/Action/Shift/Traction + 6 casi studio italiani)
