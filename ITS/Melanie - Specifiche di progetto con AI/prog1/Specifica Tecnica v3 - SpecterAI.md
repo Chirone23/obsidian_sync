@@ -19,7 +19,8 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 | 2 | §3, §6 | Decisione su lingue non IT/EN: blocco esplicito con messaggio chiaro | Review Fix #5 |
 | 3 | §6, §8 | Verifica anti-allucinazione `raw_excerpt` con normalizzazione + fuzzy match | Review Fix #1 + Meta Fix #12 |
 | 4 | §7 | Tabella scenari di costo (Demo / Testing / Pubblico) ricalcolata per modello specifico | Review Fix #3 + Meta Fix #9 |
-| 5 | §7 | Sezione GDPR ampliata: privacy PDF, ToS Anthropic, retention policy | Meta Fix #8 |
+| 5 | §7 | Sezione GDPR ampliata: privacy PDF, ToS Anthropic (Section B Commercial Terms citata verbatim), retention policy 30gg | Meta Fix #8 + verifica Perplexity Q2 |
+| 5.bis | §1 + §7 + §11 | **Riclassificazione AI Act: da "potenzialmente alto rischio" (v1/v2) a limited-risk.** Motivazione: (a) Annex III high-risk copre "amministrazione della giustizia" — sistemi a uso di autorità giudiziarie, non tool di lettura per non-avvocati; (b) Art. 6(3) prevede 3 derogazioni esplicite (task procedurale ristretto + miglioramento attività umana + pattern detection senza sostituzione) e SpecterAI le soddisfa tutte e tre; (c) restano solo obblighi di trasparenza Art. 50, già implementati via disclaimer. Conseguenza pratica: niente conformity assessment, niente registrazione UE database. | Verifica Perplexity Q3 (2026-05-07) — fonti: artificialintelligenceact.eu, EDPS guidance 2025, linee guida Commissione Art. 6(5) di febbraio 2026 |
 | 6 | §8 | Test Plan eseguibile: tabella `[Test ID · Input · Output atteso · Criterio pass/fail]` con dataset 5 contratti | Review Fix #2 |
 | 7 | §8 | Metriche qualità misurabili: precision/recall su categorie, soglie di accettazione | Meta Fix #10 |
 | 8 | §9 | Sezione fallback "API down": degraded mode + comunicazione utente | Meta Fix #13 |
