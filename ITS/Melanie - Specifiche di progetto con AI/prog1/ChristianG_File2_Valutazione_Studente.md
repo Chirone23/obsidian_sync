@@ -1,3 +1,5 @@
+> **Fonte:** documento ricevuto dalla professoressa (Melanie) — non scritto da Chirone.
+
 # Christian G. — Valutazione Intermedia (Lezione 2 → Lezione 3)
 
 **Progetto:** SpecterAI — AI Contract Analyzer for Non-Lawyers  

@@ -1,3 +1,5 @@
+> **Fonte:** documento ricevuto dalla professoressa (Melanie) — non scritto da Chirone.
+
 # Christian G. — Stack Tecnico e Percorso Consigliato
 
 **Progetto:** SpecterAI — AI Contract Analyzer for Non-Lawyers  
