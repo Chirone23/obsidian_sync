@@ -255,3 +255,5 @@ Draft (IA) → Review umana → Finalize → Archivio in Prompt Library
 - [[Knowledge MOC]] — Context Engineering, framework AI trasversali
 - [[Progettistica AI MOC]] — applicazione al design di sistemi AI
 - [[NotebookLM Query Playbook]] — estrarre contenuti dai notebook online applicando questi framework
+
+- [[Bracketed Headers - Convention Markdown]] — convenzione di formattazione complementare a C.I.A.R.E.: chiudere ogni heading con gli stessi `#` per delimitare visivamente i blocchi e ridurre il sanguinamento di contesto tra sezioni
