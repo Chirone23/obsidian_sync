@@ -51,8 +51,8 @@ Stato del progetto tra sessioni: ✅ completato · 🔄 in progress · ⏳ pross
 |------|-------|
 | [[Review Spec v2 - Gap e Roadmap Pre-Consegna]] | Gap analysis sulla Spec v2: cosa manca, roadmap di fix mirati (~4-6h) prima della consegna |
 | [[Meta-Review Multi-Agent - Validazione della Review]] | Validazione della review tramite 3 agenti OpenCode in parallelo (modelli free OpenRouter), verdetto convergente |
-| [[ChristianG_File2_Valutazione_Studente]] | Valutazione intermedia Lezione 2 → 3 (95/100) |
-| [[ChristianG_File3_Stack_Tecnico]] | Analisi dello stack tecnico scelto e percorso consigliato |
+| [[ChristianG_File2_Valutazione_Studente]] | **Feedback della prof** — valutazione intermedia Lezione 2 → 3 (95/100) |
+| [[ChristianG_File3_Stack_Tecnico]] | **Feedback della prof** — analisi dello stack tecnico scelto e percorso consigliato |
 
 ---
 
