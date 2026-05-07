@@ -196,3 +196,10 @@ Guide per l'interpretazione efficace di grafici e tabelle a supporto di decision
 - [[Idee MOC]] — Da idea a business regolamentato
 - [[Progettistica AI MOC]] — Specifiche tecniche conformi all'AI Act
 - [[Agenti IA Design Patterns MOC]] — Implementazione tecnica sistemi AI conformi compliance
+
+
+---
+
+## Materiali Aggiuntivi
+
+- [[Ecosistema AI Moderno - Panoramica]] — Agentic Design Patterns (Gulli), GPT-5, MCP/A2A, impatto AI sul lavoro (NotebookLM)
