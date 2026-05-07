@@ -14,6 +14,7 @@
 | [[Brainstorming - Validazione Idea]] | Brainstorming iniziale delle 5 idee candidate (2026-05-04) |
 | [[Contract Analyzer - Validazione Idea]] | Validazione approfondita dell'idea scelta |
 | [[perplexity_ricerche]] | Ricerca di mercato Perplexity sulle 5 idee — competitor, gap, dimensioni |
+| `perplexity/What is the current official pricing for Anthropic.md` | 4 query di verifica fattuale pre-consegna (pricing Sonnet, Anthropic ToS, AI Act classification, provider alternativi) → integrate in v3 |
 | [[Verifica PC - personale]] | Snapshot ambiente di sviluppo (HW/SW) |
 
 ---

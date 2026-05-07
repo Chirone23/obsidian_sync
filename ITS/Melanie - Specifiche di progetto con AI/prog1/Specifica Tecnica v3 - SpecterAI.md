@@ -38,7 +38,7 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 
 **Valore prodotto:** Ridurre il rischio di firmare contratti con clausole sfavorevoli senza averle comprese, senza pagare un avvocato per ogni documento.
 
-**Posizionamento AI Act:** Sistema di *decision-support*, non di consulenza legale. Ogni output include disclaimer esplicito. L'utente mantiene piena responsabilità decisionale.
+**Posizionamento AI Act:** Sistema di *decision-support*, non di consulenza legale. Ogni output include disclaimer esplicito. L'utente mantiene piena responsabilità decisionale. **Classificazione rivista (verifica Perplexity 2026-05-07):** non è "alto rischio" Annex III — rientra in **limited/minimal-risk** grazie alle derogazioni dell'Art. 6(3) (vedi §7).
 
 > ⚠️ **Limite di validazione dichiarato:** la validazione di mercato è esclusivamente desk research (Perplexity, Statista, Eurostat). **Zero user interview condotte** con freelance reali. L'assunzione "10-20 contratti/anno" e l'utilità percepita del tool sono ipotesi conservative da verificare in fase post-MVP. Vedi §11.bis.
 
@@ -397,7 +397,20 @@ a mezzo raccomandata A/R.
 | Profilazione | ❌ Nessuna |
 | Cookie / tracking | ❌ Nessuno |
 
-**Anthropic ToS (Claude API):** Anthropic dichiara di **non usare** le chiamate API a pagamento per addestrare i modelli (Anthropic Privacy Policy & Commercial ToS, sezione "API Inputs and Outputs"). Questo è il fondamento giuridico del flusso. Da verificare al momento del deploy pubblico (le policy possono cambiare).
+**Anthropic ToS (Claude API) — verificato 2026-05-07 via Perplexity:**
+
+> *"Anthropic may not train models on Customer Content from Services."* (Anthropic Commercial Terms of Service, Section B — Customer Content)
+
+URL: https://www.anthropic.com/legal/commercial-terms — "Customer Content" = Inputs e Outputs trasmessi attraverso i Services.
+
+**Distinzione tra prodotti:**
+- **Claude.ai consumer (free):** Consumer Terms of Service — Anthropic *può* usare i contenuti per training salvo opt-out nelle impostazioni account
+- **API a pagamento (uso di SpecterAI):** Commercial Terms — training **vietato** sui Customer Content
+- **Enterprise contracts:** Commercial Terms con tutele rafforzate, eventuali clausole custom
+
+**Retention log:** Anthropic conserva log API per 30 giorni a fini di safety/debugging, poi vengono cancellati (no archiving permanente).
+
+**Implicazione GDPR:** poiché SpecterAI usa l'API a pagamento, il testo dei contratti non alimenta i modelli Anthropic. La base giuridica (consenso + legittimo interesse) è rispettata. Il DPA di Anthropic copre il trattamento dati.
 
 **Base giuridica (GDPR art. 6):** consenso informato dell'utente al momento dell'upload + legittimo interesse a fornire il servizio richiesto. Il disclaimer pre-upload informa esplicitamente che il testo del contratto sarà inviato ad Anthropic via HTTPS.
 
@@ -405,13 +418,36 @@ a mezzo raccomandata A/R.
 
 **Dato sensibile particolare:** il sistema non è autorizzato per dati di cui all'art. 9 GDPR (sanitari, biometrici, etc.). Disclaimer pre-upload: "Non caricare contratti contenenti dati sanitari, biometrici o di minori".
 
-### AI Act
-- Classificazione: sistema potenzialmente **alto rischio** (analisi documenti legali)
-- Mitigazione: posizionamento come *decision-support tool*, non consulenza legale
-- Disclaimer obbligatorio in ogni output
-- Human-in-the-loop: l'utente legge il report e decide autonomamente
-- Nessuna decisione automatizzata che impatta diritti o obbligazioni
-- **Garanzia di citazione verificata:** ogni `raw_excerpt` è validato contro il testo originale (vedi §6) — l'utente può fare audit della provenienza di ogni informazione
+### AI Act — classificazione rivista (verifica Perplexity 2026-05-07)
+
+**Correzione rispetto a v1/v2:** la classificazione "alto rischio" usata nelle versioni precedenti era **sovrastimata**. La verifica del Regolamento (UE) 2024/1689 e delle linee guida della Commissione (Art. 6(5), pubblicate entro febbraio 2026) chiarisce:
+
+**Annex III high-risk** include esplicitamente:
+- (5) **Amministrazione della giustizia e processi democratici** — sistemi che assistono autorità giudiziarie nell'interpretazione del diritto, valutazione di prove, ricerca giurisprudenziale per decisioni vincolanti
+- (4) Accesso/qualità di servizi essenziali
+- (2)(b) Gestione lavoratori
+
+Un tool di **analisi contrattuale per non-avvocati**, **non integrato in procedimenti giudiziari** e **senza autorità decisionale**, **non rientra** nelle categorie Annex III.
+
+**Classificazione applicabile a SpecterAI:** **limited-risk** (obblighi di trasparenza ex Art. 50 — "questo è un sistema AI") con possibile downgrade a minimal-risk grazie all'**Art. 6(3)** che esclude da high-risk i sistemi che:
+- (a) eseguono task procedurali ristretti
+- (b) migliorano il risultato di un'attività umana già completata
+- (c) rilevano pattern decisionali senza sostituirsi alla valutazione umana
+
+**Tutte e tre le condizioni sono soddisfatte da SpecterAI:**
+- Task ristretto: analisi 7 categorie su PDF singolo, no negoziazione/drafting
+- Migliora attività umana: l'utente legge comunque il contratto, il tool aiuta la lettura
+- Pattern detection senza sostituzione: l'utente decide se firmare, non il sistema
+
+**Obblighi residui da rispettare (limited-risk):**
+- ✅ Trasparenza Art. 50: informare l'utente che sta interagendo con AI (disclaimer pre-upload)
+- ✅ Etichettatura output AI-generato (disclaimer in ogni report)
+- ✅ Human-in-the-loop esplicito (l'utente è il decisore)
+- ✅ Garanzia di citazione verificata: ogni `raw_excerpt` è validato contro il testo originale (vedi §6)
+
+**Riferimento normativo:** Regolamento (UE) 2024/1689, Art. 6(3), Art. 50; linee guida Commissione Europea 2026 sulla classificazione; EDPS guidance 2025 su HITL come misura di mitigazione.
+
+**Conseguenza pratica:** **SpecterAI non necessita** di conformity assessment, registrazione nel database UE, o quality management system formale (obblighi che si applicano solo ai sistemi high-risk). Restano gli obblighi di trasparenza, già implementati.
 
 ### AI Sustainability / Green AI
 
@@ -430,9 +466,11 @@ a mezzo raccomandata A/R.
 
 **Premessa.** La stima v2 di "<0,02 €/analisi" era plausibile per modelli di fascia bassa (Haiku) ma **sottostimata per Sonnet**. Ricalcolo basato sul listino pubblico Anthropic (al 2026-05-07; verificare prima del deploy):
 
-**Pricing claude-sonnet-4-6 (riferimento listino Anthropic):**
-- Input: ~3 $/M token
-- Output: ~15 $/M token
+**Pricing claude-sonnet-4-6 — verificato 2026-05-07 via Perplexity** (fonte: https://platform.claude.com/docs/en/about-claude/pricing):
+- Input: **3,00 $/M token**
+- Output: **15,00 $/M token**
+- Stesso pricing per tutta la famiglia Sonnet 4.x (4, 4.5, 4.6)
+- Esclusi: prompt caching ($3.75/MTok writes, $0.30/MTok hits) e long-context premium
 
 **Consumo per analisi tipica:**
 - Input: prompt sistema (600) + few-shot (~1.500) + contratto (~2.500–4.000) = ~4.600–6.100 token
@@ -573,8 +611,39 @@ a mezzo raccomandata A/R.
 
 ### Aggiornamenti modello
 - Il sistema è provider-agnostic: la logica di estrazione è separata dall'LLM
-- Switch da Claude a GPT-4o richiede solo cambio client e adattamento del prompt (< 1 ora)
+- Switch da Claude a un altro provider richiede solo cambio client e adattamento del prompt (< 1 ora)
 - Il routing multi-modello permette di aggiornare singoli step senza toccare gli altri
+
+### Provider alternativi (verifica Perplexity 2026-05-07)
+
+Confronto provider valutati per SpecterAI (~5K input + 2K output token / analisi):
+
+| Modello | Input $/M | Output $/M | €/analisi | IT quality | JSON mode | No-train ToS | EU residency |
+|---|---|---|---|---|---|---|---|
+| **Claude Sonnet 4.6** (Anthropic) — corrente | 3,00 | 15,00 | ~0,040 € | Alta | ✅ | ✅ | ❌ (US) |
+| **Mistral Medium 3** (Mistral AI) — fallback raccomandato | 0,40 | 2,00 | ~0,012 € | **Alta (nativa EU)** | ✅ (tools/JSON schema) | ✅ | **✅ (default EU servers)** |
+| DeepSeek V3 | 0,27 | 1,10 | ~0,010 € | Media-alta | ✅ | ✅ | Provider-dependent |
+| Llama 4 Maverick (via Together/Groq) | 0,15 | 0,60 | ~0,007 € | Media (fine-tune dipendente) | ✅ | ✅ (via provider) | ✅ (Together Frankfurt) |
+| Ministral 8B (Mistral AI) | 0,15 | 0,15 | ~0,006 € | Media | ✅ | ✅ | ✅ |
+
+**Raccomandazione post-MVP:** **Mistral Medium 3** come provider primario alternativo. Vantaggi:
+- **3,3× più economico** di Sonnet (0,012 € vs 0,040 €/analisi)
+- **EU data residency nativa** (server in UE di default) — vantaggio GDPR significativo per mercato italiano
+- Compliance con AI Act / AGCM nativa
+- Fine-tuning francese/europeo migliora la resa su italiano legale
+- JSON mode robusto via tools/schema
+
+**Decisione MVP corso:** **rimaniamo su Claude Sonnet 4.6** perché:
+1. Il costo è già trascurabile per il MVP (<2 € budget consegna)
+2. La qualità Claude su testo legale è benchmark di riferimento
+3. Cambiare provider ora introdurrebbe rischio sul deliverable corso (re-prompting, re-test, re-validazione few-shot)
+
+**Decisione post-MVP / produzione:** valutare migrazione a **Mistral Medium 3** se SpecterAI esce dalla fase corso, motivata da:
+- Riduzione costi 70% — sostenibilità economica del freemium
+- EU data residency — argomento di vendita verso freelance italiani sensibili al GDPR
+- Allineamento con narrativa "Italian-first, EU-compliant" della spec
+
+**Strategia hybrid (futuro):** Mistral Medium 3 come default + Sonnet come "premium tier" per analisi critiche su contratti complessi.
 
 ---
 
@@ -592,7 +661,7 @@ a mezzo raccomandata A/R.
 |---|---|---|---|
 | PDF parsing fallisce su layout non standard | Media | Alto | Layer deterministico + messaggio errore chiaro |
 | Claude allucina clausole inesistenti | Bassa | Alto | Pydantic + **verifica `raw_excerpt` con fuzzy match (§6)** + retry |
-| AI Act: classificazione alto rischio | Presente | Medio | Disclaimer + posizionamento decision-support + audit trail citazioni |
+| AI Act: riclassificazione regolatoria | Bassa | Medio | Tool è limited-risk Art. 6(3) (verificato 2026-05-07); disclaimer + HITL + audit citazioni mitigano comunque |
 | GDPR: dati personali nel contratto | Presente | Medio | Stateless, no logging del contenuto, ToS Anthropic verificato (§7) |
 | Dipendenza single-vendor da Claude API | Bassa | Alto | Architettura provider-agnostic (switch <1h); modalità degradata definita (§9) |
 | Costi API sottostimati | Bassa | Basso | Stima ricalcolata (§7), budget consegna <2 €, tier Haiku come fallback economico |
@@ -680,7 +749,7 @@ Audit trail della spec, per trasparenza didattica:
 |---|---|---|---|
 | v1 | 2026-04-30 | Lezione 2 — prima specifica completa | 11 sezioni, stack definito, 7 categorie, edge case base |
 | v2 | 2026-05-04 | Independent re-analysis (Haiku) → gap detectati | +Competitive positioning, +full prompt C.I.A.R.E., +few-shot, +Green AI, +multi-model routing |
-| **v3** | **2026-05-07** | [[Review Spec v2 - Gap e Roadmap Pre-Consegna]] + [[Meta-Review Multi-Agent - Validazione della Review]] | +verifica raw_excerpt, +test plan eseguibile, +scenari costo ricalcolati, +GDPR esteso, +modalità degradata, +limiti validazione, +metriche precision/recall, +gate lingua |
+| **v3** | **2026-05-07** | [[Review Spec v2 - Gap e Roadmap Pre-Consegna]] + [[Meta-Review Multi-Agent - Validazione della Review]] + 4 query Perplexity di verifica fattuale | +verifica raw_excerpt, +test plan eseguibile, +scenari costo ricalcolati, +GDPR esteso, +modalità degradata, +limiti validazione, +metriche precision/recall, +gate lingua, **+riclassificazione AI Act limited-risk Art. 6(3)**, **+tabella provider alternativi (Mistral Medium 3 come fallback raccomandato post-MVP)** |
 
 **Principio di processo:** ogni versione è preservata, mai sovrascritta. La v1 e la v2 restano leggibili per audit del processo di iterazione (parte della valutazione del corso).
 
