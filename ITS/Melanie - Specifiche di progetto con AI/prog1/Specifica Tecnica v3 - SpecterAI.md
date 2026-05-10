@@ -29,6 +29,8 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 | 11 | §2.bis (nuovo) | Sezione Stretch Goals separata da Fuori scope (PDF download via Playwright, confidence indicator self-consistency, CSS curato) | Feedback prof File3 + verifica Perplexity 2026-05-10 |
 | 12 | §7 | Sezione "Strategia token in fase di sviluppo" (dev workflow zero-cost: Claude Code CLI per prompt, Cursor per codice, API solo runtime §8) — esclusi Gemini/OpenRouter per evitare drift di modello | Feedback prof File3 + verifica Perplexity 2026-05-10 |
 | 13 | §12.bis (nuovo) | Build Roadmap moduli→lezioni→deliverable (Lez. 3 schemas+pdf+regex / Lez. 4 llm+main+templates / Lez. 5 test plan+log / Lez. 6 polish+stretch) | Feedback prof File3 |
+| 14 | §7 | Retention log Anthropic aggiornata da 30gg → 7gg (policy update settembre 2025) | Verifica Perplexity 2026-05-10 |
+| 15 | §7 | Nota esplicita: DPA Anthropic da sottoscrivere pre-deploy pubblico (include SCC post-Schrems II + ruolo DPF US-EU) | Verifica Perplexity 2026-05-10 |
 
 ---
 
@@ -421,11 +423,13 @@ URL: https://www.anthropic.com/legal/commercial-terms — "Customer Content" = I
 - **API a pagamento (uso di SpecterAI):** Commercial Terms — training **vietato** sui Customer Content
 - **Enterprise contracts:** Commercial Terms con tutele rafforzate, eventuali clausole custom
 
-**Retention log:** Anthropic conserva log API per 30 giorni a fini di safety/debugging, poi vengono cancellati (no archiving permanente).
+**Retention log:** Anthropic conserva log API per **7 giorni** a fini di safety/debugging, poi vengono cancellati (no archiving permanente). *Aggiornamento 2026-05-10: la policy precedente di 30 giorni è stata ridotta a 7 giorni a partire da settembre 2025 — verifica Perplexity su privacy.claude.com.*
 
 **Implicazione GDPR:** poiché SpecterAI usa l'API a pagamento, il testo dei contratti non alimenta i modelli Anthropic. La base giuridica (consenso + legittimo interesse) è rispettata. Il DPA di Anthropic copre il trattamento dati.
 
 **Base giuridica (GDPR art. 6):** consenso informato dell'utente al momento dell'upload + legittimo interesse a fornire il servizio richiesto. Il disclaimer pre-upload informa esplicitamente che il testo del contratto sarà inviato ad Anthropic via HTTPS.
+
+**DPA e trasferimento UE→US (azione pre-deploy pubblico):** prima di esporre SpecterAI a utenti reali (fuori scope MVP corso, ma necessario in produzione) è obbligatorio **sottoscrivere il Data Processing Agreement di Anthropic**, che include le Standard Contractual Clauses (SCC) della Commissione UE post-Schrems II per il trasferimento dati verso server US. Il EU-US Data Privacy Framework copre Anthropic come provider partecipante, ma le SCC nel DPA restano la base giuridica preferita per il ruolo processor. Ref: https://privacy.claude.com.
 
 **Diritti dell'interessato:** essendo il sistema stateless senza account utente, i diritti GDPR (accesso, cancellazione, portabilità) non sono applicabili nel senso classico — non esistono dati conservati. La privacy by design coincide con la non-conservazione.
 
