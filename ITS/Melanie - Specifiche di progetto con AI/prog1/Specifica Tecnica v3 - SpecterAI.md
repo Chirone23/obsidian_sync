@@ -26,6 +26,9 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 | 8 | §9 | Sezione fallback "API down": degraded mode + comunicazione utente | Meta Fix #13 |
 | 9 | §11.bis | Limiti della validazione di mercato dichiarati, score auto-corretto a 3/5 | Review Fix #4 + Meta Fix #11 |
 | 10 | §13 (nuovo) | Sezione Provenance & Versioning della spec (audit trail v1 → v2 → v3) | Coerenza interna |
+| 11 | §2.bis (nuovo) | Sezione Stretch Goals separata da Fuori scope (PDF download via Playwright, confidence indicator self-consistency, CSS curato) | Feedback prof File3 + verifica Perplexity 2026-05-10 |
+| 12 | §7 | Sezione "Strategia token in fase di sviluppo" (dev workflow zero-cost: Claude Code CLI per prompt, Cursor per codice, API solo runtime §8) — esclusi Gemini/OpenRouter per evitare drift di modello | Feedback prof File3 + verifica Perplexity 2026-05-10 |
+| 13 | §12.bis (nuovo) | Build Roadmap moduli→lezioni→deliverable (Lez. 3 schemas+pdf+regex / Lez. 4 llm+main+templates / Lez. 5 test plan+log / Lez. 6 polish+stretch) | Feedback prof File3 |
 
 ---
 
@@ -68,15 +71,24 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 - **Blocco esplicito** dei contratti in lingue diverse da IT/EN (vedi §3)
 - Nessuna persistenza dei dati (processing on-request)
 
-### Fuori scope (versioni future)
+### Fuori scope (versioni future, mai nel MVP corso)
 - OCR per PDF scansionati
 - Confronto tra versioni del contratto
-- Download output in PDF
 - Storico analisi / account utente
 - Integrazione con firma digitale
 - Dashboard multi-documento
 - Notifiche scadenze contrattuali
 - Supporto contratti in lingue diverse da IT/EN
+
+### Stretch goals (attivabili solo se avanza tempo Lez. 6)
+
+Distinti dal "fuori scope": questi sono candidati ad implementazione **opportunistica** in fase di rifinitura, prioritizzati. Nessuno è promesso nello scope MVP.
+
+| # | Stretch | Tecnologia | Note |
+|---|---|---|---|
+| 1 | Download report in PDF | **Playwright** headless (`page.pdf()`) | Preferito su WeasyPrint per fedeltà CSS moderni; pdfkit/wkhtmltopdf escluso (legacy) |
+| 2 | Confidence indicator su `risk_level` | Self-consistency 3-run a temp=0, % agreement | Anthropic API non espone logprobs (2026). Soglia ≥2/3 → badge "alta confidence", altrimenti "bassa". **Costo:** triplica €/analisi (€0,12 invece di €0,04) → attivabile solo su demo, mai default |
+| 3 | CSS report più curato | Tailwind via CDN o CSS inline | Semafori risk_level, layout responsive, branding leggero |
 
 ---
 
@@ -463,6 +475,21 @@ Un tool di **analisi contrattuale per non-avvocati**, **non integrato in procedi
 | Temperature=0 | Riduce il campionamento probabilistico: meno "tentativi" interni del modello |
 | Retry max 1 volta | Cap esplicito al re-spending energetico in caso di fallimento |
 
+### Strategia token in fase di sviluppo (dev workflow, zero-cost)
+
+Distinta dalla token optimization a runtime sopra: questa sezione documenta come **iterare sul progetto senza consumare budget API** durante le Lezioni 3-6.
+
+| Tier | Strumento | Costo marginale | Ruolo |
+|---|---|---|---|
+| Iterazione system prompt + quality check JSON | **Claude Code CLI** (abbonamento già attivo) | €0 | Test Sonnet senza drift di modello — output identico al runtime |
+| Generazione codice Python (modulo per modulo) | Cursor con Sonnet | incluso piano | schemas.py → pdf_processor.py → regex_layer.py → llm_client.py → main.py |
+| Runtime test plan §8 (E2E su FastAPI reale) | Claude API a pagamento | ~0,60 € totali | Necessario: valida integrazione SDK + retry + Pydantic + latenza, non solo prompt |
+| Demo presentazione finale | Claude API a pagamento | ~0,40 € | 2-3 contratti scelti |
+
+**Razionale chiave:** stesso modello in dev e runtime → quello che vedi in CLI è quello che gira in prod. Esclusi alternative (Gemini Flash free tier, OpenRouter free models) perché introducono **drift di modello** (un JSON valido su Gemini può fallire su Sonnet) → falserebbero i test del system prompt.
+
+**Budget complessivo dev + consegna: <1,50 €** (vedi anche tabella scenari sotto).
+
 ### Stima costi e scenari (ricalcolati v3)
 
 **Premessa.** La stima v2 di "<0,02 €/analisi" era plausibile per modelli di fascia bassa (Haiku) ma **sottostimata per Sonnet**. Ricalcolo basato sul listino pubblico Anthropic (al 2026-05-07; verificare prima del deploy):
@@ -739,6 +766,21 @@ Durante lo sviluppo vengono mantenuti i seguenti file nella cartella `prog1/`:
 | [[Meta-Review Multi-Agent - Validazione della Review]] | Validazione multi-agent della review che ha aggiunto 6 fix ulteriori | Storica — non più aggiornata |
 
 Questi file fanno parte della valutazione del corso — documentare il processo di revisione (v1, v2, v3…) ha lo stesso peso del prodotto finale.
+
+---
+
+## 12.bis Build Roadmap (Moduli → Lezioni → Deliverable)
+
+Mappatura modulare per validazione iterativa. **Non** è un project plan (no Gantt, no effort tracking, no risorse) — è il breakdown spec che lega componenti a deliverable verificabili lezione per lezione.
+
+| Lezione | Moduli da implementare | Deliverable verificabile | Stato |
+|---|---|---|---|
+| Lez. 3 | `schemas.py` + `pdf_processor.py` + `regex_layer.py` | PDF → testo pulito + metadati estratti, testato su 2 contratti | ⏳ |
+| Lez. 4 | `llm_client.py` + `main.py` + `templates/report.html` + `templates/index.html` | Flusso E2E: upload PDF da browser → report HTML renderizzato | ⏳ |
+| Lez. 5 | Esecuzione Test Plan §8 + compilazione `PROMPT_LOG.md` + `INCIDENTS.md` | 12 test pass/fail loggati, edge case validati, incidents tracciati | ⏳ |
+| Lez. 6 | Polish UI + eventuali stretch (§2.bis) + demo prep | Demo 2-3 contratti pronta, eventuale stretch implementato, SPEC_ERRATA o v4 se necessario | ⏳ |
+
+**Pre-requisiti già completati (Lez. 2):** brainstorming, validazione idea, spec v1→v2→v3, verifica PC, struttura cartelle Cursor.
 
 ---
 
