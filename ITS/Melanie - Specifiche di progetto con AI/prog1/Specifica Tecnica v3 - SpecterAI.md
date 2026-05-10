@@ -31,6 +31,9 @@ Questa versione integra i fix di [[Review Spec v2 - Gap e Roadmap Pre-Consegna]]
 | 13 | §12.bis (nuovo) | Build Roadmap moduli→lezioni→deliverable (Lez. 3 schemas+pdf+regex / Lez. 4 llm+main+templates / Lez. 5 test plan+log / Lez. 6 polish+stretch) | Feedback prof File3 |
 | 14 | §7 | Retention log Anthropic aggiornata da 30gg → 7gg (policy update settembre 2025) | Verifica Perplexity 2026-05-10 |
 | 15 | §7 | Nota esplicita: DPA Anthropic da sottoscrivere pre-deploy pubblico (include SCC post-Schrems II + ruolo DPF US-EU) | Verifica Perplexity 2026-05-10 |
+| 16 | §6 | Calibrazione soglia fuzzy 0.92 da fare durante Test T11 con annotazione in PROMPT_LOG (giustificazione empirica) | Audit indipendente Opus 2026-05-10 |
+| 17 | §8 | Caveat statistico su kappa di Cohen con N=35 (indicativo, non inferenziale) + alternativa agreement % | Audit indipendente Opus 2026-05-10 |
+| 18 | §6 | Nota su `langdetect` per contratti misti IT/EN (gate accetta entrambe → falsi-misti non critici) — risolve tensione apparente con §11 | Audit indipendente Opus 2026-05-10 |
 
 ---
 
@@ -229,7 +232,7 @@ langdetect
 | Task | Modello | Motivazione |
 |---|---|---|
 | Validazione input (testo sufficiente?) | Nessun LLM — heuristica Python | Task deterministico, zero token consumati |
-| Rilevamento lingua (IT vs EN vs altro) | Nessun LLM — `langdetect` | Task semplice; gate solo binario IT/EN, no fallback |
+| Rilevamento lingua (IT vs EN vs altro) | Nessun LLM — `langdetect` | Gate binario IT/EN, no fallback. *Nota su contratti misti IT/EN: `langdetect` ritorna la lingua dominante; poiché il gate accetta entrambe, i falsi-misti non sono critici (vedi rischio §11)* |
 | Analisi contratto (7 categorie) | claude-sonnet-4-6 | Task critico e ambiguo, richiede modello bilanciato |
 | Retry su JSON malformato | claude-sonnet-4-6 con prompt più restrittivo | Stessa classe, non declassare su task già fallito |
 | Retry su `raw_excerpt` non verificato | claude-sonnet-4-6 con prompt "quote verbatim only" | Forza il modello a citare solo testo presente |
@@ -290,6 +293,8 @@ def excerpt_is_grounded(excerpt: str, contract_text: str,
 4. Tutti i fallimenti sono loggati in `INCIDENTS.md`
 
 **Limiti del check:** la normalizzazione gestisce whitespace e case; il fuzzy match a soglia 0.92 tollera differenze di punteggiatura (es. virgolette curly vs straight) e piccoli errori OCR. Il check **non** rileva paraphrasing intenzionale del modello: se Claude riformula leggermente il testo, il fuzzy match potrebbe ancora passare. Mitigazione: prompt esplicito + retry.
+
+**Calibrazione soglia 0.92:** valore iniziale scelto empiricamente come compromesso tra tolleranza OCR/punteggiatura e rigetto paraphrasing. Da calibrare durante il Test T11 (§8) su 5–10 esempi reali (excerpt verbatim vs leggermente paraphrased) e annotare la scelta finale in `PROMPT_LOG.md`. Soglia, finestra di scan (step 200, len+50) e tasso di falsi negativi accettati sono parametri tunabili post-misurazione.
 
 ---
 
@@ -546,7 +551,7 @@ Distinta dalla token optimization a runtime sopra: questa sezione documenta come
 | **Excerpt grounding** | % `raw_excerpt` verificati nel testo originale (su categorie `present: true`) | ≥90% al primo tentativo, 100% dopo retry |
 | **Recall categorie presenti** | Su dataset gold-standard, % di clausole realmente presenti correttamente identificate | ≥0,80 (medio sulle 7 categorie) |
 | **Precision categorie presenti** | Su dataset gold-standard, % di categorie marcate `present: true` che lo sono davvero | ≥0,85 (medio sulle 7 categorie) |
-| **Risk level agreement** | Accordo tra `risk_level` predetto e annotazione manuale (3 livelli) | ≥0,70 (kappa di Cohen) |
+| **Risk level agreement** | Accordo tra `risk_level` predetto e annotazione manuale (3 livelli). *Nota statistica: con N=35 punti dati (5 contratti × 7 categorie) il kappa di Cohen ha intervalli di confidenza ampi — valore indicativo, non inferenziale. In alternativa: agreement % semplice ≥0,75* | ≥0,70 (kappa di Cohen, indicativo) |
 | **Disclaimer visibilità** | Presente senza scroll a 1366×768 | 100% |
 
 **Dataset gold-standard:** 5 contratti (vedi sotto) annotati manualmente da Chirone prima del test, con etichette per ogni categoria (presente sì/no, severità). Le metriche precision/recall sono calcolate su queste annotazioni.
