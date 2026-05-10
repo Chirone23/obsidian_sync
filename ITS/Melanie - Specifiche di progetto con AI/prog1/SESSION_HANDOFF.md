@@ -1,9 +1,76 @@
 # SESSION_HANDOFF — SpecterAI
 
-**Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)  
-**Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)  
-**Ultima sessione:** 2026-05-04  
-**Prossima sessione:** 2026-05-05 (Lezione 3 — MVP Building in Cursor)  
+**Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
+**Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
+**Ultima sessione:** 2026-05-10 (finalizzazione Spec v3.1 + audit Opus + aggiornamento diari)
+**Prossima sessione:** Lezione 3 — MVP Building (start con G1: test prompt su Claude Code CLI)
+**Spec corrente:** v3.1 (file: `Specifica Tecnica v3 - SpecterAI.md`, changelog 18 righe)
+
+---
+
+## 🟢 STATO ATTUALE (post-sessione 2026-05-10)
+
+### ✅ Completato dopo l'ultimo handoff (2026-05-04)
+
+**Sessione 2026-05-07 — Spec v3 (13 fix)**
+- Review interna Spec v2 + Meta-Review multi-agent (3 agenti OpenCode su modelli free OpenRouter)
+- 4 query Perplexity di verifica fattuale (pricing Sonnet, Anthropic ToS, AI Act, provider alternativi)
+- 13 fix integrati in Spec v3 — highlight: **AI Act riclassificato high-risk → limited-risk Art. 6(3)**, verifica anti-allucinazione `raw_excerpt` con fuzzy match, test plan T1-T12 eseguibile, scenari costo ricalcolati Sonnet (0,02→0,04 €), gate lingua IT/EN bloccante, Mistral Medium 3 come fallback post-MVP
+
+**Sessione 2026-05-10 — Spec v3.1 (5 fix + 3 fix coerenza)**
+- Letto feedback prof (95/100 + File3 stack tecnico) → 3 gap minori identificati
+- 3 patch da feedback prof: **§7 strategia token dev zero-cost** (Claude Code CLI invece di Gemini/OpenRouter per evitare drift modello), **§2.bis Stretch Goals** separati (Playwright per PDF, self-consistency per confidence), **§12.bis Build Roadmap** moduli→lezioni→deliverable
+- 2 fix da review Perplexity validation generale (9 punti, 7/9 confermati): retention Anthropic 30gg→7gg, DPA esplicito pre-deploy
+- Audit indipendente Opus su spec v3.1 → 3 fix coerenza interna applicati: calibrazione soglia 0.92 da T11, caveat statistico kappa N=35, nota langdetect su contratti misti
+- **PROMPT_LOG** e **INCIDENTS** aggiornati con storia v2→v3→v3.1 + 3 nuovi incident metodologici risolti (INC-000d sovraclass AI Act, INC-000e sottostima costi, INC-000f drift retention)
+
+### ⏳ Prossimo step (PRIORITÀ 1, prima di scrivere qualsiasi codice)
+
+**G1 — Test prompt end-to-end su contratto reale (richiesto da prof File2 + audit Opus)**
+- Sessione 30 min su **Claude Code CLI** (non Claude.ai, sfrutto abbonamento già attivo)
+- Input: contratto C1 (servizi/consulenza freelance, ~3 pagine IT) — prendere uno reale, anche breve
+- Procedura: incollare system prompt (Spec v3 §6) + few-shot examples + testo contratto
+- Verificare: (a) JSON valido, (b) 7 categorie presenti, (c) `raw_excerpt` verbatim dal testo, (d) `risk_level` ∈ {low, medium, high}
+- Se fallisce → fix prompt **prima** di iniziare a scrivere codice Python
+- Loggare risultato in `PROMPT_LOG.md`
+
+### ⏳ Sequenza building Lez. 3-6 (da `§12.bis Build Roadmap`)
+
+| Lezione | Moduli | Deliverable |
+|---|---|---|
+| **Lez. 3** | `schemas.py` + `pdf_processor.py` + `regex_layer.py` | PDF→testo+metadati su 2 contratti |
+| Lez. 4 | `llm_client.py` + `main.py` + `templates/` | Flusso E2E upload→report HTML |
+| Lez. 5 | Test plan §8 eseguito (T1-T12) + `PROMPT_LOG`/`INCIDENTS` aggiornati | 12 test pass/fail loggati |
+| Lez. 6 | Polish + eventuali stretch goals (§2.bis) + demo prep | Demo 2-3 contratti |
+
+**Cut-off operativo (da audit Opus G5):** se a fine Lez. 3 `regex_layer.py` non è testato, taglialo (estrazione minimale già OK) e proteggi `llm_client.py` + `main.py` per Lez. 4.
+
+### ❓ Domande aperte
+
+| # | Domanda | Quando decidere |
+|---|---|---|
+| Q1 | Soglia fuzzy 0.92 va calibrata: quanti falsi negativi accettare? | Test T11 (Lez. 5) |
+| Q2 | Kappa di Cohen o agreement % semplice come metrica risk_level? | Lez. 5, su N=35 punti dati reali |
+| Q3 | Stretch goals da attivare (PDF download? confidence?) | Solo se Lez. 6 ha tempo |
+| Q4 | OCR scansioni: reject definitivo o Tesseract opzionale post-MVP? | Mai nel MVP corso (fuori scope) |
+
+### 💰 Budget API consegna
+
+| Voce | Costo stimato |
+|---|---|
+| Dev iterazione prompt (Claude Code CLI) | €0 — abbonamento |
+| Generazione codice (Cursor + Sonnet) | incluso |
+| Test plan §8 runtime (12 test su Claude API) | ~€0,60 |
+| Demo presentazione (3-5 contratti) | ~€0,40 |
+| **Totale stimato** | **<€1,50** |
+
+### 📁 File modificati nella sessione 2026-05-10
+
+- ✅ `Specifica Tecnica v3 - SpecterAI.md` — 5 patch nuove (§2.bis, §7, §12.bis + 2 fix Perplexity) + 3 fix coerenza Opus (changelog #16-18)
+- ✅ `PROMPT_LOG.md` — header aggiornato, +3 righe timeline, +2 sezioni "Spec v3" e "Spec v3.1"
+- ✅ `INCIDENTS.md` — 3 nuovi incident risolti (INC-000d/e/f) + date INC-001/002/003 allineate a Lez. 3-4
+- ✅ `SESSION_HANDOFF.md` — questo file
+- ✅ Tutti i commit pushati su `obsidian_sync` (ultimo: `e6f1969`)
 
 ---
 
