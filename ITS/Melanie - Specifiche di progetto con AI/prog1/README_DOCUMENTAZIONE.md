@@ -1,9 +1,9 @@
 # Documentazione SpecterAI — Indice
 
 **Progetto:** SpecterAI (AI Contract Analyzer per Non-Avvocati in Italiano)
-**Fase:** Building Lez. 3 — da iniziare (prossimo step: G1 test prompt su Claude Code CLI)
-**Specifica corrente:** [[Specifica Tecnica v3 - SpecterAI]] (v3.1, changelog 18 righe)
-**Ultimo aggiornamento indice:** 2026-05-10
+**Fase:** Building Lez. 4 — pronto a partire (prossimo step: checklist pre-building da `valutazione 10-5/ChristianG_Promemoria_Lezione4.md`)
+**Specifica corrente:** [[Specifica Tecnica v3 - SpecterAI]] (v3.1, changelog 18 righe, confermata dalla prof 2026-05-10)
+**Ultimo aggiornamento indice:** 2026-05-11
 
 ---
 
@@ -65,10 +65,10 @@ Stato del progetto tra sessioni: ✅ completato · 🔄 in progress · ⏳ pross
 |---|---|---|
 | `valutazione x (prima valutazione)/ChristianG_File2_Valutazione_Studente.md` | 2026-05-06 | Valutazione intermedia Lez. 2→3 (95/100) — letto, integrato in v3.1 |
 | `valutazione x (prima valutazione)/ChristianG_File3_Stack_Tecnico.md` | 2026-05-06 | Analisi stack tecnico + percorso consigliato — letto, 3 patch integrate in v3.1 |
-| **`valutazione 10-5/ChristianG_Valutazione_Aggiornata.md`** | 2026-05-10 | **Valutazione aggiornata della prof — DA LEGGERE** |
-| **`valutazione 10-5/ChristianG_Promemoria_Lezione4.md`** | 2026-05-10 | **Promemoria Lezione 4 — DA LEGGERE** |
+| `valutazione 10-5/ChristianG_Valutazione_Aggiornata.md` | 2026-05-10 | Valutazione aggiornata: **95/100 confermato** ("più alto della classe"). Cita esplicitamente spec v3, build roadmap, PROMPT_LOG, INC-000c, INC-000d, §11.bis come punti di forza. *Verdetto: "Non c'è nulla da aggiungere. Domani apri Cursor e parti da schemas.py."* — nessuna patch richiesta |
+| `valutazione 10-5/ChristianG_Promemoria_Lezione4.md` | 2026-05-10 | Checklist pre-building Lez. 4 + breakdown task 5 fasi + struttura cartelle dettagliata (include `tests/contratti/` e `prompts/system_prompt.md` come file separato). Da seguire come guida operativa per il building |
 
-> ⚠️ I 2 file in `valutazione 10-5/` sono arrivati il 2026-05-10 e devono essere letti per verificare se contengono nuove richieste che potrebbero richiedere ulteriori patch alla v3.1 prima della Lez. 3.
+> ✅ Entrambi i file letti il 2026-05-10. Esito: nessuna patch alla spec richiesta. La v3.1 è confermata come spec finale di consegna. Si procede al building seguendo la checklist del Promemoria.
 
 ---
 

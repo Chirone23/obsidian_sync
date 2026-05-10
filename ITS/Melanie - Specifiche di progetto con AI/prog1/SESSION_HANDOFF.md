@@ -2,9 +2,9 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
 **Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
-**Ultima sessione:** 2026-05-10 (finalizzazione Spec v3.1 + audit Opus + aggiornamento diari)
-**Prossima sessione:** Lezione 3 — MVP Building (start con G1: test prompt su Claude Code CLI)
-**Spec corrente:** v3.1 (file: `Specifica Tecnica v3 - SpecterAI.md`, changelog 18 righe)
+**Ultima sessione:** 2026-05-11 (lettura nuovo feedback prof in `valutazione 10-5/` → 95/100 confermato + nessuna patch richiesta)
+**Prossima sessione:** Lezione 4 — MVP Building (checklist pre-building del Promemoria prof, vedi sotto)
+**Spec corrente:** v3.1 — **confermata dalla prof come finale** (file: `Specifica Tecnica v3 - SpecterAI.md`, changelog 18 righe)
 
 ---
 
@@ -24,15 +24,59 @@
 - Audit indipendente Opus su spec v3.1 → 3 fix coerenza interna applicati: calibrazione soglia 0.92 da T11, caveat statistico kappa N=35, nota langdetect su contratti misti
 - **PROMPT_LOG** e **INCIDENTS** aggiornati con storia v2→v3→v3.1 + 3 nuovi incident metodologici risolti (INC-000d sovraclass AI Act, INC-000e sottostima costi, INC-000f drift retention)
 
-### ⏳ Prossimo step (PRIORITÀ 1, prima di scrivere qualsiasi codice)
+### 🟢 Nuovo feedback prof (sessione 2026-05-11)
 
-**G1 — Test prompt end-to-end su contratto reale (richiesto da prof File2 + audit Opus)**
-- Sessione 30 min su **Claude Code CLI** (non Claude.ai, sfrutto abbonamento già attivo)
-- Input: contratto C1 (servizi/consulenza freelance, ~3 pagine IT) — prendere uno reale, anche breve
-- Procedura: incollare system prompt (Spec v3 §6) + few-shot examples + testo contratto
-- Verificare: (a) JSON valido, (b) 7 categorie presenti, (c) `raw_excerpt` verbatim dal testo, (d) `risk_level` ∈ {low, medium, high}
-- Se fallisce → fix prompt **prima** di iniziare a scrivere codice Python
-- Loggare risultato in `PROMPT_LOG.md`
+Letti i 2 file in `valutazione 10-5/`:
+- **`ChristianG_Valutazione_Aggiornata.md`** — 95/100 confermato. Verdetto prof: *"Non c'è nulla da aggiungere. Domani apri Cursor e parti da schemas.py."* Punti di forza citati: spec v3 (826 righe, 18 mod), build roadmap §12.bis, PROMPT_LOG come "racconto di come hai usato l'AI", INC-000c (metodologia), INC-000d (AI Act riclass), §11.bis (auto-correzione score).
+- **`ChristianG_Promemoria_Lezione4.md`** — checklist pre-building + breakdown 5 fasi + struttura cartelle dettagliata (vedi sotto).
+
+### ⏳ Checklist pre-building Lez. 4 (dal Promemoria prof)
+
+Prima di aprire Cursor:
+- [ ] **Testare prompt di sistema** su almeno 1 contratto reale — sessione su **Claude Code CLI** (sfrutta abbonamento, zero costo, no drift di modello)
+- [ ] Verificare output JSON: 7 categorie presenti, `raw_excerpt` con citazioni reali, `risk_level` ∈ {low, medium, high}
+- [ ] Avere pronti **3 contratti PDF** di test (servizi, NDA, fornitura)
+- [ ] Creare **struttura cartelle** del progetto (vedi sotto)
+- [ ] API key Anthropic funzionante in `.env`
+- [ ] `PROMPT_LOG.md` e `INCIDENTS.md` già esistono ✅ (popolati con storia v1→v3.1)
+
+### 📂 Struttura cartelle progetto (dal Promemoria prof)
+
+```
+specter-ai/
+├── main.py                # FastAPI app, endpoint upload + analisi
+├── pdf_processor.py       # PyMuPDF: estrazione testo da PDF
+├── regex_layer.py         # Estrazione date, importi, scadenze
+├── llm_client.py          # Chiamata Claude API + gestione retry
+├── schemas.py             # Schema Pydantic per validazione JSON
+├── templates/
+│   ├── index.html         # Pagina upload
+│   └── report.html        # Template Jinja2 per il report
+├── prompts/
+│   └── system_prompt.md   # Il prompt (già scritto nella spec v3 §6)
+├── tests/
+│   └── contratti/         # PDF di test
+├── PROMPT_LOG.md
+├── INCIDENTS.md
+├── .env                   # ANTHROPIC_API_KEY
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+### ⏳ Sequenza fasi building (dal Promemoria prof, 5 fasi)
+
+| Fase | Lezione | Task | Dipendenze |
+|---|---|---|---|
+| **Fase 1 — Fondamenta** | Lez. 4 | `schemas.py` → `pdf_processor.py` → `regex_layer.py` | schemas è primo (tutto valida contro lui) |
+| **Fase 2 — Core AI** | Lez. 4-5 | `prompts/system_prompt.md` → `llm_client.py` → integrazione regex+LLM | schemas + pdf + regex |
+| **Fase 3 — Interfaccia** | Lez. 5 | `main.py` (endpoint FastAPI) + `templates/index.html` + `templates/report.html` | tutto Fase 1-2 |
+| **Fase 4 — Test e docs** | Lez. 5-6 | Test 5 contratti + edge case + contratto EN + popolamento PROMPT_LOG/INCIDENTS con dati reali | sistema E2E funzionante |
+| **Fase 5 — Rifinitura/demo** | Lez. 6-7 | Polish HTML + eventuali stretch goals (§2.bis spec) + selezione 2-3 contratti demo + presentazione 2 min | sistema testato |
+
+**Nota su numerazione lezioni:** la build roadmap §12.bis della spec (scritta prima del Promemoria) mappa Lez. 3/4/5/6; il calendario corso effettivo è Lez. 4/5/6/7 (slittamento +1). Non è un problema spec, solo allineamento al calendario.
+
+**Cut-off operativo da audit Opus G5:** se a fine Fase 1 `regex_layer.py` non è testato, taglialo (estrazione minimale è già OK) e proteggi `llm_client.py` + `main.py` per la lezione successiva.
 
 ### ⏳ Sequenza building Lez. 3-6 (da `§12.bis Build Roadmap`)
 
@@ -64,13 +108,19 @@
 | Demo presentazione (3-5 contratti) | ~€0,40 |
 | **Totale stimato** | **<€1,50** |
 
-### 📁 File modificati nella sessione 2026-05-10
+### 📁 File modificati nelle sessioni 2026-05-10 / 2026-05-11
 
+**2026-05-10 (Spec v3.1 finalizzazione):**
 - ✅ `Specifica Tecnica v3 - SpecterAI.md` — 5 patch nuove (§2.bis, §7, §12.bis + 2 fix Perplexity) + 3 fix coerenza Opus (changelog #16-18)
 - ✅ `PROMPT_LOG.md` — header aggiornato, +3 righe timeline, +2 sezioni "Spec v3" e "Spec v3.1"
 - ✅ `INCIDENTS.md` — 3 nuovi incident risolti (INC-000d/e/f) + date INC-001/002/003 allineate a Lez. 3-4
-- ✅ `SESSION_HANDOFF.md` — questo file
-- ✅ Tutti i commit pushati su `obsidian_sync` (ultimo: `e6f1969`)
+- ✅ Riorg cartelle: `gap spec-v2/`, `spec precedenti/`, `valutazione x (prima valutazione)/`, `valutazione 10-5/` (nuova)
+
+**2026-05-11 (verifica nuovo feedback prof):**
+- ✅ Letti `valutazione 10-5/ChristianG_Valutazione_Aggiornata.md` e `ChristianG_Promemoria_Lezione4.md` → 95/100 confermato, nessuna patch spec richiesta
+- ✅ `README_DOCUMENTAZIONE.md` — rimosso flag "DA LEGGERE", aggiornato esito + spec confermata + fase a Lez. 4
+- ✅ `SESSION_HANDOFF.md` — questo file (checklist pre-building Lez. 4 + struttura cartelle + 5 fasi dal Promemoria prof)
+- ✅ Tutti i commit pushati su `obsidian_sync`
 
 ---
 
