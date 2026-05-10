@@ -13,9 +13,12 @@
 | **INC-000a** | **2026-04-28** | **PDF tool (ricerca)** | **PDF extraction tool failure on course materials** | **Medium** | **✅ RESOLVED** |
 | **INC-000b** | **2026-04-29** | **MCP obsidian** | **Obsidian MCP connection refused on vault write** | **Medium** | **✅ RESOLVED** |
 | **INC-000c** | **2026-05-02** | **AI methodology** | **AI prompting approach (directed vs independent)** | **Methodology** | **✅ RESOLVED** |
-| INC-001 | 2026-05-05 (TBD) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🔴 Open |
-| INC-002 | 2026-05-05 (TBD) | Claude API timeout | Timeout su batch processing di contratti | High | 🔴 Open |
-| INC-003 | 2026-05-05 (TBD) | JSON parsing / encoding | Caratteri speciali italiani (accenti, €) corrotti nel JSON | High | 🔴 Open |
+| **INC-000d** | **2026-05-07** | **Spec — AI Act classification** | **Sovraclassificazione AI Act (high-risk → limited-risk)** | **High (compliance)** | **✅ RESOLVED** |
+| **INC-000e** | **2026-05-07** | **Spec — cost estimate** | **Sottostima costo Sonnet (~0,02 → ~0,04 €/analisi)** | **Medium** | **✅ RESOLVED** |
+| **INC-000f** | **2026-05-10** | **Spec — Anthropic retention drift** | **Retention log API 30gg obsoleta — policy aggiornata a 7gg da set 2025** | **Low (fact drift)** | **✅ RESOLVED** |
+| INC-001 | 2026-05-12 (Lez. 3) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🔴 Open |
+| INC-002 | 2026-05-13 (Lez. 4) | Claude API timeout | Timeout su batch processing di contratti | High | 🔴 Open |
+| INC-003 | 2026-05-13 (Lez. 4) | JSON parsing / encoding | Caratteri speciali italiani (accenti, €) corrotti nel JSON | High | 🔴 Open |
 
 ---
 
@@ -117,6 +120,82 @@ User feedback: "assolutamente non va bene deve rianalizzare lui i file e trovare
 - Documented in PROMPT_LOG.md as "User feedback on design methodology"
 
 **Status:** ✅ Resolved — Methodology corrected, Specifica v2 completed with independent Haiku analysis
+
+---
+
+## INC-000d — Sovraclassificazione AI Act (high-risk → limited-risk)
+
+**Data:** 2026-05-07 (durante review Spec v2 + verifica Perplexity)
+
+**Componente:** Specifica §1, §7, §11 — posizionamento normativo AI Act
+
+**Descrizione:** Spec v1 e v2 classificavano SpecterAI come "AI Act high-risk decision-support" basandosi su un'interpretazione conservativa: "sistema legal-AI = automaticamente Annex III high-risk". Questa classificazione comportava (se non corretta): obbligo di conformity assessment, registrazione database UE, quality management system formale → carico compliance enorme per un MVP.
+
+**Severità:** High (compliance) — non blocca il prototipo, ma se la spec fosse stata applicata in produzione avrebbe imposto obblighi non dovuti, con costi e tempistiche elevati.
+
+**Root cause:** classificazione fatta "by analogy" senza leggere il testo dell'Annex III e dell'Art. 6(3). Annex III voce (5) copre "amministrazione della giustizia" ma è ristretto a sistemi a uso di **autorità giudiziarie** (giudici, pubblici ministeri, tribunali) per interpretazione del diritto, valutazione prove, ricerca giurisprudenziale per decisioni vincolanti. Un tool di **lettura contrattuale per non-avvocati** non rientra. Inoltre Art. 6(3) prevede 3 derogazioni esplicite (task procedurale ristretto + miglioramento attività umana + pattern detection senza sostituzione): SpecterAI le soddisfa tutte e tre.
+
+**Soluzione:** verifica Perplexity su artificialintelligenceact.eu, EDPS guidance 2025, linee guida Commissione Art. 6(5) di feb 2026 → riclassificato come **limited-risk** con soli obblighi di trasparenza Art. 50 (disclaimer, già implementato). Niente conformity assessment, niente registrazione UE.
+
+**Lezioni apprese:**
+- ✅ Classificazioni normative vanno verificate sui testi originali, non per analogia
+- ✅ "Conservative-by-default" su compliance può essere costoso quanto under-classification
+- ✅ Verifica fattuale via Perplexity con citazione fonti = pattern critico per claim regolatori
+- ✅ Documentare la riclassificazione esplicitamente in changelog (audit trail per la prof e per future revisioni)
+
+**Aggiornamenti Specifica:** Spec v3 §1 + §7 + §11 + §13 changelog riga #5.bis (riclassificazione + motivazione tripla).
+
+**Status:** ✅ Resolved 2026-05-07
+
+---
+
+## INC-000e — Sottostima costo Sonnet (~0,02 → ~0,04 €/analisi)
+
+**Data:** 2026-05-07 (durante meta-review + verifica Perplexity pricing)
+
+**Componente:** Specifica §7 — Stima costi e scenari
+
+**Descrizione:** Spec v2 dichiarava "<0,02 €/analisi" come stima costo runtime. La cifra era plausibile per modelli di fascia bassa (Haiku) ma **non per Sonnet** (modello effettivamente scelto in §6 multi-model routing). Discrepanza tra modello scelto e prezzo dichiarato.
+
+**Severità:** Medium (non blocca il prototipo per il corso — budget piccolo — ma compromette credibilità della stima per scenari MVP pubblico 100-1000 analisi/mese).
+
+**Root cause:** numero "ricordato" da casi d'uso Haiku passati, non ricalcolato per Sonnet. Verifica pricing ufficiale non eseguita prima della stima v2.
+
+**Soluzione:** verifica Perplexity 2026-05-07 su platform.claude.com/docs/en/about-claude/pricing → Sonnet 4.6: 3,00 $/M input, 15,00 $/M output. Ricalcolo con consumo tipico (4.600-6.100 token input + 1.500-2.000 output): media ~0,04 €/analisi (range 0,033-0,044 €). Aggiornata tabella scenari Demo / Testing / MVP pubblico in §7. Budget consegna ricalcolato: <2 € (margine ampio).
+
+**Lezioni apprese:**
+- ✅ Stime di costo vanno verificate sul listino vigente al momento della spec, mai a memoria
+- ✅ Coerenza interna spec: il modello scelto in §6 deve essere quello prezzato in §7
+- ✅ Ricalcolo per scenari (Demo / Testing / MVP) rende esplicito il delta a volume
+
+**Aggiornamenti Specifica:** Spec v3 §7 tabella scenari + §13 changelog riga #4.
+
+**Status:** ✅ Resolved 2026-05-07
+
+---
+
+## INC-000f — Anthropic retention drift (30gg → 7gg)
+
+**Data:** 2026-05-10 (durante review Perplexity di validazione Spec v3)
+
+**Componente:** Specifica §7 — GDPR / Anthropic ToS
+
+**Descrizione:** Spec v3 (versione 2026-05-07) dichiarava retention log API Anthropic = 30 giorni. La policy era stata aggiornata a **7 giorni a partire da settembre 2025** — fact drift di 8 mesi non rilevato nella verifica Perplexity originale del 2026-05-07.
+
+**Severità:** Low (fact drift, no compliance impact diretto — la retention più breve è *favorevole* per GDPR, non sfavorevole). Comunque incoerenza che indebolisce credibilità della spec.
+
+**Root cause:** la verifica Perplexity originale (2026-05-07) ha citato la policy "storica" senza beccare l'update. Probabile causa: pagina policy non indicizzata recentemente o citation di un riferimento secondario.
+
+**Soluzione:** review Perplexity di validazione finale (2026-05-10, sessione fresh isolata) ha rilevato il drift incrociando privacy.claude.com con char.com/blog/anthropic-data-retention-policy. Aggiornata spec v3 §7 con policy corrente (7gg) + nota esplicita sul cambio settembre 2025.
+
+**Lezioni apprese:**
+- ✅ **Conversazione Perplexity fresh per la validazione finale:** una sessione "calda" sui fix avrebbe probabilmente confermato per inerzia il numero originale
+- ✅ I claim su policy esterne (ToS, retention, pricing) hanno scadenza implicita — vanno re-verificati a ogni iterazione spec
+- ✅ Pattern: ogni numero/percentuale/policy citata deve avere data di verifica nel testo, così è ovvio quando è invecchiata
+
+**Aggiornamenti Specifica:** Spec v3.1 §7 + §13 changelog riga #14.
+
+**Status:** ✅ Resolved 2026-05-10
 
 ---
 

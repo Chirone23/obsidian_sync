@@ -2,9 +2,10 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)  
 **Data inizio progetto:** 2026-04-28 (brainstorming)  
-**Data prompt v1:** 2026-05-07  
-**Versione prompt attuale:** v1  
-**Stato:** Operativo — pronto per MVP testing  
+**Data prompt v1:** 2026-04-30
+**Versione prompt attuale:** v1-final (text-level invariato dalla Spec v2; spec attuale: v3.1 al 2026-05-10)
+**Stato:** Operativo — pronto per MVP testing (Lez. 3)
+**Strategia testing:** Iterazione prompt + JSON quality check su Claude Code CLI (zero-cost, stesso modello del runtime). Runtime test plan §8 su Claude API a pagamento (~0,60 € totali). Esclusi Gemini Flash / OpenRouter free per evitare drift di modello.
 
 ---
 
@@ -20,6 +21,9 @@
 | 2026-05-02 | Competitive analysis | Ricerca vs Mikeoss | Medium risk (non cannibalizza) |
 | 2026-05-03 | Specifica v2 | +Competitive Positioning, +Green AI, +Full prompt | Specifica congelata |
 | 2026-05-04 | Documentation | PROMPT_LOG, INCIDENTS, SESSION_HANDOFF | Ready for building |
+| 2026-05-06 | Feedback prof (intermedio) | Valutazione 95/100, File2 + File3 stack tecnico | Sblocca Lez. 3 |
+| 2026-05-07 | Spec v3 | Review v2 + Meta-Review multi-agent + 4 query Perplexity → 13 fix integrati | AI Act riclassificato limited-risk |
+| 2026-05-10 | Spec v3.1 | 3 patch da feedback prof File3 (stretch goals, dev token strategy, build roadmap) + 2 fix da review Perplexity (retention 30gg→7gg, DPA esplicito) | Spec finale pre-consegna |
 
 ---
 
@@ -32,6 +36,8 @@
 | **v1** | 2026-04-30 | ✅ Completato | First full specification, 7 categories, stack defined | Specifica Tecnica v1 |
 | **v1-refined** | 2026-05-02 | ✅ Completato | User feedback: prompt design methodology | Haiku independent re-analysis |
 | **v1-final** | 2026-05-04 | ✅ Operativo | Full prompt text + few-shot examples + Green AI | Specifica Tecnica v2 |
+| **v1-final** (spec v3) | 2026-05-07 | ✅ Operativo | Prompt text invariato; spec arricchita: anti-allucinazione `raw_excerpt` (fuzzy match), gate lingua IT/EN bloccante, scenari costo ricalcolati Sonnet, AI Act limited-risk Art. 6(3), Mistral Medium 3 come fallback | 13 fix integrati |
+| **v1-final** (spec v3.1) | 2026-05-10 | ✅ Operativo | Prompt text invariato; +Stretch Goals, +dev token strategy zero-cost (Claude Code CLI), +build roadmap, +retention Anthropic 7gg, +DPA esplicito | 5 fix da feedback prof + Perplexity review |
 
 ---
 
@@ -254,6 +260,69 @@ DO NOT: Invent clauses, use legal jargon, advise sign/don't sign, return text ou
 **Problema riscontrato:** None — prompt è stabile e production-ready.
 
 **Soluzione:** → Ready for MVP building in Cursor (Lezione 3)
+
+---
+
+## Spec v3 — 2026-05-07 — Review + Meta-Review + Verifiche Perplexity (13 fix)
+
+**Contesto:** prima della consegna, Spec v2 è stata sottoposta a una review interna (gap analysis pre-consegna) seguita da meta-review multi-agent (3 agenti OpenCode in parallelo su modelli free OpenRouter, validazione convergente). Output: 13 fix richiesti. In parallelo, 4 query Perplexity di verifica fattuale (pricing Sonnet, Anthropic ToS, AI Act classification, provider alternativi).
+
+**Cosa è cambiato (prompt text-level: nulla; spec-level: 13 fix):**
+
+1. Verifica anti-allucinazione `raw_excerpt`: fuzzy match SequenceMatcher threshold 0.92, retry "verbatim only", flag `excerpt_unverified` se persiste
+2. Test plan eseguibile T1-T12 con criteri pass/fail (sostituisce elenco discorsivo v2)
+3. Metriche precision/recall/grounding con soglie (≥0,85 / ≥0,80 / ≥0,90)
+4. Scenari costo ricalcolati: Sonnet ~0,04 €/analisi (v2 sottostimava 0,02), budget consegna <2 €
+5. GDPR esteso: ToS Anthropic Section B citato verbatim, retention log dichiarata, DPA referenziato
+6. **Riclassificazione AI Act: high-risk → limited-risk** ex Art. 6(3) (3 derogazioni soddisfatte)
+7. Modalità degradata Claude API down: messaggio esplicito + 503 + Retry-After (no fake-success da regex)
+8. Limiti validazione dichiarati: zero user interview, score auto-corretto 4/5 → 3/5
+9. Provenance & Versioning §13 (audit trail v1→v2→v3)
+10. Gate lingua bloccante IT/EN (no fallback silenzioso)
+11. Tabella provider alternativi: Mistral Medium 3 raccomandato post-MVP (3,3× più economico, EU residency)
+12. Sezione fallback "API down" definita
+13. Limit `raw_excerpt` ≥20 char per evitare frammenti triviali
+
+**Lezione metodologica:** la **meta-review multi-agent** (3 angle OpenRouter free in parallelo) ha trovato 6 gap aggiuntivi non identificati dalla review singola. Costo: zero (free models). Pattern riutilizzabile per progetti futuri.
+
+**Aggiornamenti collegati:** Specifica v3 §13 (changelog completo).
+
+---
+
+## Spec v3.1 — 2026-05-10 — Feedback Prof + Validation Perplexity (5 fix)
+
+**Contesto:** la prof Melanie ha consegnato 2 file di feedback (File2 valutazione 95/100, File3 stack tecnico + roadmap consigliata). Audit incrocia feedback prof con Spec v3 → 3 gap minori identificati. Per ognuno, ricerca Perplexity isolata su best practice 2026 (sessione separata da Spec v3 review). Successivamente, Perplexity di validazione generale Spec v3 (9 punti, sessione fresh).
+
+**3 patch da feedback prof File3:**
+
+1. **§7 Strategia token in fase di sviluppo (zero-cost):**
+   - Claude Code CLI per iterazione prompt + JSON quality check (zero drift di modello, abbonamento già attivo)
+   - Cursor con Sonnet per generazione codice modulo per modulo
+   - Claude API a pagamento solo per runtime test plan §8 (~0,60 €) e demo (~0,40 €)
+   - **Esclusi Gemini Flash / OpenRouter free:** drift di modello (un JSON valido su Gemini può fallire su Sonnet), limiti free tier aggressivi
+   - Budget complessivo dev + consegna: <1,50 €
+
+2. **§2.bis Stretch Goals (separati da Fuori scope):**
+   - Download report PDF: **Playwright headless** `page.pdf()` (preferito su WeasyPrint per fedeltà CSS moderni)
+   - Confidence indicator su `risk_level`: self-consistency 3-run a temp=0, ≥2/3 agreement (Anthropic API non espone logprobs nel 2026). Costo triplica (€0,12/analisi) → solo demo, mai default
+   - CSS report più curato
+
+3. **§12.bis Build Roadmap moduli→lezioni→deliverable:**
+   - Lez. 3: schemas + pdf_processor + regex_layer
+   - Lez. 4: llm_client + main + templates
+   - Lez. 5: test plan §8 + PROMPT_LOG + INCIDENTS
+   - Lez. 6: polish + eventuale stretch + demo
+
+**2 fix da review Perplexity validation (9 punti, 7/9 ✅, 2 ⚠️):**
+
+4. **§7 retention Anthropic:** 30gg → **7gg** (policy update settembre 2025, verificato su privacy.claude.com)
+5. **§7 GDPR:** nota esplicita su DPA Anthropic da sottoscrivere pre-deploy pubblico (include SCC post-Schrems II + ruolo DPF US-EU)
+
+**Lezione metodologica:**
+- **Conversazioni Perplexity isolate per evitare bias da contesto:** le 3 ricerche isolate sui gap (idee/best practice) hanno restituito alternative concrete che la prof non aveva citato (Playwright vs WeasyPrint, self-consistency vs logprobs). La validation finale Spec v3 in sessione fresh ha trovato 2 fact drift recenti (retention 30→7gg) che una sessione "calda" avrebbe probabilmente confermato per inerzia.
+- **Strategia testing rivista:** il piano originale prof (Claude.ai + Gemini Flash + Cursor + Claude API) è stato semplificato a (Claude Code CLI + Cursor + Claude API) sfruttando l'abbonamento esistente. Stesso risultato a costo marginale zero per il dev workflow.
+
+**Aggiornamenti collegati:** Specifica v3.1 §2.bis, §7, §12.bis, §13 changelog (righe #11-15).
 
 ---
 
