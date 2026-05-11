@@ -14,15 +14,15 @@ Il punteggio resta 95 — era già il più alto della classe e il materiale cons
 
 ## Cosa hai consegnato oggi
 
-| File | Contenuto | Note |
-|------|-----------|------|
-| Specifica_Tecnica_v3_-_SpecterAI.md | Spec v3 (826 righe, 18 modifiche documentate nel changelog) | Versione corrente di riferimento |
-| Brainstorming_-_Validazione_Idea.md | Brainstorming in formato .md (originale, convertito da .docx) | Formato .md — apprezzato |
-| Contract_Analyzer_-_Validazione_Idea.md | Validazione idea separata in formato .md | Formato .md — apprezzato |
-| PROMPT_LOG.md | Timeline completa dal 28/04 al 10/05, ogni iterazione documentata | 385 righe |
-| INCIDENTS.md | 6 incident risolti + 3 previsti (pre-mortem) con root cause e lezioni | 346 righe |
-| README_DOCUMENTAZIONE.md | Indice strutturato di tutti i file del progetto | Include i miei File 2 e File 3 come riferimenti |
-| Verifica_PC_-_personale.md | Ambiente completo: 8 dipendenze installate, API key confermata | Formato .md |
+| File                                    | Contenuto                                                             | Note                                            |
+| --------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------- |
+| Specifica_Tecnica_v3_-_SpecterAI.md     | Spec v3 (826 righe, 18 modifiche documentate nel changelog)           | Versione corrente di riferimento                |
+| Brainstorming_-_Validazione_Idea.md     | Brainstorming in formato .md (originale, convertito da .docx)         | Formato .md — apprezzato                        |
+| Contract_Analyzer_-_Validazione_Idea.md | Validazione idea separata in formato .md                              | Formato .md — apprezzato                        |
+| PROMPT_LOG.md                           | Timeline completa dal 28/04 al 10/05, ogni iterazione documentata     | 385 righe                                       |
+| INCIDENTS.md                            | 6 incident risolti + 3 previsti (pre-mortem) con root cause e lezioni | 346 righe                                       |
+| README_DOCUMENTAZIONE.md                | Indice strutturato di tutti i file del progetto                       | Include i miei File 2 e File 3 come riferimenti |
+| Verifica_PC_-_personale.md              | Ambiente completo: 8 dipendenze installate, API key confermata        | Formato .md                                     |
 
 Tutti i file in formato .md con link Obsidian interni — coerente con il metodo del corso e con il tuo workflow personale.
 
