@@ -26,6 +26,7 @@
 | 2026-05-10 | Spec v3.1 | 3 patch da feedback prof File3 (stretch goals, dev token strategy, build roadmap) + 2 fix da review Perplexity (retention 30gg→7gg, DPA esplicito) | Spec finale pre-consegna |
 | 2026-05-11 | Test data + prompt test | 8 PDF reali scaricati via Perplexity free (INC-000g) + primo test prompt su Claude.ai con Sonnet su 1 contratto reale | Output JSON conforme schema 7 cat inglesi, autovalut. 4-5/5, 2 osservazioni da verificare (ellissi raw_excerpt, numeri calcolati in plain_language) |
 | 2026-05-11 | Test runtime #2 e #3 | Sonnet v1-final su co.co.co. ERSU + Consip Condizioni Generali; verifica fattuale Consip delegata a Haiku via Claude.ai | Test #2 zero pattern; Test #3 scopre pattern 3 (cross-article extraction + drift semantico "automatica" vs "potrà"). Definita patch v2.1 grounding stretto plain_language ↔ raw_excerpt |
+| 2026-05-11 | Test runtime #4 | Sonnet v1-final su NDA Politecnico Milano (baseline negativo); verifica fattuale delegata a Haiku via Claude.ai | Pattern 1/2 non riprodotti, pattern 3 confermato 1/2 (termination cross-article), pattern 4 (riempimento allucinato) escluso. **Scoperto pattern 5 nuovo:** inferenza speculativa esplicitata su fatti giurisprudenziali ("foro probabile Milano" da firma a Milano). Definita patch v2.2 anti-speculazione |
 
 ---
 
@@ -531,6 +532,91 @@ CONSTRAINTS (additional — patch v2.1, 2026-05-11)
 1. Ri-test Consip: verificare che 0,5%, BCE+8, tetto 10%, 30gg preavviso, D.Lgs. 50/2016 finiscano nel raw_excerpt (lista multi-span) e non solo nel plain_language.
 2. Re-run Demanio Test #1: verificare che le patch v2 + v2.1 elimino sia l'ellissi sia i calcoli sia eventuali drift semantici.
 3. NDA breve (4. Modello impegno riservatezza): contratto a categoria singola, baseline negativo (pattern non dovrebbero attivarsi).
+
+---
+
+## Test runtime #4 — 2026-05-11 — Prompt v1-final su Sonnet via Claude.ai (contratto reale n.4/8)
+
+**Contesto:** Quarto test del prompt v1-final **senza modifiche** su NDA breve unilaterale (Modello Impegno alla Riservatezza, Politecnico di Milano). Tipologia "contratto monocategoria, baseline negativo": ci si aspetta `present:false` su 3-4 categorie su 7, nessuno dei pattern di Test #1 (ellissi+calcoli) e minima attivazione di pattern 3 (cross-article). Scopo aggiuntivo: verificare se Sonnet **inventa** clausole sotto pressione di schema (pattern 4 candidato — riempimento allucinato).
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/6._Modello_impegno_alla_riservatezza.pdf` (2 pagine, NDA unilaterale a favore del Politecnico)
+- System prompt + user message: identici a Test #1/#2/#3 (v1-final, spec v3.1 §6)
+- Esecuzione: chat Claude.ai NUOVA
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione 5/5/5/4. Risk distribution: 3 high (penalties, liability_limitation, intellectual_property), 2 medium (termination, governing_law), 0 low (le 3 categorie con `present:false` payment_terms+auto_renewal+liability_limitation marcate come risk_level basso/alto coerente con assenza di tutele).
+
+**Verifica anti-pattern (vs Test #1, #2, #3):**
+
+| Pattern | Test #1 | Test #2 | Test #3 | Test #4 (NDA) | Esito cumulativo |
+|---|---|---|---|---|---|
+| Ellissi `[...]` | Presente | Assente | Assente | **Assente** | ✅ 3/4 non riprodotto (Demanio outlier) |
+| Calcoli aritmetici espliciti | Presente | Assente | Assente | **Assente** | ✅ 3/4 non riprodotto |
+| Cross-article extraction nel plain_language | Non emerso | Non emerso | Confermato (5/6 fatti) | **Confermato 1/2** (termination "cessa prima se pubbliche" è in altra sezione del NDA) | ⚠️ pattern stabile su contratti multi-articolo |
+| Pressione di schema → riempimento allucinato (pattern 4 candidato) | n/a | n/a | n/a | **Non riprodotto** — 3 `present:false` correttamente motivati, raw_excerpt vuoto come da spec | ✅ regola schema tiene |
+
+**🆕 PATTERN 5 NUOVO confermato in Test #4 — inferenza speculativa esplicitata su fatti giurisprudenziali:**
+
+In `governing_law` plain_language Sonnet ha scritto: *"la firma avviene a Milano, quindi è probabile che sia quello milanese"* (riferito al foro competente). Il raw_excerpt cita Dir. UE 2016/943 + artt. 98-99 c.p.i., **nessuna menzione di foro**. Verifica Haiku via Claude.ai sul PDF allegato (chat fresh, prompt verifica letterale) ha confermato: ASSENTE — il documento riporta "Milano" **solo come luogo di firma** ("Letto, accettato e sottoscritto, Milano"), nessuna clausola di competenza territoriale.
+
+Caratteristiche del pattern:
+- Sonnet ha **qualificato esplicitamente** con "probabile" → comportamento trasparente, non allucinazione vera
+- Tuttavia ha **inferito un fatto giurisprudenziale** ("foro Milano") da un elemento extra-testuale ("firma a Milano") che ha valore probatorio diverso
+- Per legal-AI a target non-avvocato: il qualificatore "probabile" viene spesso ignorato dal lettore; il "fatto" si consolida come tale
+- Differenza rispetto al pattern 3 (Test #3 cross-article): qui il fatto **non è nel contratto in nessuna forma**; è un'inferenza da extra-testo
+
+**Verifica delegata Haiku — riepilogo numerico:**
+
+| # | Affermazione di Sonnet | Verdetto Haiku | Posizione PDF |
+|---|---|---|---|
+| 1 | NDA cessa prima dei 5 anni se info diventano pubbliche per cause non imputabili | SIMILE — fatto presente con struttura logica diversa ("5 anni OPPURE pubblico dominio" vs "5 anni con deroga anticipata") | pag. 2, paragrafo finale |
+| 2 | Foro probabile Milano basato sulla firma a Milano | **ASSENTE** — solo "Milano" come luogo firma, nessuna clausola foro | pag. 2, firma |
+
+Sintesi: 0/2 PRESENTI + 1/2 SIMILE + 1/2 ASSENTE. **Pattern 6 (allucinazione totale) escluso**; pattern 5 confermato come categoria distinta da pattern 3.
+
+**Implicazioni metodologiche cumulate (Test #1→#4):**
+
+1. Patch v2 (no-ellissi + no-calcoli) → coprono pattern di Test #1, falsificate negativamente su Test #2/#3/#4 (assenti) → prevention legittima.
+2. Patch v2.1 (grounding stretto + multi-span + qualificatori modali) → copre pattern 3 di Test #3 e marginalmente pattern 3 di Test #4 (termination cross-article). Tecnicamente blocca anche pattern 5 se Sonnet rispetta "ogni fatto specifico deve avere correlato testuale nel raw_excerpt". Rischio: l'inferenza speculativa qualificata ("probabile X") potrebbe non essere classificata come "fatto" da Sonnet.
+3. **Serve patch v2.2 esplicita** contro linguaggio speculativo/inferenziale sul plain_language. Sicurezza in profondità: anche se v2.1 dovesse bastare, una regola esplicita è preferibile per audit trail e per allenare il modello via few-shot in iterazioni future.
+
+**Lezione metodologica:**
+- ✅ **Pattern 5 (inferenza speculativa) è sottile**: emerge solo con verifica fattuale incrociata + lettura attenta dei qualificatori. Una review automatica su grounding numerico (Test #1) o su nomi-cose-numeri (Test #3) non l'avrebbe catturato. Lezione: in Lez. 5 (test plan §8) aggiungere un test su grep di stop-words speculative ("probabil*", "presumibil*", "verosimilmente", "potrebbe essere", "presumere").
+- ✅ **NDA breve non è un baseline-zero come previsto**: i pattern emergono comunque, solo cambiano forma. Test su contratti corti restano informativi.
+- ⚠️ Per legal-AI a target non-esperto, la dottrina "ogni fatto = citazione + verbatim, altrimenti tacere" è più sicura della dottrina "puoi inferire purché qualificato". L'utente non-avvocato non sa pesare i qualificatori di incertezza.
+
+**Aggiornamenti collegati:** nessuna modifica spec v3.1. Patch v2.2 definita sotto come BLOCCO additivo.
+
+---
+
+## Patch v2.2 prompt — BLOCCO PRONTO DA INCOLLARE in `prompts/system_prompt.md` (Cursor Fase 1, additivo a v2 + v2.1)
+
+> Da inserire **dopo le patch v2 e v2.1** nella sezione `CONSTRAINTS (additional)` del system prompt. Copre il pattern 5 emerso in Test #4 (inferenza speculativa qualificata su fatti giurisprudenziali).
+
+```
+CONSTRAINTS (additional — patch v2.2, 2026-05-11)
+- plain_language must not contain speculative or inferential statements
+  about facts absent from the contract text. Speculative language markers
+  are forbidden: "probabilmente", "presumibilmente", "verosimilmente",
+  "potrebbe essere", "è plausibile che", "si può presumere", "implicitamente".
+- Inferring legal facts (governing court, applicable jurisdiction,
+  enforcement venue, party domiciles, regulatory classification) from
+  extra-textual signals (place of signature, letterhead, institutional
+  affiliation, language of the document) is forbidden. If the contract
+  does not explicitly state a legal fact, plain_language must say so:
+  "Il contratto non specifica [fatto X]; chiarire con la controparte."
+- The only inferential statement allowed in plain_language is a direct
+  consequence of an absent clause flagged elsewhere as "present": false.
+  Example permitted: "Senza un tetto di responsabilità, sei esposto a
+  richieste illimitate." Example forbidden: "La firma a Milano suggerisce
+  che il foro probabile sia quello milanese."
+```
+
+**Provenance:** patch derivata da Test runtime #4 (NDA Politecnico Milano, verifica delegata a Haiku). Pattern 5 confermato come categoria distinta dal pattern 3 (cross-article): qui il fatto inferito **non è nel contratto in nessuna forma**, deriva da extra-testo (luogo firma).
+
+**Quando applicare:** in Lez. 4 insieme alle patch v2 e v2.1, in `prompts/system_prompt.md`. Nessuna modifica schema Pydantic richiesta — vincolo puro a livello di prompt.
+
+**Test post-applicazione:** la mini-suite della patch v2.1 (Consip ri-test + Demanio re-run + NDA baseline) verifica anche v2.2. Test specifico: nel JSON di output, grep di `(probabil|presumibil|verosimil|potrebbe|plausibil|implicit)` deve restituire zero match.
 
 ---
 

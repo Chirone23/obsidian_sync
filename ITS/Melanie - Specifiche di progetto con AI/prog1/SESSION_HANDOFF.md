@@ -139,9 +139,10 @@ specter-ai/
 | Asset | Stato |
 |---|---|
 | 8 PDF contratti reali (5/5 tipologie) | ✅ pronti in `prog1/specterai/contratti/` |
-| Prompt v1-final validato cross-contratto | ✅ 3/8 PDF (Demanio appalto + ERSU co.co.co. + Consip Condizioni Generali) |
+| Prompt v1-final validato cross-contratto | ✅ 4/8 PDF (Demanio appalto + ERSU co.co.co. + Consip Cond. Gen. + NDA Politecnico Milano) |
 | Patch v2 prompt (ellissi + calcoli) | ✅ definite, blocco pronto da incollare in PROMPT_LOG (post Test #2) |
 | Patch v2.1 prompt (grounding stretto + qualificatori modali) | ✅ definita post Test #3 + verifica Haiku, blocco additivo in PROMPT_LOG |
+| Patch v2.2 prompt (anti-speculazione + no inferenza giurisprudenziale) | ✅ definita post Test #4 + verifica Haiku (pattern 5 "foro probabile Milano"), blocco additivo in PROMPT_LOG |
 | Spec v3.1 | ✅ confermata 95/100, nessuna patch richiesta dalla prof |
 | Cartella progetto Cursor | ⏳ da creare in Lez. 4 (struttura nel Promemoria prof) |
 | `prompts/system_prompt.md` separato | ⏳ da creare in Fase 1 Cursor + integrare patch v2 |

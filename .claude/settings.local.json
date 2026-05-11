@@ -85,7 +85,10 @@
       "Bash(grep -a \"pulizia\\\\|cleanup\\\\|delete\\\\|C:\\\\\\\\\\\\\\\\\" \"C:\\\\Users\\\\Chirone\\\\.claude\\\\projects\\\\C--Users-Chirone-Documents-Secondo-Cervello-ITS-Melanie---Specifiche-di-progetto-con-AI\\\\479d50b9-4488-43b6-95a8-8fe6eaad1212.jsonl\")",
       "PowerShell(python \"C:\\\\Users\\\\Chirone\\\\execution\\\\parse_sessions.py\")",
       "PowerShell($env:PYTHONIOENCODING='utf-8'; python \"C:\\\\Users\\\\Chirone\\\\execution\\\\parse_sessions.py\")",
-      "Bash(mkdir *)"
+      "Bash(mkdir *)",
+      "Bash(grep -q \"^\\\\.tmp\" .gitignore)",
+      "Bash(echo \".tmp/\")",
+      "Bash(git rm *)"
     ]
   }
 }
