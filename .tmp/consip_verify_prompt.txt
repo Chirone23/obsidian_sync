@@ -1,0 +1,1019 @@
+Sei un verificatore fattuale. Ti fornisco il testo integrale di un contratto (Consip Condizioni Generali Fornitura Prodotti, agosto 2018). Devi verificare se 6 fatti specifici, citati da un altro LLM nei suoi commenti riassuntivi, sono PRESENTI letteralmente nel testo, e se sì in quale articolo/paragrafo.
+
+Per ogni fatto rispondi con:
+- PRESENTE / ASSENTE
+- Se presente: citazione testuale verbatim (max 200 char) + articolo o sezione
+- Se assente: nota se esiste qualcosa di simile o se è proprio invenzione
+
+FATTI DA VERIFICARE:
+1. "ritenuta dello 0,5%" (sui pagamenti, svincolabile a fine contratto)
+2. "tasso BCE maggiorato di 8 punti" come tasso di mora per ritardi pagamento
+3. "tetto del 10% del valore contrattuale" come massimo cumulativo delle penali
+4. "risoluzione automatica al raggiungimento del 10%" delle penali
+5. "30 giorni di preavviso" per recesso del committente (Punto Ordinante)
+6. "D.Lgs. 50/2016" (Codice degli Appalti) citato esplicitamente come normativa applicabile
+
+Rispondi in italiano, formato lista numerata 1-6, conciso. Non aggiungere preamboli.
+
+=== TESTO CONTRATTO ===
+ 
+ 
+Realizzato da azienda con sistema di gestione per la qualità certificato ISO 9001:2008                    Pag.- 1 - di 25 
+ 
+ 
+ 
+CONDIZIONI GENERALI DI CONTRATTO 
+RELATIVE ALLA FORNITURA DI PRODOTTI 
+ 
+Articolo 1 
+Definizioni 
+ 
+Nell’aŵďito del pƌeseŶte doĐuŵeŶto ĐiasĐuŶo dei segueŶti teƌŵiŶi, ƋuaŶdo vieŶe sĐƌitto ĐoŶ l’iŶiziale 
+maiuscola, sia al singolare che al plurale, assume il significato di seguito riportato: 
+Attivazione del servizio: data di inizio di erogazione del servizio indicata dal Punto Ordinante; 
+Bando di Abilitazione al Mercato Elettronico (o Bando): uŶo dei ďaŶdi peƌ l’AďilitazioŶe ;ĐoŵpƌeŶsivo dei 
+relativi allegati) dei Fornitori al Mercato Elettronico; 
+Prodotto: il bene offerto dal Fornitore nel Mercato Elettronico; 
+Canone di noleggio: l’iŵpoƌto peƌiodiĐo corrisposto dal Punto Ordinante al Fornitore a fronte 
+dell’eseĐuzioŶe del CoŶtƌatto; 
+Capitolato d’Oneri: documento coŶteŶeŶte le disposizioŶi ƌelative all’AďilitazioŶe e alla peƌŵaŶeŶza al 
+Bando di Abilitazione; 
+Capitolato Tecnico: il documento allegato al Bando di Abilitazione al Mercato Elettronico della Pubblica 
+Amministrazione contenente la descrizione dei requisiti e delle caratteristiche cui devono rispondere i 
+Prodotti offerti dai Fornitori nel Mercato Elettronico; 
+Catalogo elettronico: l’eleŶĐo dei Prodotti  delle relative caratteristiche tecniche e commerciali, offerti dal 
+FoƌŶitoƌe ed esposti all’iŶteƌŶo del Sistema di e-Procurement secondo la struttura definita da ciascuna 
+Categoria di Abilitazione e resa disponibile secondo le modalità  previste nel Sito; 
+Condizioni Generali di Contratto: il presente documento contenente le clausole contrattuali uniformi 
+standardizzate che disciplinano il Contratto concluso nel Mercato Elettronico della Pubblica Ammnistrazione 
+tra Soggetto Aggiudicatore e Fornitore in conformità a quanto stabilito da ciascun Bando di Abilitazione al 
+Mercato Elettronico; 
+Condizioni Particolari di Contratto: le clausole contrattuali eventualmente predisposte dal Soggetto 
+Aggiudicatore nel caso di acquisto tramite RdO ad integrazione o in deroga al Contratto e/o alle presenti 
+Condizioni Generali di Contratto; 
+Contratto: il contratto di fornitura conĐluso Ŷell’aŵďito del Sistema di e- Procurement tra il Fornitore  ed il 
+Soggetto Aggiudicatore; 
+Data di Accettazione: si intende la data di esito positivo della verifica di conformità e di conseguente 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 2 - di 25 
+ 
+accettazione della fornitura; 
+Direttore dell’esecuzione del contratto: il soggetto eventualmente individuato da ciascun Soggetto 
+AggiudiĐatoƌe ai seŶsi e peƌ gli effetti dell’aƌt. ϭϬϭ del D. Lgs. 50/2016 e s.m.i., relativamente a ciascun 
+contratto di fornitura;  
+Fornitore: indiĐa uŶo dei soggetti di Đui all’ art. 45 del D. Lgs. n. 50/2016 e s.m.i. che ha ottenuto 
+l’AďilitazioŶe Ƌuale opeƌatoƌe eĐoŶoŵiĐo peƌ il MeƌĐato ElettƌoŶiĐo;  
+Giorno lavorativo: dal lunedì al venerdì, esclusi sabato e festivi; 
+Ordine Diretto (ODA): la manifestazione di volontà predisposta ed inviata dal Soggetto Aggiudicatore al 
+FoƌŶitoƌe peƌ l’aĐƋuisto effettuato nel Mercato Elettronico direttamente dal catalogo elettronico; 
+Parte: il Punto Ordinante e/o il Fornitore contraente; 
+Prezzo (o Corrispettivo): il corrispettivo versato dal Punto OƌdiŶaŶte al FoƌŶitoƌe a fƌoŶte dell’eseĐuzioŶe 
+del Contratto;  
+Punto Ordinante: il soggetto dotato dei poteƌi ŶeĐessaƌi peƌ ƌiĐhiedeƌe la RegistƌazioŶe e l’AďilitazioŶe al 
+Sistema di e-Procurement in nome e per conto del Soggetto Aggiudicatore e impegnare il Soggetto 
+AggiudiĐatoƌe ŵedesiŵo all’aĐƋuisto di prodotti e seƌvizi attƌaveƌso l’utilizzo del MeƌĐato ElettƌoŶiĐo; 
+Regole del Sistema di e-Procurement della Pubblica Amministrazione (o Regole): il documento che 
+definisce i termini e le condizioni che disĐipliŶaŶo l’aĐĐesso e l’utilizzo del “isteŵa di e-Procurement e dei 
+relativi Strumenti di Acquisto da parte di Fornitori e Soggetti Aggiudicatori e che disciplinano i Bandi di 
+abilitazione emanati da Consip e le procedure di acquisto svolte dai Soggetti AggiudiĐatoƌi Ŷell’aŵďito del 
+Mercato Elettronico; 
+Responsabile del Procedimento: il soggetto individuato da ciascun Soggetto Aggiudicatore ai sensi e per gli 
+effetti degli artt. 31 e 101 del D. Lgs. n. 50/2016 e s.m.i.; 
+Richiesta di Offerta (o RdO): l’iŶvito ad offrire, inviato dal Punto Ordinante ai Fornitori selezionati dallo 
+stesso, secondo le modalità e le procedure di cui agli artt. 50 e seguenti delle Regole; 
+Servizi Connessi: i servizi di consegna, eventuale installazione, manutenzione, e in generale tutti i servizi 
+indicati nel Capitolato Tecnico, nelle Condizioni Generali di Contratto e nel Contratto; 
+Soggetti Aggiudicatori: (un soggetto tra) le amministrazioni aggiudicatrici, gli enti aggiudicatori e gli altri 
+soggetti aggiudiĐatoƌi ai seŶsi dell’art. 3 del D. Lgs. n. 50/2016 e s.m.i., che sulla base della normativa 
+appliĐaďile vigeŶte soŶo legittiŵati all’utilizzo degli “tƌuŵeŶti di AĐƋuisto. 
+ 
+Per quanto non espressamente previsto nelle presenti Condizioni Generali di Contratto valgono le definizioni 
+contenute nelle Regole del Sistema di e-Procurement della Pubblica Amministrazione. 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 3 - di 25 
+ 
+ 
+ 
+Articolo 2 
+Oggetto e disciplina applicabile 
+ 
+1. Le presenti Condizioni Generali di Contratto disciplinano i contratti conclusi tra i Fornitori e i Punti 
+Ordinanti mediante Ordine Diretto e mediante procedimento di RdO Ŷell’aŵďito del MeƌĐato ElettƌoŶiĐo 
+della Pubblica Amministrazione (o Mercato Elettronico) ed aventi ad oggetto i Prodotti di cui al relativo 
+Capitolato Tecnico. 
+2. I rapporti tra le parti relativi al Contratto sono regolati: 
+a) In caso di Ordine Diretto: dal ŵodulo d’oƌdiŶe, dal ĐoŶteŶuto del Catalogo relativo al Prodotto, dalle 
+pƌeseŶti CoŶdizioŶi GeŶeƌali di CoŶtƌatto, ŶoŶĐhĠ dal Capitolato TeĐŶiĐo allegato al Capitolato d’OŶeƌi 
+relativo al Bando in oggetto, che costituiscono la manifestazione integrale di tutti gli accordi intervenuti con 
+il Fornitore relativamente alle attività e alle prestazioni contrattuali;  
+b) in caso di RdO : dalla proposta del Fornitore e dalla relativa accettazione del Punto Ordinante, dal 
+contenuto del Catalogo relativo al Prodotto, dalle presenti Condizioni Generali e dalle Condizioni Particolari 
+di Contratto eventualmente pattuite tra le Parti anche sotto forma di Capitolato Tecnico, le quali, in caso di 
+contrasto, prevalgono sulle Condizioni Generali di Contratto, nonché dal relativo Capitolato Tecnico allegato 
+al Capitolato d’OŶeƌi ƌelativo al BaŶdo in oggetto; 
+c) dalle disposizioni di cui al D.Lgs. 50/2016 e s.m.i.; 
+d) dalle disposizioni di cui al d.P.R. 10 ottobre 2010, n. 207, nei limiti stabiliti dagli artt. 216 e 217 del D.Lgs. 
+n. 50/2016 e s.m.i.; 
+e) dalle altre disposizioni anche regolamentari, inclusi i Capitolati d’Oneri Generali e Speciali e le norme in 
+materia di contabilità, in vigore per il Soggetto Aggiudicatore, di cui il Fornitore dichiara di avere esatta 
+conoscenza e che, sebbene non materialmente allegate, formano parte integrale del Contratto; 
+f) dal Codice Civile e dalle altre disposizioni normative in vigore in materia di contratti di diritto privato 
+nonché, in generale, dalla legge italiana. 
+3. Le presenti Condizioni Generali di Contratto, anche nelle loro singole disposizioni, sono sostituite, 
+modificate o abrogate automaticamente per effetto di norme aventi carattere vincolante contenute in leggi 
+o regolamenti vigenti o che entreranno in vigore successivamente, fermo restando che in ogni caso, anche 
+ove intervengano modificazioni autoritative dei prezzi peggiorative per il Fornitore contraente, Ƌuest’ultiŵo 
+rinuncia a promuovere azione o ad opporre eccezioni rivolte a sospendere o a risolvere il rapporto 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 4 - di 25 
+ 
+contrattuale in essere, salvo quanto previsto dagli artt. 13 e 14 delle presenti Condizioni Generali di 
+Contratto. 
+ϰ. Il PuŶto OƌdiŶaŶte, Ŷel Đoƌso dell’eseĐuzioŶe ĐoŶtƌattuale, potƌà appoƌtaƌe, ŵodifiĐhe Ŷonché varianti nei 
+Đasi e alle ĐoŶdizioŶi pƌeviste dall’aƌt. ϭϬϲ, del D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.m.i. e dalle disposizioni legislative e 
+regolamentari applicabili.  
+ 
+ 
+Articolo 3 
+Obbligazioni generali del Fornitore contraente 
+ 
+1. Sono a carico del Fornitore, intendendosi remunerati con il corrispettivo contrattuale di cui oltre, tutti 
+gli oneri ed i rischi relativi alla prestazione dei Prodotti oggetto del Contratto, nonché ogni attività che si 
+rendesse necessaria per la prestazione degli stessi o, comunque, opportuna per un corretto e completo 
+adempimento delle obbligazioni previste, ivi compresi gli oneri fiscali, le imposte e le tasse, gli oneri per la 
+sicurezza, gli eventuali oŶeƌi ƌelativi alle spese di viaggio e di ŵissioŶe peƌ il peƌsoŶale addetto all’eseĐuzione 
+contrattuale. 
+2. Il Fornitore ğ teŶuto a eseguiƌe tutte le pƌestazioŶi a peƌfetta ƌegola d’aƌte, Ŷel ƌispetto delle Ŷoƌŵe 
+vigenti e secondo le modalità, i termini e le prescrizioni contenute nel Contratto e nella relativa disciplina 
+contenuta nei documenti di cui all’aƌt. Ϯ, Đoŵŵa Ϯ, delle pƌeseŶti CoŶdizioŶi GeŶeƌali di CoŶtƌatto.  
+3. I Prodotti e, in generale, le prestazioni contrattuali dovranno necessariamente essere conformi alle 
+caratteristiche tecniche e commerciali e alle specifiche indicate nel Catalogo del Fornitore, nonché a quanto 
+stabilito nel relativo Capitolato Tecnico. Il Fornitore si obbliga a osseƌvaƌe, Ŷell’eseĐuzioŶe delle prestazioni 
+contrattuali, tutte le norme e le prescrizioni legislative e regolamentari applicabili siano esse di carattere 
+generale o specificamente inerenti al settore merceologico cui i Prodotti appartengono, ed in particolare 
+quelle di carattere tecnico, di sicurezza, di igiene e sanitarie vigenti, incluse quelle che dovessero essere 
+emanate successivamente alla conclusione del Contratto. Il Fornitore contraente si impegna a rispettare, per 
+quanto applicabili, le norme internazionali EN - I“O vigeŶti peƌ la gestioŶe e l’assiĐuƌazioŶe della Ƌualità delle 
+proprie prestazioni; a predisporre tutti gli strumenti e i metodi, comprensivi della relativa documentazione, 
+al fine di consentire al Punto Ordinante e a Consip, per quanto di sua competenza, di verificare la conformità  
+delle prestazioni offerte alle presenti Condizioni Generali di Contratto; a predisporre tutti gli strumenti e i 
+metodi, comprensivi della relativa documentazione, atti a garantire elevati livelli di servizio, compresi quelli 
+relativi alla sicurezza e riservatezza. 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 5 - di 25 
+ 
+4. Gli eveŶtuali ŵaggioƌi oŶeƌi deƌivaŶti dall’oďďligo di osseƌvaƌe le pƌesĐƌizioŶi di Đui sopƌa, anche se 
+entrate in vigore successivamente alla stipula del Contratto, resteranno ad esclusivo carico del Fornitore, 
+intendendosi in ogni caso remunerati con il corrispettivo contrattuale; il Fornitore non potrà, pertanto, 
+avanzare pretesa di indennizzi e/o compensi a tale titolo nei confronti dei Punti Ordinanti, assumendosene 
+ogni relativa alea. 
+5. Il Fornitore si impegna espressamente a manlevare e tenere indenne il Punto Ordinante da tutte le 
+ĐoŶsegueŶze deƌivaŶti dall’eventuale inosservanza delle prescrizioni di cui al comma 3 del presente articolo, 
+iŶĐluse, tƌa l’altƌo, Ƌuelle deƌivaŶti dagli iŶfoƌtuŶi e dai daŶŶi aƌƌeĐati al Punto Ordinante o a terzi in 
+relazione alla mancata osservanza delle vigenti norme tecniche, di sicurezza, di igiene e sanitarie. 
+6. Il Fornitore si obbliga a dare immediata comunicazione al Punto Ordinante di ogni circostanza che 
+influisca sull’eseĐuzioŶe delle oďďligazioŶi ĐoŶtƌattuali. IŶ paƌtiĐolaƌe, il Fornitore si impegna a mantenere i 
+ƌeƋuisiti ƌiĐhiesti peƌ l’aďilitazioŶe al Meƌcato Elettronico anche al momento della conclusione del Contratto 
+e comunque fino alla completa e perfetta esecuzione dello stesso. Il Fornitore contraente si impegna, altresì, 
+a dare immediata comunicazione anche al Punto Ordinante della sopravvenuta perdita di uno o più requisiti 
+di abilitazione. 
+7. Le attività contrattuali da svolgersi presso le sedi del Punto Ordinante dovranno essere eseguite senza 
+interferire con il normale lavoro degli uffici; le modalità e i tempi dovranno comunque essere concordati con 
+il Punto Ordinante. Il Fornitore pƌeŶde atto Đhe Ŷel Đoƌso dell’eseĐuzioŶe delle attività ĐoŶtƌattuali gli uffici 
+del Punto Ordinante continueranno ad essere utilizzati per la loro destinazione istituzionale. Il Fornitore si 
+impegna, pertanto, a eseguire le predette prestazioni salvaguardando le esigenze del Punto Ordinante senza 
+ƌeĐaƌe iŶtƌalĐio, distuƌďo o iŶteƌƌuzioŶi all’attività lavoƌativa iŶ Đoƌso, ƌiŶuŶziaŶdo, oƌa per allora, a qualsiasi 
+pƌetesa o ƌiĐhiesta di ĐoŵpeŶso Ŷel Đaso iŶ Đui l’eseĐuzioŶe delle prestazioni contrattuali dovesse essere 
+ostacolata o resa più onerosa dalle attività svolte dal Punto Ordinante.  
+8. Il Fornitore si impegna ad avvalersi di personale specializzato che potrà accedere agli uffici del Punto 
+Ordinante nel rispetto di tutte le prescrizioni di sicurezza e di accesso, fermo restando che sarà cura ed 
+onere del Fornitore verificare le relative procedure. 
+9. Il Fornitore si obbliga a ottemperare a tutti gli obblighi verso i propri dipendenti derivanti da disposizioni 
+legislative e regolamentari vigenti in materia di lavoro, ivi compresi quelli in materia di igiene e sicurezza, 
+nonché la disciplina previdenziale ed infortunistica, assumendo a proprio carico tutti i relativi oneri e spese. 
+In particolare, il Fornitore si impegna a rispettaƌe, Ŷell’eseĐuzioŶe delle oďďligazioŶi deƌivaŶti dal CoŶtƌatto, 
+le disposizioni di cui al D.Lgs. 81/2008 e successive modifiche. 
+10. Il Fornitore si obbliga altresì ad applicare, nei confronti dei propri dipendenti occupati nelle attività 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 6 - di 25 
+ 
+contrattuali, le condizioni normative e retributive non inferiori a quelle risultanti dai contratti collettivi e 
+integrativi di lavoro applicabili alla data di stipula del Contratto alla categoria e nelle località di svolgimento 
+delle attività, nonché le condizioni risultanti da successive modifiche ed integrazioni anche tenuto conto di 
+ƋuaŶto pƌevisto all’aƌt. ϵϱ, Đoŵŵa ϭϬ e all’aƌt. ϵ7 del D.lgs. n. 50/2016 e s.m.i.  
+11. Il Fornitore si obbliga, altresì, fatto in ogni caso salvo il trattamento di miglior favore per il dipendente, a 
+continuare ad applicare i suindicati contratti collettivi anche dopo la loro scadenza e fino alla loro 
+sostituzione. Gli obblighi relativi ai contratti collettivi nazionali di lavoro di cui ai commi precedenti vincolano 
+il Fornitore anche nel caso in cui questi non aderisca alle associazioni stipulanti o receda da esse, per tutto il 
+periodo di validità del Contratto. 
+12. Nell’adeŵpiŵeŶto delle pƌopƌie pƌestazioŶi e oďďligazioŶi, il Fornitore si impegna ad osservare tutte le 
+indicazioni operative, di indirizzo e di controllo che a tale scopo saranno predisposte e comunicate dal Punto 
+Ordinante, nonché le indicazioni relative alla buona e corretta esecuzione del Contratto. 
+13. Il Fornitore si obbliga a consentire al Punto Ordinante di procedere, in qualsiasi momento e senza 
+preavviso, alle verifiche della piena e corretta esecuzione delle prestazioni oggetto del Contratto, nonché a 
+prestare la propria collaborazione per lo svolgimento di tali verifiche.  
+14. Il Fornitore contraente si impegna ad utilizzare, per le attività dell'appalto, personale abilitato ai sensi di 
+legge nei casi prescritti e munito di preparazione professionale e di conoscenze tecniche adeguate. Lo stesso 
+personale dovrà avere conoscenza delle norme antinfortunistiche e sarà tenuto all'osservanza delle norme 
+del Punto Ordinante. 
+ 
+Articolo 4 
+Obbligazioni specifiche del Fornitore contraente 
+ 
+ 
+1. Il Fornitore, in particolare, si impegna, oltre a quanto previsto dalle presenti Condizioni Generali di 
+Contratto, a: 
+a) consegnare al Punto Ordinante il Prodotto oggetto di acquisto/noleggio, del tipo e con le caratteristiche 
+indicate nel Capitolato Tecnico nonché nei tempi, nelle modalità e, in generale, in conformità a quanto 
+stabilito dal Contratto;  
+b) predisporre tutti gli strumenti e le metodologie atti a garantire i requisiti e i livelli di fornitura dei Prodotti 
+indicati nel Capitolato Tecnico e nelle presenti Condizioni Generali di Contratto, ivi compresi quelli relativi 
+alla sicurezza;  
+c) rispettare tutti gli obblighi previsti dal Capitolato Tecnico; 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 7 - di 25 
+ 
+d) ;Ŷell’ipotesi di ŶoleggioͿ garantire durante tutto il periodo di durata del Contratto il pacifico godimento 
+del Prodotto nonché eseguire tutte le riparazioni necessarie al fine di mantenere il Prodotto in stato da 
+seƌviƌe all’uso ĐoŶveŶuto Ŷel CoŶtƌatto; 
+f) assumere ogni responsabilità conseguente alla violazione di diritti di brevetto, di marchio, di autore ed in 
+genere di privativa altrui, manlevando e tenendo indenne il Punto Ordinante di tutti gli oneri conseguenti, 
+incluse le spese eventualmente sostenute per la difesa in giudizio, qualora venga promossa nei confronti 
+della stessa azione giudiziaria da parte di terzi.  
+2. Il Fornitore si impegna a eseguire la fornitura dei Prodotti oggetto del Contratto e – ove previsti -  a 
+erogare i Servizi Connessi presso i luoghi ed i locali indicati dal Punto Ordinante, fermo restando quanto 
+previsto dall’aƌt. ϱ, Đoŵŵa ϭ, ĐoŶ ƌifeƌiŵeŶto alla consegna dei Prodotti.  
+3. Qualsiasi omissione o ritardo nella richiesta di adempimento del Contratto (o di parte di esso) da parte del 
+Punto Ordinante non costituisce in nessun caso rinuncia ai diritti a esso spettanti, che questi si riserva 
+comunque di far valere nei limiti della prescrizione. 
+4. Il Fornitore dovrà in ogni caso operare con la massima diligenza affinché le attrezzature, i mezzi e le 
+modalità operative utilizzate non comportino alterazioni o danni al patrimonio del Punto Ordinante. 
+ 
+ 
+Articolo 5 
+Consegna dei Prodotti e verbale di consegna 
+1. Fermo restando quanto previsto nel Capitolato Tecnico, la consegna dei Prodotti oggetto di acquisto o 
+noleggio si intende comprensiva (ove compatibili con la natura del Prodotto fornito) delle attività di 
+imballaggio, trasporto, facchinaggio nei locali, installazione e montaggio, nonché della redazione di apposito 
+verbale di consegna dei Prodotti stessi. Unitamente ai Prodotti, il Fornitore, dovrà consegnare la 
+doĐuŵeŶtazioŶe e la ŵaŶualistiĐa teĐŶiĐa e d’uso, ƋuaŶdo pƌevista.  
+2. Peƌ l’eseĐuzioŶe delle prestazioni contrattuali, il Fornitore si obbliga, a propria cura, spese e rischio, a 
+consegnare (ove non diversamente previsto nelle Condizioni Particolari di Contratto e ove compatibile con la 
+natura del Prodotto fornito) i Prodotti oggetto di acquisto o noleggio all’iŶdiƌizzo/i iŶdiĐato/i dal PuŶto 
+Ordinante. Nel caso di Pƌodotti oggetto di Ŷoleggio peƌ ĐoŶsegŶa si iŶteŶde l’atto del pƌelievo degli stessi Ŷei 
+luoghi indicati dal Fornitore e previsti nel Contratto. 
+3. Fermo quanto previsto al precedente comma 2, i Prodotti oggetto di acquisto o noleggio dovranno essere 
+consegnati entro e non oltre il termine indicato nel Catalogo del Fornitore, in conformità a quanto previsto 
+Ŷel Capitolato TeĐŶiĐo, Đhe ğ da ƌiteŶeƌsi teƌŵiŶe esseŶziale a favoƌe del PuŶto OƌdiŶaŶte peƌ l’eseĐuzioŶe 
+del Contratto medesimo, ovvero, nel diverso termine convenuto tra le Parti. Tale termine inizierà a 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 8 - di 25 
+ 
+decorrere dal giorno lavorativo successivo alla conclusione del Contratto. Salvo diverso accordo tra le Parti, 
+la consegna dovrà essere effettuata tra le ore 9:00 e le ore 14:00, dal lunedì al venerdì, festivi esclusi. Il 
+verbale di cui al successivo comma 4 del pƌeseŶte aƌtiĐolo faƌà fede ĐiƌĐa il gioƌŶo e l’oƌa dell’avveŶuta 
+consegna.  
+4. Ove  compatibile con la natura del Prodotto offerto, all’atto della consegna e della verifica di consistenza 
+dei Prodotti oggetto di acquisto/noleggio, ŶoŶĐhĠ dopo l’eveŶtuale iŶstallazioŶe o ŵoŶtaggio, il Fornitore, 
+anche per mezzo del soggetto da questi incaricato del tƌaspoƌto e dell’eveŶtuale iŶstallazioŶe o ŵoŶtaggio 
+dei Prodotti, dovrà redigere un verbale di consegna in contraddittorio con il Punto Ordinante. Nel verbale in 
+questione dovrà essere dato atto della data di avvenuta consegna, della verifica della quantità dei Prodotti 
+consegnati e della corretta installazione o montaggio, se effettuati. Il verbale dovrà contenere almeno i dati 
+relativi al Fornitore (compreso il Codice Fiscale-Partita IVA), i dati relativi al Punto Ordinante (Soggetto 
+AggiudiĐatoƌe di appaƌteŶeŶzaͿ, la data e il Ŷuŵeƌo pƌogƌessivo dell’OƌdiŶe o della RdO, la data di avveŶuta 
+consegna, il codice identificativo dei Prodotti oggetto del verbale di consegna. Il verbale di consegna dovrà 
+essere sottoscritto da entrambe le Parti. Il documento di trasporto che riporti le indicazioni sopra citate 
+potrà sostituire il suddetto verbale di consegna: in tal caso, lo stesso dovrà essere sottoscritto sia dal 
+Fornitore che dal Punto Ordinante. 
+Articolo 6 
+Verifica di conformità 
+1. Al momento della consegna dei Prodotti, e, comunque, entro il termine non perentorio di 20 (venti) giorni 
+decorrenti da tale teƌŵiŶe, il diƌettoƌe dell’eseĐuzioŶe del CoŶtƌatto effettua la veƌifiĐa di ĐoŶfoƌŵità dei 
+Prodotti ĐoŶsegŶati, seĐoŶdo le ŵodalità pƌeviste dall’aƌt. ϭϬϮ D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ. RestaŶo feƌŵe le 
+disposizioni normative e regolamentari eventualmente applicabili al Punto Ordinante. In ogni caso, il Punto 
+Ordinante potrà disporre ulteƌioƌi veƌifiĐhe uŶilateƌali, aŶĐhe duƌaŶte l’eseĐuzioŶe del CoŶtƌatto, sulla 
+efficacia dei Servizi in termini di qualità resa e di rispetto delle clausole contrattuali.  
+La periodicità ed i tempi relativi alle attività di controllo saranno definiti da parte del Soggetto Aggiudicatore 
+stesso. 
+Ϯ. L’eseĐuzioŶe della veƌifiĐa di ĐoŶfoƌŵità ŶoŶĐhĠ le eveŶtuali ulteƌioƌi veƌifiĐhe disposte dal PuŶto 
+ordinante avvengono a spese del Fornitore. PeƌtaŶto, tƌa l’altƌo, il FoƌŶitoƌe si faƌà ĐaƌiĐo dei Prodotti che 
+veŶisseƌo iŶ ƋualĐhe ŵodo deteƌioƌati o ĐoŵuŶƋue ŶoŶ fosseƌo più utilizzaďili a seguito dell’eseĐuzioŶe di 
+dette verifiche. Il Punto Ordinante dovrà restituire detti Prodotti al Fornitore nello stato in cui si trovano 
+dopo le menzionate operazioni di verifica; il Fornitore dovrà consegnare al Punto Ordinante Prodotti 
+sostitutivi, con le modalità previste dai successivi commi riguardo ai resi.  
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 9 - di 25 
+ 
+3. In caso di esito positivo della verifica di conformità, la data del relativo certificato varrà come Data di 
+Accettazione dei Prodotti con riferimento alle specifiche verifiche effettuate e indicate nel verbale, fatti salvi 
+i vizi non facilmente riconoscibili e la gaƌaŶzia e l’assisteŶza pƌestate dal produttore ed eventualmente dal 
+Fornitore.  
+4. Nel caso in cui dal controllo di corrispondenza tra verbale di consegna, Contratto e Prodotti consegnati, o 
+in base alla verifica di conformità o in base a prove e utilizzi successivi, il Punto Ordinante rilevi una 
+difformità qualitativa (ad esempio Prodotto non ordinato o viziato, difforme o difettoso) o quantitativa dei 
+Prodotti consegnati, lo stesso Punto Ordinante invierà una segnalazione scritta al Fornitore attivando (ove 
+compatibile con la natura del Prodotto fornito) le pratiche di reso.  
+ϱ. Il FoƌŶitoƌe s’iŵpegŶa a ƌitiƌaƌe, seŶza alĐuŶ addeďito al PuŶto OƌdiŶaŶte, eŶtƌo ϭϬ ;dieĐiͿ gioƌŶi lavoƌativi 
+dal ricevimento della segnalazione di cui al comma 3 del presente articolo, la merce non conforme, 
+concordando con il Punto Ordinante le modalità di ritiro, in ogni caso da effettuare tra le ore 9:00 e le ore 
+14:00, dal lunedì al venerdì, festivi esclusi.  
+6. Qualora il Punto Ordinante non provveda diversamente dandone notizia al Fornitore o non decida di 
+ƌisolveƌe il CoŶtƌatto, feƌŵa ƌestaŶdo l’appliĐazioŶe delle peŶali di cui al successivo articolo 11 ed il 
+ƌisaƌĐiŵeŶto dell’eveŶtuale ŵaggioƌ daŶŶo, il FoƌŶitoƌe ğ teŶuto a pƌovvedeƌe, ĐoŶtestualŵeŶte al ƌitiƌo, 
+alla consegna dei Prodotti effettivamente ordinati e/o esenti da vizi, difformità o difetti.  
+7. L’esito positivo dei ĐoŶtƌolli/veƌifiĐa di ĐoŶfoƌŵità ŶoŶ esoŶeƌa il FoƌŶitoƌe da eveŶtuali ƌespoŶsaďilità 
+derivanti da difformità dei Prodotti che non fossero emerse all’atto dei ĐoŶtƌolli sopƌa Đitati.  
+8. Le disposizioni del presente articolo possono essere, in parte, motivatamente derogate esclusivamente 
+per i contratti la cui tipologia, per le particolari condizioni negoziali o la natura dei Prodotti, non consente di 
+effettuare la verifica di conformità.        
+Articolo 7 
+Assistenza e garanzia 
+1.Il Fornitore contraente si impegna a propria cura, spese e rischio, ad eseguire il servizio di assistenza e 
+manutenzione, per ciascun Prodotto oggetto di aĐƋuisto o Ŷoleggio dalla ͞Data di aĐĐettazioŶe͟ . 
+2. Oltre alla casella di posta elettronica il Fornitore, in conformità a quanto previsto nel Capitolato Tecnico, 
+metterà a disposizione del Punto Ordinante un numero di fax ed un numero di telefono attivi nella fascia 
+oraria compresa tra le 8:30 e le 17:30 in tutti i gioƌŶi lavoƌativi dell’aŶŶo esĐlusi saďati, doŵeŶiĐhe, festivi ed 
+eventuali chiusure aziendali, dedicati a fornire informazioni ai Soggetti Aggiudicatori circa le modalità di 
+ordine e di consegna, lo stato degli ordini in corso e delle consegne, i servizi previsti nel Mercato elettronico, 
+l’eveŶtuale assisteŶza, i seƌvizi ĐoŶŶessi e/o aĐĐessoƌi. I suddetti Ŷuŵeƌi di telefoŶo e di fax dediĐati 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 10 - di 25 
+ 
+dovƌaŶŶo esseƌe ͞Nuŵeƌi peƌ seƌvizi di addeďito al Đhiaŵato͟ seĐoŶdo ƋuaŶto defiŶito dall’aƌt. ϭϲ della 
+Deliďeƌa Ŷ. ϵ/Ϭϯ/CIR della AGCOM ͞PiaŶo di ŶuŵeƌazioŶe Ŷel settoƌe delle teleĐoŵuŶiĐazioŶi e disĐipliŶa 
+attuativa͟ puďďliĐata sulla Gazzetta UffiĐiale della RepuďďliĐa ItaliaŶa del ϭ° agosto ϮϬϬϯ, Ŷ. ϭϳϳ, ovveƌo 
+͞NuŵeƌazioŶe peƌ i seƌvizi di addeďito ƌipaƌtito͟ Pƌiŵa Đategoƌia, Ƌuota fissa, seĐoŶdo ƋuaŶto defiŶito 
+dall’aƌt. ϭϳ della Đitata Deliďeƌa. 
+3.IŶ aggiuŶta all’oƌdiŶaƌia gaƌaŶzia pƌevista dalla legge, il FoƌŶitoƌe e/o il Produttore si impegna/no a 
+mettere a disposizione del Punto Ordinante la garanzia e l’assisteŶza standard eventualmente previste in 
+relazione al Prodotto e che vengono fornite dal produttore, dal Fornitore medesimo o da terzi a ciò deputati. 
+A tale scopo, il Fornitore si impegna ad assistere il Punto Ordinante e a fare tutto quanto in suo potere per 
+garantire la corretta attivazione e il godimento dei suddetti servizi di assistenza e garanzia. 
+4. Gli ulteriori servizi di assistenza e garanzia eventualmente offerti in aggiunta a quelli previsti nello 
+specifico Capitolato Tecnico e prestati dal produttore, dal Fornitore e/o dal produttore o da terzi da questi 
+iŶdiĐati, soŶo dettagliataŵeŶte iŶdividuati e speĐifiĐati all’iŶteƌŶo del Catalogo del FoƌŶitoƌe. 
+5. Resta inteso che, qualora gli interventi di assistenza e manutenzione dovessero comportare una mancata 
+fruizione del Prodotto, gli interventi stessi dovranno essere effettuati dal Fornitore contraente previo 
+accordo con il Punto Ordinante e il Soggetto Aggiudicatore di appartenenza. 
+6. CoŶ ƌifeƌiŵeŶto all’eseĐuzioŶe del seƌvizio di manutenzione e assistenza, il Fornitore si obbliga ad attivare 
+l’iŶteƌveŶto e a ƌipƌistiŶaƌe il Prodotto entro i termini fissati a tal fine nel Catalogo o nella RdO, pena 
+l’appliĐazioŶe delle peŶali di Đui all’aƌt. ϭϭ delle presenti Condizioni Generali di Contratto. 
+7. Restano ferme eventuali ulteriori forme di assistenza disciplinate dai Soggetti Aggiudicatori nelle 
+Condizioni Particolari di Contratto. 
+ 
+Articolo 8 
+Disinstallazione (dei Prodotti oggetto di noleggio) 
+1. Ove compatibile con la natura del Prodotto, al termine della durata del Contratto, ovvero in caso di 
+risoluzione e/o recesso, il Fornitore contraente è tenuto a ritirare i Prodotti oggetto di noleggio nel termine 
+che verrà indicato dal Soggetto Aggiudicatore nella RdO o nel Contratto, ponendo in essere tutte le attività 
+necessarie quali, a titolo meramente esemplificativo e non esaustivo, quelle relative alla rimozione e al 
+trasporto. 
+Ϯ. Nell’ipotesi iŶ Đui i Pƌodotti oggetto di Ŷoleggio ŶoŶ veŶisseƌo ƌiŵossi Ŷei teƌŵiŶi iŶdiĐati, ŶoŶ saƌà 
+riconosciuto al Fornitore alcun corrispettivo ulteriore. 
+ 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 11 - di 25 
+ 
+Articolo 9 
+Corrispettivo 
+1. In caso di Ordine Diretto, il Prezzo o Canone di noleggio dei Prodotti è quello indicato nel Catalogo 
+Fornitore. Nel caso di acquisto tramite RdO il Prezzo o Canone di noleggio sarà Ƌuello ƌisultaŶte dall’offeƌta 
+del Fornitore in risposta alla richiesta del Punto Ordinante.  
+Ϯ. Il Pƌezzo o CaŶoŶe di Ŷoleggio ĐoŵpƌeŶde, tƌa l’altƌo: 
+aͿ l’eveŶtuale gaƌaŶzia pƌestata dal pƌoduttoƌe e/o dal foƌŶitoƌe e/o da teƌzi da Ƌuesti iŶĐaƌiĐati; 
+b) le spese e, in generale, tutti gli oneri di trasporto e consegna, gli oneri per la sicurezza; 
+c) gli eventuali servizi connessi, secondo quanto indicato nel Capitolato Tecnico e in generale quanto 
+previsto dalle presenti Condizioni generali di Contratto. 
+3. Il Prezzo o Canone di noleggio decorre dalla Data di accettazione dei Prodotti o, nel caso di noleggio, dal 
+giorno di prelievo degli stessi. 
+4. Il Prezzo o Canone di noleggio è da intendersi, ove non sia espressamente indicato il contrario, IVA 
+esclusa. Il Prezzo o Canone di noleggio include tutte le altre imposte, le tasse e gli oneri, presenti e futuri, 
+inerenti a qualsiasi titolo il Contratto. Le spese relative allo strumento di pagamento utilizzato dal Soggetto 
+Aggiudicatore (es. spese bancarie di boŶifiĐoͿ, soŶo a ĐaƌiĐo del “oggetto AggiudiĐatoƌe o dell’EseĐutoƌe 
+contraente ove sia previsto da norme di legge o regolamentari.  
+L’iŵposta di ďollo e di ƌegistƌo del CoŶtƌatto eveŶtualŵeŶte dovute soŶo da iŶteŶdeƌsi iŶĐluse Ŷel Pƌezzo o 
+Canone di noleggio e ƌestaŶo, peƌtaŶto, a ĐaƌiĐo dell’EseĐutoƌe ĐoŶtƌaeŶte. 
+RelativaŵeŶte all'iŵposta di ďollo, eveŶtualŵeŶte dovuta iŶ Đaso di OƌdiŶe Diƌetto, l’oŶeƌe peƌ le pƌiŵe 
+Ƌuattƌo pagiŶe ;pƌiŵe ϭϬϬ ƌigheͿ dell’OƌdiŶe stesso ğ da iŶteŶdeƌsi iŶĐluso Ŷel Pƌezzo o CaŶone di noleggio. 
+Il Fornitore ha la facoltà di rifiutare Ordini Diretti eccedenti le quattro pagine (ovvero le prime 100 righe), 
+salvo il Đaso iŶ Đui il ŵedesiŵo FoƌŶitoƌe iŶteŶda ugualŵeŶte daƌe Đoƌso all’OƌdiŶe. Il FoƌŶitoƌe ğ teŶuto, 
+comunque, a dare coŵuŶiĐazioŶe al PuŶto OƌdiŶaŶte dell’eveŶtuale ƌifiuto dell’OƌdiŶe Diƌetto, eĐĐedeŶte le 
+quattro pagine (ovvero le prime 100 righe) entro i due giorni solari successivi dal ricevimento dello stesso a 
+mezzo di documento elettronico firmato digitalmente e inviato a mezzo di Posta Elettronica Certificata al 
+PuŶto OƌdiŶaŶte. IŶ Đaso di deteƌŵiŶazioŶe foƌfetaƌia dell’eveŶtuale iŵposta di ďollo peƌ l’OƌdiŶe Diƌetto, 
+questa sarà a carico del Fornitore.  
+5. Tutti gli obblighi e oneri derivanti al Fornitore contraente dall’eseĐuzioŶe del CoŶtƌatto e dall’osseƌvaŶza 
+di leggi e regolamenti, nonché dalle disposizioni emanate o che venissero emanate dalle competenti 
+autorità, sono compresi nel Prezzo o Canone di noleggio.  
+6. I Prezzi o il Canone di noleggio dei Prodotti sono stati determinati a proprio rischio dal Fornitore in base ai 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 12 - di 25 
+ 
+propri calcoli, alle proprie indagini, alle proprie stime, e sono, pertanto fissi ed invariabili 
+indipendentemente da qualsiasi imprevisto o eventualità, facendosi carico, esso stesso, di ogni relativo 
+rischio e/o alea.  
+7. Il Fornitore contraente non potrà vantare diritto ad altri compensi, ovvero adeguamenti, revisioni o 
+aumenti dei prezzi o canoni di noleggio indicati nel Catalogo in caso di Ordine Diretto o concordati tra le 
+parti in caso di RdO.  
+Per tutto quanto non diversamente disciplinato dal Soggetto Aggiudicatore, si rinvia a quanto previsto 
+dall’aƌt.ϭϬϲ del D.lgs. ϱϬ/ϮϬϭϲ. 
+Articolo 10 
+Fatturazione e pagamenti 
+ 
+1. 
+Il pagamento del Prezzo o Canone di noleggio sarà effettuato, entro 30 giorni dal ricevimento delle 
+fatture ovvero entro quel diverso termine stabilito dal D. Lgs. n. 231/2002 s.m.i. e conformemente alle 
+modalità previste dalla normativa anche secondaria in materia, sulla base delle fatture inviate in forma 
+elettronica in osservanza delle modalità previste dal D. Lgs. 20 febbraio 2004 n. 52, dal D. Lgs. 7 marzo 2005 
+n. 82 e dai successivi decreti attuativi. In alcune specifiche ipotesi di noleggio di Prodotti il pagamento del 
+Canone potrà essere effettuato contestualmente al prelievo degli stessi. 
+2. 
+Il Fornitore si impegna, inoltre a inserire nelle fatture elettroniche i dati e le informazioni che la singola 
+Amministrazione Contraente riterrà di richiedere, nei limiti delle disposizioni normative vigenti.  
+3. Per i Punti Ordinanti facenti capo ad Amministrazioni diverse da quelle di cui al D. Lgs. 20 febbraio 2004 
+n. 52, al D. Lgs. 7 marzo 2005 n. 82 e successivi decreti attuativi, resta la possibilità di ricevere le fatture a 
+mezzo posta ovvero tramite posta elettronica certificata (PEC). 
+4. RiŵaŶe iŶteso Đhe, ove appliĐaďile, si pƌoĐedeƌà alla ƌiteŶuta dello Ϭ,ϱ% ai seŶsi dell’aƌt. ϯϬ, Đoŵŵa ϱ 
+del D. Lgs. n. 50/2016 e s.m.i., da sviŶĐolaƌsi solo iŶ fase di liƋuidazioŶe fiŶale, iŶ seguito all’appƌovazioŶe - 
+da parte del Soggetto Aggiudicatore - della verifica di conformità, e previa acquisizione del documento unico 
+di regolarità contributiva.  
+5. Ove non diversamente previsto dal Contratto, il Prezzo o Canone di noleggio verrà fatturato dal 
+Fornitore alla Data di Accettazione della fornitura.  
+6. Ciascuna fattura emessa dal Fornitore dovrà contenere, anche in un documento separato da allegare 
+alla stessa, il riferimento all’OƌdiŶe ovveƌo alla RdO a cui si riferisce, al CIG (Codice Identificativo Gara), al 
+CUP (Codice Unico Progetto), ove obbligatoƌio ai seŶsi dell’aƌt. ϭϭ della Legge ϭϲ geŶŶaio ϮϬϬϯ Ŷ. ϯ, alla data 
+di consegna dei Prodotti e alla data del certificato di verifica di conformità positivamente svolta, nonché il 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 13 - di 25 
+ 
+dettaglio dei Prodotti consegnati (tipo di Prodotti, quantità e prezzi unitari) e dovrà essere intestata e 
+spedita all’AŵŵiŶistƌazioŶe ĐoŶtƌaeŶte, all’iŶdiƌizzo a Điò deputato e nei termini previsti. La trasmissione 
+della suddetta documentazione è da intendersi prevista a pena di irricevibilità delle fatture. 
+7. In caso di ritardo nei pagamenti, il tasso di mora viene stabilito in una misura pari al tasso BCE stabilito 
+seŵestƌalŵeŶte e puďďliĐato ĐoŶ ĐoŵuŶiĐazioŶe del MiŶisteƌo dell’EĐoŶoŵia e delle FiŶaŶze sulla Gazzetta 
+Ufficiale della Repubblica Italiana, maggiorato di 8 punti peƌĐeŶtuali, Đoŵe pƌevisto dall’aƌt. ϱ del D.Lgs. 9 
+ottobre 2002, n. 231. 
+8. Rimane inteso che i Punti Ordinanti, prima di procedere al pagamento del corrispettivo verificheranno la 
+regolarità del Fornitore in ordine al versamento dei contributi previdenziali e dei contributi assicurativi 
+obbligatori per gli infortuni sul lavoro e le malattie professionali dei dipendenti attraverso il D.U.R.C.. 
+9.  In caso di ottenimento da parte del Soggetto Aggiudicatore del D.U.R.C. Đhe segŶali uŶ’iŶadeŵpieŶza 
+contributiva relativa a uŶo o più soggetti iŵpiegati Ŷell’eseĐuzioŶe del CoŶtƌatto ovveƌo Ŷel Đaso di ƌitaƌdo 
+Ŷel pagaŵeŶto delle ƌetƌiďuzioŶi dovute al peƌsoŶale dipeŶdeŶte dell’eseĐutoƌe o del suďappaltatoƌe o dei 
+soggetti titolari di subappalti e cottimi trova applicazioŶe ƋuaŶto disposto dall’aƌt. ϯϬ, Đoŵŵi ϱ e ϲ, del D. 
+Lgs. n. 50/2016 e s.m.i.. 
+ 
+Articolo 11 
+Penali 
+1. 
+Per ogni giorno solare di ritardo, non imputabile al Punto Ordinante ovvero a forza maggiore o caso 
+fortuito, rispetto ai termini massimi stabiliti per la consegna ed eventuale installazione dei Prodotti ovvero 
+rispetto al termine per la eventuale disinstallazione dei Prodotti oggetto di noleggio o la sostituzione dei 
+medesimi in caso di esito negativo della verifica di conformità ai sensi dei precedenti artt. 5 e 6, il Fornitore è 
+teŶuto a ĐoƌƌispoŶdeƌe al PuŶto OƌdiŶaŶte uŶa peŶale paƌi all’ϭ ‰ ;uŶo peƌ ŵilleͿ del Đoƌƌispettivo della 
+foƌŶituƌa oggetto dell’iŶadeŵpiŵeŶto o del ƌitaƌdo, fatto salvo il ƌisaƌĐiŵeŶto del ŵaggioƌ daŶŶo.  
+2.  
+Qualoƌa l’iŶteƌveŶto di assistenza e le attività di ripristino del Prodotto non vengano effettuati nei 
+teƌŵiŶi fissati Ŷel Catalogo o Ŷella RdO, saƌà appliĐata al FoƌŶitoƌe uŶa peŶale fissata Ŷell’ϭ‰ ;uŶo peƌ ŵilleͿ 
+dell’iŵpoƌto ĐoŶtƌattuale. 
+3. 
+Deve considerarsi ritardo anche il caso in cui il Fornitore esegua le prestazioni contrattuali in modo 
+anche solo parzialmente difforme dalle prescrizioni contenute nel Contratto, ivi compreso il ritardo nella 
+ƌisposta a seguito dell’iŶoltƌo di uŶa ƌiĐhiesta di assisteŶza ƌispetto ai teƌŵiŶi eventualmente pattuiti; in tali 
+casi il Punto Ordinante applicherà al Fornitore le predette penali sino al momento in cui il Contratto inizierà 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 14 - di 25 
+ 
+ad essere eseguito in modo conforme alle disposizioni contrattuali, fatto salvo in ogni caso il risarcimento 
+del maggior danno.  
+4. 
+Restano in ogni caso salve le ulteriori penali eventualmente previste nelle Condizioni Particolari 
+stabilite dai Soggetti Aggiudicatori. 
+5. 
+Resta iŶteso Đhe l’iŵpoƌto Đoŵplessivo delle peŶali – ivi comprese le eventuali ulteriori penali 
+previste dai Soggetti Aggiudicatori nelle Condizioni Particolari di Contratto - non potrà superare il 10% 
+dell’iŵpoƌto Đoŵplessivo del CoŶtƌatto, fatto ĐoŵuŶƋue salvo il ƌisaƌĐiŵeŶto del ŵaggioƌe daŶŶo. Nel Đaso 
+iŶ Đui l’iŵpoƌto delle peŶali appliĐate ƌaggiuŶga il liŵite del ϭϬ% dell’iŵpoƌto del CoŶtƌatto, il PuŶto 
+Ordinante potrà risolvere il Contratto per grave inadempimento. 
+6. Gli eveŶtuali iŶadeŵpiŵeŶti ĐoŶtƌattuali Đhe daƌaŶŶo luogo all’appliĐazioŶe delle peŶali di Đui ai 
+precedenti commi, verranno contestati al Fornitore dal Punto Ordinante per iscritto. Il Fornitore dovrà 
+comunicare in ogni caso le proprie deduzioni al Punto Ordinante nel termine massimo di 5 (cinque) giorni 
+dalla stessa contestazione. Qualora dette deduzioni non siano accoglibili a giudizio del Punto Ordinante 
+ovvero non vi sia stata risposta o la stessa non sia giunta nel termine indicato potranno essere applicate al 
+FoƌŶitoƌe le peŶali Đoŵe sopƌa iŶdiĐate a deĐoƌƌeƌe dall’iŶizio dell’iŶadeŵpiŵeŶto.  
+7. Il Punto Ordinante potrà compensare i crediti deƌivaŶti dall’appliĐazioŶe delle peŶali di Đui al pƌeseŶte 
+articolo con quanto dovuto al Fornitore a qualsiasi titolo, anche per i corrispettivi dovuti al Fornitore 
+medesimo. 
+8. La richiesta e/o il pagamento delle penali di cui al presente articolo non esonera in nessun caso il 
+FoƌŶitoƌe dall’adeŵpiŵeŶto dell’oďďligazioŶe peƌ la Ƌuale si ğ ƌeso iŶadeŵpieŶte e Đhe ha fatto soƌgeƌe 
+l’oďďligo di pagaŵeŶto della ŵedesiŵa peŶale, fatta salva la faĐoltà peƌ il PuŶto OƌdiŶaŶte di ƌisolveƌe il 
+Contratto nei casi in cui questo è consentito. 
+ 
+Articolo 12 
+Responsabilità 
+ 
+1. Il Fornitore si impegna a manlevare e a tenere indenne il Punto Ordinante da qualsiasi richiesta di 
+risarcimento che terzi dovessero avanzare nei confronti di Ƌuest’ultiŵo per danni derivanti dai vizi dei 
+Prodotti oggetto di acquisto o di noleggio o dalla mancata e non corretta esecuzione dei servizi connessi e/o 
+accessori.  
+ 
+Articolo 13 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 15 - di 25 
+ 
+Clausola risolutiva espressa 
+ 
+1. Oltre a quanto previsto dagli artt. 1453 e seguenti del codice civile, il Punto Ordinante potrà risolvere di 
+diƌitto il CoŶtƌatto ai seŶsi dell’aƌt. ϭϰϱϲ Đ.Đ., pƌevia diĐhiaƌazioŶe da ĐoŵuŶiĐaƌsi al FoƌŶitoƌe peƌ isĐƌitto, e 
+seŶza ďisogŶo di assegŶaƌe pƌeviaŵeŶte alĐuŶ teƌŵiŶe peƌ l’adeŵpiŵeŶto, Ŷei segueŶti Đasi:  
+a) accertamento della non veridicità del contenuto delle dichiarazioni presentate dal Fornitore per 
+l’aďilitazioŶe al MeƌĐato ElettƌoŶiĐo, o aĐĐeƌtaŵeŶto del fatto Đhe sia veŶuta ŵeŶo la veƌidiĐità delle 
+suddette dichiarazioni;  
+b) qualora sia intervenuta sentenza definitiva o decreto penale di condanna divenuto irrevocabile o sentenza 
+di appliĐazioŶe della peŶa su ƌiĐhiesta ai seŶsi dell’aƌt. ϰϰϰ del ĐodiĐe di pƌoĐeduƌa peŶale peƌ le ipotesi di 
+cui al comma 1 dell’aƌt. ϴϬ del D.lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.ŵ.i; 
+c) nelle ipotesi di cui ai commi 4 e 5 del medesimo art.80;  
+dͿ Ƌualoƌa Ŷei ĐoŶfƌoŶti del FoƌŶitoƌe sia iŶteƌveŶuto uŶ pƌovvediŵeŶto defiŶitivo Đhe dispoŶe l’appliĐazioŶe 
+di una o più misure di prevenzione di cui al Codice delle leggi antimafia e delle relative misure di 
+preveŶzioŶe, fatto salvo ƋuaŶto pƌevisto dall’aƌt. ϵϱ del D.lgs. Ŷ. ϭϱϵ/ϮϬϭϭ o Ŷel Đaso iŶ Đui gli aĐĐeƌtaŵeŶti 
+antimafia presso la Prefettura competente risultino positivi;  
+e) difformità delle caratteristiche dei Prodotti  forniti rispetto a quanto indicato dal Contratto;   
+f) violazione del divieto di interruzione della fornitura; 
+e) violazione del divieto di cessione del contratto e/o dei limiti al subappalto;  
+fͿ violazioŶe dell’aƌt. ϭ7, comma 4, delle presenti Condizioni Generali di Contratto (violazione dovere 
+riservatezza);  
+g) azioni giudiziarie contro il Soggetto Aggiudicatore di appartenenza del Punto Ordinante per la violazione 
+di diritti di brevetto, autore, marchio e, in generale, di privativa altrui;  
+hͿ Ŷel Đaso di Đui all’aƌt. ϭ9, comma 2 (Tracciabilità dei flussi finanziari – Ulteriori clausole risolutive espresse) 
+del presente atto;  
+i) applicazione di penali oltre la misura ŵassiŵa staďilita all’aƌtiĐolo 11 delle presenti Condizioni Generali di 
+Contratto.  
+l) mancato rispetto del termine di consegna dei Prodotti, che si protragga oltre 20 (venti) giorni, rispetto a 
+quanto indicato nella RdO; 
+ŵͿ Ŷell’ipotesi di iƌƌogazioŶe di saŶzioŶi iŶteƌdittive o ŵisuƌe Đautelaƌi di Đui al D.lgs. Ŷ. Ϯϯϭ/ϮϬϬϭ, Đhe 
+iŵpedisĐaŶo all’iŵpƌesa di ĐoŶtƌattaƌe ĐoŶ le Pubbliche Amministrazioni. 
+2. In caso di risoluzione del Contratto, il Fornitore si impegna comunque a porre in essere ogni attività 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 16 - di 25 
+ 
+necessaria per assicurare la continuità dei Servizi a favore del Punto Ordinante. 
+ 
+Articolo 14 
+Recesso 
+1. Il Punto Ordinante ha diritto di recedere unilateralmente dal Contratto, in tutto o in parte, mediante 
+comunicazione scritta da inviare al Fornitore contraente, nei casi di:  
+a) giusta causa;  
+b) reiterati inadempimenti del Fornitore, anche se non gravi. 
+2. La giusta causa ricorre, a mero titolo esemplificativo e non esaustivo:  
+a) qualora sia stato depositato contro il Fornitore un ricorso ai sensi della legge fallimentare o di altra legge 
+applicabile in materia di procedure concorsuali, che proponga lo scioglimento, la liquidazione coatta, la 
+ĐoŵposizioŶe aŵiĐhevole, la ƌistƌuttuƌazioŶe dell’iŶdeďitaŵeŶto o il ĐoŶĐoƌdato ĐoŶ i Đƌeditoƌi  - salvo il 
+caso di concordato con continuità aziendale -  ovvero nel caso in cui venga designato un liquidatore, 
+curatore, custode o soggetto avente simili funzioni, il quale entri in possesso dei Prodotti o venga incaricato 
+della gestione degli affari del Fornitore; 
+b) in caso di mutamenti di carattere organizzativo interessanti il Soggetto Aggiudicatore di appartenenza del 
+Punto Ordinante, Đhe aďďiaŶo iŶĐideŶza sull’eseĐuzioŶe del CoŶtƌatto; 
+c) ogni altra fattispecie che faccia venire meno il rapporto di fiducia sottostante il Contratto.  
+3. Dalla data di efficacia del recesso, il Fornitore contraente dovrà cessare tutte le prestazioni contrattuali, 
+assicurando che tale cessazione non comporti danno alcuno al Punto Ordinante.  
+4. 
+IŶ Đaso di ƌeĐesso si appliĐa ƋuaŶto pƌevisto all’aƌt. ϭϬϵ del D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ.  
+5. Il Punto Ordinante potrà recedere per qualsiasi motivo dal Contratto, in tutto o in parte, avvalendosi della 
+faĐoltà ĐoŶseŶtita dall’aƌtiĐolo ϭϲϳϭ Đ.Đ. ĐoŶ uŶ preavviso di almeno 30 (trenta) giorni solari, da comunicarsi 
+al Fornitore contraente per iscritto, purché tenga indenne il Fornitore delle spese sostenute, delle 
+prestazioni rese e del mancato guadagno. 
+6. Resta iŶteso Đhe iŶ Đaso di ĐessazioŶe dell’effiĐaĐia del CoŶtƌatto, peƌ Ƌualsiasi ŵotivo essa avveŶga, il 
+Fornitore contraente sarà tenuto a prestare la massima collaborazione, anche tecnica, affinché possa essere 
+garantita la continuità  nella erogazione delle forniture oggetto del Contratto. 
+ 
+Articolo 15 
+Divieto di cessione del contratto e cessione dei crediti 
+ 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 17 - di 25 
+ 
+1. É fatto assoluto divieto al Fornitore di cedere, a qualsiasi titolo, il Contratto, a pena di nullità della 
+cessione stessa, fatto salvo ƋuaŶto pƌevisto dall’aƌt. ϭϬϲ, Đoŵŵa ϭ, lett. dͿ del D.lgs. Ŷ. ϱϬ/ϮϬϭϲ e sŵ.i. 
+2. In caso di inadempimento da parte del Fornitore degli obblighi di cui al presente articolo, il Punto 
+Ordinante, fermo restando il diritto al risarcimento del danno, ha facoltà di risolvere di diritto il Contratto. 
+3. É ammessa la cessione dei crediti maturati dal Fornitore nei confronti del Soggetto Aggiudicatore nel 
+ƌispetto dell’aƌt. ϭ06, comma 13, del D.Lgs. n. 50/2016 e s.m.i.. Resta fermo quanto previsto in tema di 
+tracciabilità dei flussi finanziari di cui al successivo articolo 19 delle presenti Condizioni Generali di Contratto. 
+Articolo 16 
+Trasparenza 
+1. Il Fornitore espressamente ed irrevocabilmente: 
+a) dichiara che non vi è stata mediazione o altra opera di terzi per la conclusione del Contratto; 
+b) dichiara di non aver corrisposto né promesso di corrispondere ad alcuno, direttamente o attraverso 
+terzi, ivi comprese le imprese collegate o controllate, somme di denaro o altra utilità a titolo di 
+intermediazione o simili, comunque volte a facilitare la conclusione del Contratto stesso; 
+c) si obbliga a non versare ad alcuno, a nessun titolo, somme di danaro o altra utilità finalizzate a 
+faĐilitaƌe e/o a ƌeŶdeƌe ŵeŶo oŶeƌosa l’eseĐuzioŶe e/o la gestioŶe del Contratto rispetto agli 
+obblighi con esso assunti, né a compiere azioni comunque volte agli stessi fini; 
+d) si oďďliga al ƌispetto di ƋuaŶto staďilito dall’aƌt. ϰϮ del D.Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.ŵ.i. al fiŶe di evitaƌe 
+situazioŶi di ĐoŶflitto d’iŶteƌesse.  
+2. Qualora non risultasse conforme al vero anche una sola delle dichiarazioni rese ai sensi del precedente 
+comma, o il Fornitore non rispettasse per tutta la durata del Contratto gli impegni e gli obblighi di cui 
+alla lettere b), c) ed d) del precedente comma, lo stesso si intenderà risolto di diritto ai sensi e per gli 
+effetti dell’aƌtiĐolo ϭϰϱϲ Đod. Điv., peƌ fatto e Đolpa del FoƌŶitoƌe, ĐoŶ faĐoltà del “oggetto AggiudiĐatoƌe 
+di incamerare la garanzia prestata. 
+3. Il Fornitore si impegna al rispetto di tutte le previsioni di cui al Patto di integrità.  
+Articolo 17 
+Riservatezza 
+ 
+1.Il Fornitore ha l’oďďligo di ŵaŶteŶeƌe ƌiseƌvati i dati e le iŶfoƌŵazioŶi, ivi Đoŵpƌese Ƌuelle Đhe tƌaŶsitaŶo 
+per le apparecchiature di elaborazione dati, di cui venga in possesso e, comunque, a conoscenza, di non 
+divulgarli in alcun modo e in qualsiasi forma e di non farne oggetto di utilizzazione a qualsiasi titolo per scopi 
+diveƌsi da Ƌuelli stƌettaŵeŶte ŶeĐessaƌi all’eseĐuzioŶe del CoŶtƌatto, e ĐoŵuŶƋue peƌ i ĐiŶƋue aŶŶi 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 18 - di 25 
+ 
+successivi alla cessazione di efficacia del rapporto contrattuale.  
+2.L’oďďligo di Đui al pƌeĐedeŶte Đoŵŵa sussiste, altƌesì, ƌelativaŵeŶte a tutto il ŵateƌiale oƌigiŶaƌio o 
+predisposto in esecuzione del Contratto; tale obbligo non concerne i dati che siano o divengano di pubblico 
+dominio. 
+3.Il Fornitore ğ ƌespoŶsaďile peƌ l’esatta osseƌvaŶza da paƌte dei pƌopƌi dipeŶdeŶti, ĐoŶsuleŶti e 
+collaboratori, nonché dei propri eventuali subappaltatori e dei dipendenti, consulenti e collaboratori di 
+questi ultimi, degli obblighi di segretezza anzidetti. 
+4.In caso di inosservanza degli obblighi di riservatezza, il Punto Ordinante ha la facoltà di dichiarare risolto di 
+diritto il Contratto, fermo restando che il Fornitore sarà tenuto a risarcire tutti i danni che dovessero 
+derivare al Punto Ordinante. 
+5.Il Fornitore potrà citare i contenuti essenziali del Contratto, nei casi in cui ciò fosse condizione necessaria 
+per la partecipazione del Fornitore medesimo a gare e appalti. 
+6.Fermo restando quanto previsto nel successivo articolo 18, il Fornitore si impegna, altresì, a rispettare 
+quanto previsto dal Regolamento UE n. 2016/679 relativo alla protezione delle persone fisiche con riguardo 
+al trattamento dei dati personali, nonché alla libera circolazione di tali dati ;Ŷel seguito aŶĐhe ͞Regolamento 
+UE͟ o ͞GDPR͟Ϳ e ulteriori provvedimenti in materia. 
+7 .Le Parti prendono atto e accettano che, anche ai sensi degli artt. 18, comma 3, 21, 38 e ss. delle Regole, 
+Consip potrà acquisire ovvero richiedere direttamente al Fornitore o al Soggetto Aggiudicatore informazioni 
+ĐiƌĐa l’eseĐuzioŶe del Contratto, effettuare verifiche ispettive ed assumere i provvedimenti che si rendessero 
+opportuni, ai sensi di quanto previsto dalle Regole e, iŶ paƌtiĐolaƌe, dall’aƌt. ϱϱ. 
+ 
+Articolo 18 
+Trattamento dei dati personali  
+1. Il Fornitore dichiara di aver ricevuto prima della sottoscrizione del Contratto le informazioni di cui 
+all’aƌtiĐolo ϭϯ del RegolaŵeŶto UE Ŷ. ϮϬϭϲ/ϲϳϵ ƌelativo alla pƌotezioŶe delle peƌsoŶe fisiĐhe ĐoŶ ƌiguaƌdo al 
+trattamento dei dati personali, noŶĐhĠ alla liďeƌa ĐiƌĐolazioŶe di tali dati ;Ŷel seguito aŶĐhe ͞RegolaŵeŶto 
+UE͟Ϳ, ĐiƌĐa il tƌattaŵeŶto dei dati peƌsoŶali, ĐoŶfeƌiti peƌ la sottosĐƌizioŶe e l’eseĐuzioŶe del CoŶtƌatto stesso 
+e di essere a conoscenza dei diritti riconosciuti ai sensi della predetta normativa. Tale informativa è 
+ĐoŶteŶuta Ŷell’aŵďito del Capitolato d’OŶeƌi e deve iŶteŶdeƌsi iŶ Ƌuest’aŵďito iŶtegƌalŵeŶte tƌasĐƌitta.   
+2. Con la sottoscrizione del Contratto, il rappresentante legale del Fornitore acconsente espressamente al 
+trattamento dei dati personali come sopra definito e si impegna ad adempiere agli obblighi di rilascio 
+dell’iŶfoƌŵativa e di ƌiĐhiesta del ĐoŶseŶso, ove ŶeĐessaƌio, Ŷei ĐoŶfƌoŶti delle peƌsoŶe fisiĐhe iŶteƌessate di 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 19 - di 25 
+ 
+Đui soŶo foƌŶiti dati peƌsoŶali Ŷell’aŵďito dell’eseĐuzioŶe del CoŶtƌatto, peƌ le fiŶalità desĐƌitte 
+Ŷell’iŶfoƌŵativa, Đoŵe sopƌa ƌiĐhiaŵata. 
+3. Con la sottoscrizione del Contratto, il Fornitore si impegna ad improntare il trattamento dei dati personali 
+ai principi di correttezza, liceità e trasparenza nel pieno rispetto della normativa vigente (Regolamento UE 
+2016/679), ivi inclusi gli ulteriori provvedimenti, comunicati ufficiali, autorizzazioni generali, pronunce in 
+genere emessi dall'Autorità Garante per la Protezione dei Dati Personali. In particolare, si impegna ad 
+eseguiƌe i soli tƌattaŵeŶti fuŶzioŶali, ŶeĐessaƌi e peƌtiŶeŶti all’eseĐuzioŶe delle pƌestazioŶi ĐoŶtƌattuali e, iŶ 
+ogni modo, non incompatibili con le finalità per cui i dati sono stati raccolti. 
+4. IŶ ƌagioŶe dell’oggetto del CoŶtƌatto, ove il Fornitore sia chiamato ad eseguire attività di trattamento di 
+dati personali, il medesimo potrà essere nominato dal Soggetto Aggiudicatore ͞RespoŶsaďile del 
+tƌattaŵeŶto͟ dei dati peƌsoŶali ai seŶsi dell’aƌt. Ϯϴ del RegolaŵeŶto UE; in tal caso, il Fornitore si impegna 
+ad accettare la designazione a Responsabile del trattamento da parte del Soggetto Aggiudicatore, 
+relativamente ai dati personali di cui la stessa è Titolare e che potranno essere trattati dal Fornitore 
+Ŷell’aŵďito dell’eƌogazioŶe dei servizi contrattualmente previsti.  
+5. Nel caso in cui il Fornitore violi gli obblighi previsti dalla normativa in materia di protezione dei dati 
+personali, o nel caso di nomina a Responsabile, agisca in modo difforme o contrario alle legittime istruzioni 
+impartitegli dal Titolare, oppure adotti misure di sicurezza inadeguate rispetto al rischio del trattamento, 
+ƌispoŶdeƌà iŶtegƌalŵeŶte del daŶŶo ĐagioŶato agli ͞iŶteƌessati͟. In tal caso, il Soggetto Aggiudicatore 
+diffiderà il Fornitore ad adeguarsi assegŶaŶdogli uŶ teƌŵiŶe ĐoŶgƌuo Đhe saƌà all’oĐĐoƌƌeŶza fissato; iŶ Đaso 
+di ŵaŶĐato adeguaŵeŶto a seguito della diffida, ƌesa aŶĐhe ai seŶsi dell’aƌt. ϭϰϱϰ ĐĐ, il Soggetto 
+Aggiudicatore in ragione della gravità potrà risolvere il contratto o escutere la garanzia definitiva, salvo il 
+risarcimento del maggior danno.  
+6. Il Fornitore si impegna ad osservare le vigenti disposizioni in materia di sicurezza e riservatezza e a farle 
+osservare ai relativi dipendenti e collaboratori, quali persone autorizzate al trattamento dei Dati personali. 
+ 
+Articolo 19 
+Tracciabilità dei flussi finanziari e ulteriori Clausole risolutive espresse 
+ϭ. Ai seŶsi e peƌ gli effetti dell’aƌt. ϯ, Đoŵŵa ϴ, della Legge ϭϯ agosto ϮϬϭϬ Ŷ. ϭϯϲ e s.ŵ.i., il FoƌŶitoƌe si 
+impegna a rispettare puntualmente quanto previsto dalla predetta disposizione in ordine agli obblighi di 
+tracciabilità dei flussi finanziari. 
+2. Ferme restando le ulteriori ipotesi di risoluzione previste nelle presenti Condizioni Generali, o nelle 
+Condizioni Particolari di Contratto, si conviene che, in ogni caso, i Punti Ordinanti, in ottemperanza a quanto 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 20 - di 25 
+ 
+disposto dall’aƌt. ϯ, Đoŵŵa ϵ bis, della Legge 13 agosto 2010 n. 136 e s.m.i., senza bisogno di assegnare 
+pƌeviaŵeŶte alĐuŶ teƌŵiŶe peƌ l’adeŵpiŵeŶto, ƌisolveƌaŶŶo di diƌitto, ai seŶsi dell’aƌt. ϭϰϱϲ c.c., nonché ai 
+seŶsi dell’aƌt. ϭϯϲϬ c.c., pƌevia diĐhiaƌazioŶe da ĐoŵuŶiĐaƌsi al FoƌŶitoƌe, i siŶgoli ĐoŶtƌatti Ŷell’ipotesi iŶ Đui 
+le transazioni siano eseguite senza avvalersi del bonifico bancario o postale ovvero degli altri documenti 
+idonei a consentire la piena tracciabilità delle operazioni ai sensi della Legge 13 agosto 2010 n. 136 e s.m.i., 
+del DeĐƌeto Legge ϭϮ Ŷoveŵďƌe ϮϬϭϬ Ŷ. ϭϴϳ ŶoŶĐhĠ della DeteƌŵiŶazioŶe dell’Autoƌità peƌ la VigilaŶza sui 
+Contratti Pubblici (ora ͞Autorità Nazionale Anticorruzione͟, di seguito ͞A.N.AC.͟) n. 4 del 7 luglio 2011.  
+3. In ogni caso, si conviene che il Punto Ordinante, senza bisogno di assegnare previamente alcun termine 
+peƌ l’adeŵpiŵeŶto, si ƌiseƌva di ƌisolveƌe di diƌitto il CoŶtƌatto, ai seŶsi dell’aƌt. ϭϰϱϲ Đod. Điv., ŶoŶĐhĠ ai 
+seŶsi dell’aƌt. ϭϯϲϬ Đod. Điv., pƌevia diĐhiaƌazioŶe da ĐoŵuŶiĐaƌsi al FoƌŶitoƌe ĐoŶ ƌaĐĐoŵaŶdata a.ƌ., 
+Ŷell’ipotesi di ƌeiteƌati iŶadeŵpiŵeŶti agli oďďlighi di Đui al pƌeĐedeŶte Đoŵŵa. 
+4. Il Fornitore, nella sua qualità di appaltatoƌe, si oďďliga, a ŵeŶte dell’aƌt. ϯ, Đoŵŵa ϴ, della Legge 13 
+agosto 2010 n. 136 e s.m.i., ad inserire nei contratti sottoscritti con i subappaltatori o i subcontraenti, a pena 
+di nullità assoluta, un apposita clausola con la quale ciascuno di essi assume gli obblighi di tracciabilità dei 
+flussi finanziari di cui alla Legge 13 agosto 2010 n. 136 e s.m.i. 
+5. Il FoƌŶitoƌe, il suďappaltatoƌe o il suďĐoŶtƌaeŶte Đhe ha Ŷotizia dell’iŶadeŵpiŵeŶto della pƌopƌia 
+controparte agli obblighi di tracciabilità fiŶaŶziaƌia di Đui all’aƌt. ϯ della Legge ϭϯ agosto ϮϬϭϬ Ŷ. ϭϯϲ e s.ŵ.i., 
+è tenuto a darne immediata comunicazione al Punto Ordinante e alla Prefettura – Ufficio Territoriale del 
+Governo della Provincia ove ha sede la stazione appaltante. 
+6. Il Fornitore, si obbliga e garantisce che nei contratti sottoscritti con i subappaltatori e i subcontraenti, 
+veƌƌà assuŶta dalle pƌedette ĐoŶtƌopaƌti l’oďďligazioŶe speĐifiĐa di ƌisoluzioŶe di diƌitto del ƌelativo ƌappoƌto 
+contrattuale nel caso di mancato utilizzo del bonifico bancario o postale ovvero degli strumenti idonei a 
+consentire la piena tracciabilità dei flussi finanziari. Il Punto ordinante verificherà che nei contratti 
+sottoscritti con i subappaltatori e i subcontraenti, sia inserita, a pena di nullità assoluta del contratto, 
+uŶ’apposita Đlausola ĐoŶ la Ƌuale ĐiasĐuŶo di essi assuŵe gli oďďlighi di tƌaĐĐiaďilità dei flussi fiŶaŶziaƌi di Đui 
+alla surrichiamata Legge. 
+7. I PuŶti OƌdiŶaŶti pƌovvedeƌaŶŶo, ai seŶsi e peƌ gli effetti dell’aƌt. ϯ della Legge ϭϯ agosto 2010 n. 136 e 
+s.m.i., degli artt. 6 e 7 del Decreto Legge 12 novembre 2010, n. 187 nonché della Determinazione 
+dell’Autoƌità peƌ la VigilaŶza sui CoŶtƌatti PuďďliĐi (ora A.N.A.C) n. 4 del 7 luglio 2011 al momento della 
+predisposizione della RdO, all’indicazione sulla medesima RdO del CIG (Codice Identificativo Gara) e, ove 
+oďďligatoƌio ai seŶsi dell’aƌt. ϭϭ della Legge ϭϲ geŶŶaio ϮϬϬϯ Ŷ. ϯ, del CUP ;CodiĐe UŶiĐo di PƌogettoͿ, 
+pƌeĐedeŶteŵeŶte ƌiĐhiesti, ai seŶsi dell’aƌt. ϯ Đoŵŵa ϲ della Legge ϭϯ agosto 2010 n. 136 e s.m.i. 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 21 - di 25 
+ 
+8. Il Fornitore sarà tenuto a comunicare al Punto Ordinante, entro e non oltre 7 giorni dalla stipula del 
+Contratto, i dati afferenti al Conto Bancario o Postale dedicato, anche non in via esclusiva, alla ricezione dei 
+flussi finanziari relativi al contratto stipulato nonché le generalità e il codice fiscale del/i soggetto/i 
+delegato/i ad operare sul conto/i corrente del Fornitore dedicato/i. 
+9. Il Fornitore è tenuto a comunicare tempestivamente e comunque entro e non oltre 7 giorni dalla/e 
+variazione/i, qualsivoglia variazione intervenuta in ordine ai dati relativi agli estremi identificativi del/i 
+conto/i corrente/i dedicato/i nonché le generalità (nome e cognome) e il Codice Fiscale delle persone 
+delegate ad operare su detto/i conto/i. 
+10. Con riferimento ai contratti di subfornitura, il Fornitore si obbliga a trasmettere al Punto Ordinante, oltre 
+alle iŶfoƌŵazioŶi di Đui all’aƌt. ϭϬϱ, Đoŵŵa Ϯ, ƋuiŶto peƌiodo, del D.Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.ŵ.i., aŶĐhe apposita 
+dichiarazione resa ai sensi del DPR 445/2000, attestante che nel relativo sub-contratto, ove predisposto, sia 
+stata iŶseƌita, a peŶa di Ŷullità assoluta, uŶ’apposita Đlausola ĐoŶ la Ƌuale il suďĐoŶtƌaeŶte assuŵe gli 
+obblighi di tracciabilità dei flussi finanziari di cui alla surrichiamata Legge, restando inteso che il Punto 
+Ordinante, si riserva di procedere a verifiche a campione sulla presenza di quanto attestato, richiedendo 
+all’uopo la pƌoduzioŶe degli eveŶtuali suď-ĐoŶtƌatti stipulati, e, di adottaƌe, all’esito dell’espletata veƌifica 
+ogni più opportuna determinazione, ai sensi di legge e di contratto. 
+11. Ai seŶsi della DeteƌŵiŶazioŶe dell’Autoƌità peƌ la VigilaŶza sui ĐoŶtƌatti puďďliĐi (ora A.N.AC.) n. 4 del 7 
+luglio 2011, il Fornitore, in caso di cessione dei crediti, si impegna a comunicare il/i CIG/CUP al cessionario 
+affinché lo/gli stesso/i venga/no riportato/i sugli strumenti di pagamento utilizzati. Il cessionario è tenuto a 
+utilizzare conto/i corrente/i dedicato/i nonché ad anticipare i pagamenti al Fornitore mediante bonifico 
+bancario o postale sul/i conto/i corrente/i dedicato/i del Fornitore medesimo riportando il CIG/CUP dallo 
+stesso comunicato e, in generale, al rispetto delle prescrizioni stabilite dalla normativa applicabile e 
+dall’A.N.AC. 
+ 
+Articolo 20 
+Subappalto 
+1. Resta inteso che qualora il Fornitore contraente si sia avvalso, in sede di offerta, della facoltà di 
+subappaltare le prestazioni oggetto del Contratto, si applicano le modalità e gli obblighi connessi 
+all’affidaŵeŶto iŶ suďappalto iŶdiĐati Ŷei suĐĐessivi commi. 
+2. Il Fornitore contraente è responsabile dei danni che dovessero derivare al Punto Ordinante, al Soggetto 
+Aggiudicatore contraente e/o a terzi per fatti comunque imputabili ai soggetti cui sono state affidate le 
+suddette attività. 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 22 - di 25 
+ 
+3. I subappaltatori dovranno mantenere, per tutta la durata del Contratto, i requisiti richiesti dalla Richiesta 
+di Offerta, nonché dalla normativa vigente in materia per lo svolgimento delle attività agli stessi affidate. 
+4. Il Fornitore si impegna a depositare presso il PuŶto OƌdiŶaŶte, alŵeŶo veŶti gioƌŶi pƌiŵa dell’iŶizio 
+dell’eseĐuzioŶe delle attività oggetto del suďappalto: iͿ l’oƌigiŶale o la Đopia auteŶtiĐa del ĐoŶtƌatto di 
+suďappalto Đhe deve iŶdiĐaƌe puŶtualŵeŶte l’aŵďito opeƌativo del suďappalto sia iŶ teƌŵiŶi prestazionali 
+che economici; ii) la dichiarazione attestante il possesso, da parte del subappaltatore, dei requisiti richiesti 
+dalla RdO per lo svolgimento delle attività allo stesso affidate, qualora le dichiarazioni rese in gara non siano 
+più utilizzabili; iiiͿ la diĐhiaƌazioŶe del suďappaltatoƌe attestaŶte l’asseŶza, iŶ Đapo a Ƌuest’ultiŵo, dei ŵotivi 
+di esĐlusioŶe di Đui all’aƌt. ϴϬ del D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.m.i., ove le dichiarazioni rese in gara non siano più 
+utilizzaďili; ivͿ la diĐhiaƌazioŶe dell’appaltatore relativa alla sussistenza o meno di eventuali forme di 
+ĐoŶtƌollo o ĐollegaŵeŶto a Ŷoƌŵa dell’aƌt. Ϯϯϱϵ Đ.Đ. ĐoŶ il suďappaltatoƌe; se del Đaso, vͿ la ĐeƌtifiĐazioŶe 
+attestante il possesso, da parte del subappaltatore, dei requisiti di qualificazione prescritti dal D. Lgs. 
+50/2016 e s.m.i. peƌ l’eseĐuzioŶe delle attività affidate.  
+5. I subappaltatori dovranno mantenere per tutta la durata del Contratto, i requisiti richiesti per il rilascio 
+dell’autoƌizzazioŶe al suďappalto. IŶ Đaso di peƌdita dei detti requisiti il Soggetto Aggiudicatore revocherà 
+l’autoƌizzazioŶe. 
+ϲ. Il FoƌŶitoƌe, Ƌualoƌa l’oggetto del suďappalto suďisĐa vaƌiazioŶi e l’iŵpoƌto dello stesso sia iŶĐƌeŵeŶtato 
+nonché siano variati i requisiti di qualificazione o le certificazioni, deve acquisire una autorizzazione 
+integrativa. 
+ϳ. Ai seŶsi dell’aƌt. ϭϬϱ, Đoŵŵa ϰ, lett. aͿ del D.lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.ŵ.i. ŶoŶ potƌà esseƌe autoƌizzato il 
+subappalto ad un operatore economico che abbia partecipato alla RdO. 
+8. Per le prestazioni affidate in subappalto: 
+a) devono essere praticati gli stessi prezzi unitari risultanti dall'aggiudicazione, con ribasso non superiore al 
+venti per cento, nel rispetto degli standard qualitativi e prestazionali previsti nel Contratto;  
+b) devono essere corrisposti i costi della sicurezza e della manodopera, relativi alle prestazioni affidate in 
+subappalto, alle imprese subappaltatrici senza alcun ribasso. 
+Il Soggetto Aggiudicatore, sentito il direttore dell'esecuzione, provvede alla verifica dell'effettiva 
+applicazione degli obblighi di cui al presente comma. Il Fornitore è solidalmente responsabile con il 
+subappaltatore degli adempimenti, da parte di questo ultimo, degli obblighi di sicurezza previsti dalla 
+normativa vigente. 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 23 - di 25 
+ 
+9. Il subappalto non comporta alcuna modificazione agli obblighi e agli oneri del Fornitore, il quale rimane 
+l’uŶiĐo e solo responsabile, nei confronti del Soggetto Aggiudicatore, per quanto di rispettiva competenza, 
+della perfetta esecuzione del contratto anche per la parte subappaltata.  
+10. Il Fornitore è responsabile in via esclusiva nei confronti del Soggetto Aggiudicatore dei danni che 
+dovessero derivare, al Soggetto Aggiudicatore o a terzi per fatti comunque imputabili ai soggetti cui sono 
+state affidate le suddette attività. In particolare, il Fornitore si impegna a manlevare e tenere indenne il 
+Soggetto Aggiudicatore da qualsivoglia pretesa di terzi per fatti e colpe imputabili al subappaltatore o ai suoi 
+ausiliari derivanti da qualsiasi perdita, danno, responsabilità, costo o spesa che possano originarsi da 
+eventuali violazioni del Codice in materia di protezione dei dati personali. 
+11. Il Fornitore è responsabile in solido dell'osservanza del trattamento economico e normativo stabilito dai 
+contratti collettivi nazionale e territoriale in vigore per il settore e per la zona nella quale si eseguono le 
+prestazioni da parte del subappaltatore nei confronti dei suoi dipendenti, per le prestazioni rese nell'ambito 
+del subappalto. Il Fornitore trasmette al Soggetto Aggiudicatore prima dell'inizio delle prestazioni la 
+documentazione di avvenuta denunzia agli enti previdenziali, inclusa la Cassa edile, ove presente, 
+assicurativi e antinfortunistici, nonché copia del piano della sicurezza di cui al D. Lgs. n. 81/2008. Ai fini del 
+pagamento delle prestazioni rese nell'ambito dell'appalto o del subappalto, il Soggetto Aggiudicatore 
+acquisisce d'ufficio il documento unico di regolarità contributiva in corso di validità relativo a tutti i 
+subappaltatori. 
+12. Il Fornitore è responsabile in solido con il subappaltatore in relazione agli obblighi retributivi e 
+ĐoŶtƌiďutivi, ai seŶsi dell’aƌt. Ϯϵ del D. Lgs. Ŷ. Ϯϳϲ/ϮϬϬϯ, ad eĐĐezioŶe del Đaso iŶ Đui ƌiĐoƌƌaŶo le fattispeĐie 
+di Đui all’aƌt. ϭϬϱ, Đoŵŵa ϭϯ, lett. aͿ e ĐͿ, del D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.m.i..  
+13. Il Fornitore si impegna a sostituire i subappaltatori relativamente ai quali apposita verifica abbia 
+diŵostƌato la sussisteŶza dei ŵotivi di esĐlusioŶe di Đui all’aƌtiĐolo ϴϬ del D. Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.m.i..  
+14. Il Soggetto Aggiudicatore corrisponde direttamente al subappaltatore, al cottimista, al prestatore di 
+servizi ed al fornitore di beni o lavori, l'importo dovuto per le prestazioni dagli stessi eseguite nei seguenti 
+casi: a) quando il subappaltatore o il cottimista è una microimpresa o piccola impresa; b) in caso 
+inadempimento da parte dell'appaltatore; c) su richiesta del subappaltatore e se la natura del contratto lo 
+ĐoŶseŶte. IŶ Đaso ĐoŶtƌaƌio, salvo diveƌsa iŶdiĐazioŶe del diƌettoƌe dell’eseĐuzioŶe, il FoƌŶitoƌe si oďďliga a 
+trasmettere al Soggetto Aggiudicatore entro 20 giorni dalla data di ciascun pagamento effettuato nei 
+confronti dei subappaltatori, copia delle fatture quietanzate relative ai pagamenti da esso via via corrisposte 
+al subappaltatore.  
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 24 - di 25 
+ 
+15. Nelle ipotesi di iŶadeŵpiŵeŶti da paƌte dell’impresa subappaltatrice, ferma restando la possibilità di 
+ƌevoĐa dell’autoƌizzazioŶe al suďappalto, ğ oŶeƌe del FoƌŶitoƌe svolgeƌe iŶ pƌopƌio le attività ovveƌo poƌƌe iŶ 
+essere, nei confronti del subappaltatore ogni rimedio contrattuale, ivi inclusa la risoluzione. 
+16. L’eseĐuzioŶe delle attività suďappaltate ŶoŶ può foƌŵaƌe oggetto di ulteƌioƌe suďappalto.  
+17. In caso di inadempimento da parte del Fornitore agli obblighi di cui ai precedenti comma, il Soggetto 
+Aggiudicatore può risolvere il Contratto, salvo il diritto al risarcimento del danno. 
+18. Ai seŶsi dell’aƌt. ϭϬϱ, comma 2 del D. Lgs. n. 50/2016 e s.m.i., il Fornitore si obbliga a comunicare al  
+Soggetto Aggiudicatore il nome del sub-ĐoŶtƌaeŶte, l’iŵpoƌto del ĐoŶtƌatto, l’oggetto delle pƌestazioŶi 
+affidate. 
+ϭϵ. Il FoƌŶitoƌe si iŵpegŶa a ĐoŵuŶiĐaƌe al “oggetto AggiudiĐatoƌe, pƌiŵa dell’iŶizio della pƌestazioŶe, peƌ 
+tutti i sub-ĐoŶtƌatti Đhe ŶoŶ soŶo suďappalti, stipulati peƌ l’eseĐuzioŶe del CoŶtƌatto, il Ŷoŵe del suď-
+ĐoŶtƌaeŶte, l’iŵpoƌto del suď-contƌatto, l’oggetto del lavoƌo, seƌvizio o foƌŶituƌa affidati. “oŶo, altƌesì, 
+comunicate eventuali modifiche a tali informazioni avvenute nel corso del sub-contratto. 
+ϮϬ. NoŶ ĐostituisĐoŶo suďappalto le fattispeĐie di Đui al Đoŵŵa ϯ dell’aƌt. ϭϬϱ del D.lgs. n. 50/2016 e s.m.i.. 
+Nel caso in cui il Fornitore intenda ricorrere alle prestazioni di soggetti terzi in forza di contratti continuativi 
+di cooperazione, servizio e/o fornitura gli stessi devono essere stati sottoscritti in epoca anteriore 
+all’iŶdizioŶe della RdO e devono essere depositati al Soggetto Aggiudicatore prima o contestualmente alla 
+sottoscrizione del Contratto. 
+21. Peƌ tutto ƋuaŶto ŶoŶ pƌevisto si appliĐaŶo le disposizioŶi di Đui all’aƌt. ϭϬϱ del D.Lgs. Ŷ. ϱϬ/ϮϬϭϲ e s.m.i.. 
+22. Restano fermi tutti gli oďďlighi e gli adeŵpiŵeŶti pƌevisti dall’aƌt. ϰϴ-bis del D.P.R. 602 del 29 settembre 
+1973 nonché dai successivi regolamenti. 
+Articolo 21 
+Evoluzione Tecnologica 
+1. Per i soli Ordini Diretti, qualora il Prodotto ordinato non sia più disponibile, in quanto il produttore ne 
+aďďia diĐhiaƌato il ͞fuoƌi pƌoduzioŶe͟, il FoƌŶitoƌe potƌà pƌopoƌƌe al PuŶto OƌdiŶaŶte uŶ Ŷuovo pƌodotto ĐoŶ 
+caratteristiche tecniche/funzionali e servizi associati almeno pari a quelli da sostituire, mantenendo lo stesso 
+Prezzo o Canone. 
+2. In tal caso il Fornitore dovrà formulare la proposta di sostituzione producendo una dichiarazione del 
+pƌoduttoƌe attestaŶte l’avveŶuta iŶdispoŶiďilità del Prodotto. 
+ϯ. Il PuŶto OƌdiŶaŶte, all’esito dell’aŶalisi della doĐuŵeŶtazioŶe inoltrata circa il Pƌodotto ͞evoluto͟ 
+procederà, entro e non oltre 48 ore dalla ricezione della dichiarazione, ad autorizzare il Fornitore a 
+
+ 
+ 
+Classificazione del documento: Consip Public 
+Allegato  1 al Bando "Prodotti"–  Condizioni Generali di Contratto relative alla fornitura di ͞Prodotti͟ 
+Stato del documento: Emesso 
+ 
+Pag.- 25 - di 25 
+ 
+procedere all’evasioŶe dell’oƌdiŶe ĐoŶ il Pƌodotto ͞evoluto͟ oppuƌe a ƌifiutaƌe la pƌoposta di sostituzioŶe, 
+senza pretesa alcuna da parte di entrambe le Parti.  
+ 
+ 
+
+=== FINE TESTO ===

@@ -25,6 +25,7 @@
 | 2026-05-07 | Spec v3 | Review v2 + Meta-Review multi-agent + 4 query Perplexity → 13 fix integrati | AI Act riclassificato limited-risk |
 | 2026-05-10 | Spec v3.1 | 3 patch da feedback prof File3 (stretch goals, dev token strategy, build roadmap) + 2 fix da review Perplexity (retention 30gg→7gg, DPA esplicito) | Spec finale pre-consegna |
 | 2026-05-11 | Test data + prompt test | 8 PDF reali scaricati via Perplexity free (INC-000g) + primo test prompt su Claude.ai con Sonnet su 1 contratto reale | Output JSON conforme schema 7 cat inglesi, autovalut. 4-5/5, 2 osservazioni da verificare (ellissi raw_excerpt, numeri calcolati in plain_language) |
+| 2026-05-11 | Test runtime #2 e #3 | Sonnet v1-final su co.co.co. ERSU + Consip Condizioni Generali; verifica fattuale Consip delegata a Haiku via Claude.ai | Test #2 zero pattern; Test #3 scopre pattern 3 (cross-article extraction + drift semantico "automatica" vs "potrà"). Definita patch v2.1 grounding stretto plain_language ↔ raw_excerpt |
 
 ---
 
@@ -440,6 +441,96 @@ CONSTRAINTS (additional — patch v2, 2026-05-11)
 **Quando applicare:** in Lez. 4 quando si crea `prompts/system_prompt.md` separato dal text-level della spec. Non modificare la spec v3.1: il prompt vive nel file separato secondo la struttura del Promemoria prof.
 
 **Test post-applicazione:** rieseguire un mini-suite (1 contratto denso tipo appalto + 1 contratto semplice tipo NDA) e verificare in PROMPT_LOG sotto entry "Test runtime #3 — post patch v2".
+
+---
+
+## Test runtime #3 — 2026-05-11 — Prompt v1-final su Sonnet via Claude.ai (contratto reale n.3/8)
+
+**Contesto:** Terzo test del prompt v1-final **senza modifiche** su Consip Condizioni Generali Fornitura Prodotti (agosto 2018), tipologia "contratto pubblico denso multi-articolo". Scopo: ulteriore falsificazione delle patch v2 (ellissi, no-calcoli) e ricerca di pattern non ancora osservati.
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/Consip_CondizioniGeneraliRelativeAllaFornituraDiProdottiAgosto2018-A.pdf` (25 pagine, ~72k char)
+- System prompt: identico a Test #1/#2 (spec v3.1 §6 invariato)
+- User message: identico a Test #1/#2 (vincoli espliciti + auto-valutazione 4 dimensioni)
+- Esecuzione: chat Claude.ai NUOVA (mitigazione context bleed)
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione 5/5/5/4 (Italiano 4/5 per uso "manleva" inevitabile). Risk distribution: 3 high (termination, penalties, liability_limitation), 3 medium (payment_terms, governing_law, intellectual_property), 1 low (auto_renewal correttamente assente — Consip Condizioni Generali non hanno durata propria, solo cornice).
+
+**Verifica anti-pattern (vs Test #1 e #2):**
+
+| Pattern | Test #1 (Demanio) | Test #2 (co.co.co.) | Test #3 (Consip) | Esito |
+|---|---|---|---|---|
+| Ellissi `[...]` in raw_excerpt | Presente | Assente | **Assente in tutti i 7** | ✅ Non riprodotto (2/3 PDF) |
+| Calcoli aritmetici espliciti (es. "X €/giorno" derivato da 1‰ × importo) | Presente | Assente | **Assente** — Consip ha 1‰ + tetto 10% ma manca importo base → Sonnet non aveva su cosa calcolare | ✅ Non riprodotto (ipotesi indebolita ma non falsificata) |
+| `present:false` motivato senza inventare | OK | OK | OK (`auto_renewal` ben gestito) | ✅ Confermato 3/3 |
+
+**🆕 PATTERN 3 NUOVO osservato in Test #3 — cross-article extraction nel plain_language:**
+
+Sonnet inserisce nel `plain_language` fatti specifici (numeri, percentuali, riferimenti normativi, qualificatori) che **non** compaiono nel `raw_excerpt` corrispondente, anche se sono presenti nel PDF in altri articoli. Identificati 6 fatti sospetti, delegata verifica fattuale a **Claude Haiku via Claude.ai sul PDF allegato** (sessione separata, prompt di verifica letterale, no interpretazione). Risultato:
+
+| # | Fatto nel plain_language di Sonnet | Articolo nel raw_excerpt | Articolo reale (verifica Haiku) | Verdetto Haiku |
+|---|---|---|---|---|
+| 1 | Ritenuta 0,5% svincolabile a fine contratto | art. pagamento generico | Art. 10 c.4 | ✅ PRESENTE |
+| 2 | Mora = BCE + 8 punti | art. pagamento generico | Art. 10 c.7 | ✅ PRESENTE |
+| 3 | Tetto penali 10% del contratto | art. penale 1‰ | Art. 11 c.5 | ✅ PRESENTE |
+| 4 | **Risoluzione AUTOMATICA al 10% penali** | art. penale 1‰ | Art. 11 c.5 dice "potrà risolvere" (facoltà) | ⚠️ **SIMILE — drift semantico** |
+| 5 | Recesso committente con preavviso 30 giorni | art. 1456 c.c. (risoluzione) | Art. 14 c.5 | ✅ PRESENTE |
+| 6 | Riferimento D.Lgs. 50/2016 | art. legge italiana | Artt. 1, 2, 10 e passim | ✅ PRESENTE |
+
+**Sintesi:** 5/6 PRESENTI + 1/6 SIMILE + 0/6 ASSENTI. **Zero allucinazioni** (Ipotesi B esclusa) → Ipotesi A confermata: Sonnet legge tutto il contratto e fa **estrazione cross-articolo**, riassumendo nel plain_language fatti veri pescati da articoli diversi dal raw_excerpt selezionato.
+
+**🚨 Caso #4 — drift semantico su qualificatore (pattern più pericoloso):**
+
+L'art. 11 c.5 Consip dice "il Punto Ordinante **potrà** risolvere il Contratto" (facoltà discrezionale). Sonnet ha riqualificato come "risoluzione **automatica** al 10%". Il numero (10%) è corretto e presente; l'avverbio modale ("automatica") è inventato. Per il diritto privato/pubblico italiano la differenza tra risoluzione facoltativa e automatica è **sostanziale** (cambia chi attiva il meccanismo, i tempi, l'onere della prova). È **peggio** dei calcoli aritmetici di Test #1: lì il numero inventato è verificabile con Ctrl+F; qui il drift è semantico-modale e sfugge a qualunque controllo automatico fuzzy match sul raw_excerpt.
+
+**Implicazioni metodologiche:**
+
+1. Le patch v2 (no-ellissi + no-calcoli) **restano necessarie** ma **non sufficienti**. Coprono i pattern di Test #1 ma non i pattern di Test #3 (cross-article extraction + drift semantico).
+
+2. La fuzzy match anti-allucinazione della spec v3.1 (SequenceMatcher 0.92 su raw_excerpt) **non protegge** dal pattern Test #3: il raw_excerpt resta verbatim e passa il fuzzy match; il problema è nel plain_language, non nell'excerpt.
+
+3. Serve un terzo vincolo (patch v2.1 #3): grounding stretto del plain_language al raw_excerpt corrispondente. Ogni fatto specifico (numero, percentuale, riferimento normativo, qualificatore modale come "automatica"/"facoltativa"/"obbligatoria") nel plain_language deve avere un correlato testuale nel raw_excerpt. Se la categoria richiede di citare fatti da più articoli, il raw_excerpt va trasformato in lista o concatenato (compatibilmente con la patch no-ellissi del v2 → soluzione: schema con `raw_excerpts` come array di stringhe contigue).
+
+**Lezione metodologica:**
+- ✅ **Delega della verifica fattuale a un secondo LLM su sessione fresh** è efficace e a basso costo: Haiku via Claude.ai gratis, prompt di verifica letterale (no interpretazione), risultato in <1 min, 6 fatti tracciati a livello di articolo del PDF.
+- ✅ Il pattern "drift semantico su qualificatore" sarebbe sfuggito a una verifica solo numerica (Ctrl+F): emerge solo confrontando la citazione PDF parola per parola con il plain_language. Lezione: in Lez. 5 (test plan §8) aggiungere un test esplicito di grounding semantico, non solo di grounding numerico.
+- ⚠️ La spec v3.1 §raw_excerpt anti-allucinazione (fuzzy match 0.92) protegge solo da "excerpt inventato", non da "interpretazione drift nel plain_language a partire da excerpt corretto". Gap da segnalare alla prof come edge-case scoperto in pre-Cursor (post-MVP, non richiede patch spec ora).
+
+**Aggiornamenti collegati:** nessuna modifica spec v3.1. Nuova patch v2.1 definita sotto come BLOCCO PRONTO DA INCOLLARE (additiva alle patch v2 esistenti, stessa posizione nel system_prompt.md).
+
+---
+
+## Patch v2.1 prompt — BLOCCO PRONTO DA INCOLLARE in `prompts/system_prompt.md` (Cursor Fase 1, additiva alle patch v2)
+
+> Da inserire **dopo le patch v2** nella sezione `CONSTRAINTS (additional)` del system prompt. Coprire il pattern 3 emerso in Test #3 (cross-article extraction + drift semantico su qualificatore).
+
+```
+CONSTRAINTS (additional — patch v2.1, 2026-05-11)
+- plain_language must be strictly grounded in the corresponding raw_excerpt.
+  Every specific fact mentioned in plain_language (numbers, percentages,
+  normative references like "D.Lgs. X/Y", deadlines, modal qualifiers like
+  "automatic" / "discretionary" / "mandatory") MUST be supported by literal
+  text in the raw_excerpt for the same category.
+- If a category requires facts located in multiple articles of the contract,
+  the raw_excerpt may be split into a list of contiguous spans (each ≥20
+  characters, none containing ellipsis markers per patch v2). Do not import
+  facts from other articles into plain_language unless their source span is
+  included in raw_excerpt.
+- Modal qualifiers must mirror the contract's wording. If the text says
+  "potrà / può / facoltà" → translate as "facoltativa / discrezionale",
+  NEVER as "automatica / obbligatoria". If the text says "di diritto /
+  automaticamente" → translate as "automatica". Never upgrade a discretionary
+  clause to an automatic one or vice versa.
+```
+
+**Provenance:** patch derivata da Test runtime #3 (Consip, verifica fattuale delegata a Haiku via Claude.ai). 5/6 fatti del plain_language risultano cross-article (presenti nel PDF ma fuori dal raw_excerpt); 1/6 mostra drift semantico su qualificatore modale ("automatica" vs "potrà"). Pattern non osservato in Test #1 (calcoli aritmetici) né in Test #2 (zero pattern).
+
+**Quando applicare:** in Lez. 4 insieme alle patch v2, in `prompts/system_prompt.md`. Richiede modifica minima dello schema Pydantic: `raw_excerpt: str` → `raw_excerpt: str | list[str]` (oppure mantenere `str` e usare separatore esplicito come `\n---\n` tra span). Decisione di scope da prendere in Fase 1 Cursor.
+
+**Test post-applicazione (mini-suite suggerita):**
+1. Ri-test Consip: verificare che 0,5%, BCE+8, tetto 10%, 30gg preavviso, D.Lgs. 50/2016 finiscano nel raw_excerpt (lista multi-span) e non solo nel plain_language.
+2. Re-run Demanio Test #1: verificare che le patch v2 + v2.1 elimino sia l'ellissi sia i calcoli sia eventuali drift semantici.
+3. NDA breve (4. Modello impegno riservatezza): contratto a categoria singola, baseline negativo (pattern non dovrebbero attivarsi).
 
 ---
 

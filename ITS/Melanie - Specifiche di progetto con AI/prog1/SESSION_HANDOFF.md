@@ -128,7 +128,10 @@ specter-ai/
 - ✅ **2 patch v2 prompt** definite e BLOCCO PRONTO DA INCOLLARE in `PROMPT_LOG.md` → da applicare a `prompts/system_prompt.md` quando si crea la struttura in Cursor (Fase 1 Lez. 4):
   1. no-ellissi nei raw_excerpt (singolo brano contiguo, mai `[...]`)
   2. no-calcoli nei plain_language (vietate operazioni aritmetiche su numeri citati; numeri ammessi solo se verbatim nel raw_excerpt corrispondente)
-- ✅ Decisione: prompt resta source-of-truth nella spec v3.1 (text-level invariato); patch v2 vivranno in `prompts/system_prompt.md` in Cursor → spec **non** viene modificata ora
+- ✅ **Test runtime #3** Sonnet v1-final su Consip Condizioni Generali Fornitura (PDF #3/8, denso, multi-articolo) → JSON conforme, autovalut. 5/5/5/4. Pattern v2 (ellissi + calcoli) NON riprodotti. **Scoperto pattern 3 nuovo:** cross-article extraction (5/6 fatti del plain_language presenti nel PDF ma in articoli diversi dal raw_excerpt) + 1/6 caso di **drift semantico su qualificatore modale** ("risoluzione automatica" vs "potrà risolvere") — più pericoloso dei calcoli per legal-AI
+- ✅ Verifica fattuale Test #3 **delegata a Claude Haiku via Claude.ai** sul PDF allegato (sessione fresh, prompt verifica letterale): 5/6 PRESENTI + 1/6 SIMILE + 0/6 ASSENTI → zero allucinazioni, Ipotesi A (cross-article) confermata, Ipotesi B (invenzione) esclusa
+- ✅ **Patch v2.1** definita come BLOCCO additivo in PROMPT_LOG: grounding stretto plain_language ↔ raw_excerpt (numeri, percentuali, riferimenti normativi, **qualificatori modali**) + raw_excerpt come lista multi-span per categorie cross-article. Richiede modifica minima schema Pydantic in Fase 1 Cursor (`raw_excerpt: str | list[str]`)
+- ✅ Decisione: prompt resta source-of-truth nella spec v3.1 (text-level invariato); patch v2 + v2.1 vivranno in `prompts/system_prompt.md` in Cursor → spec **non** viene modificata ora. Gap fuzzy match 0.92 (protegge solo excerpt, non plain_language) da segnalare alla prof come edge-case post-MVP
 - ✅ Tutti i commit pushati su `obsidian_sync`
 
 ### 🟢 Stato pre-Cursor (sintesi entrata Lez. 4)
@@ -136,8 +139,9 @@ specter-ai/
 | Asset | Stato |
 |---|---|
 | 8 PDF contratti reali (5/5 tipologie) | ✅ pronti in `prog1/specterai/contratti/` |
-| Prompt v1-final validato cross-contratto | ✅ 2/8 PDF (Demanio appalto + ERSU co.co.co.) |
-| Patch v2 prompt | ✅ definite, blocco pronto da incollare in PROMPT_LOG (post Test #2) |
+| Prompt v1-final validato cross-contratto | ✅ 3/8 PDF (Demanio appalto + ERSU co.co.co. + Consip Condizioni Generali) |
+| Patch v2 prompt (ellissi + calcoli) | ✅ definite, blocco pronto da incollare in PROMPT_LOG (post Test #2) |
+| Patch v2.1 prompt (grounding stretto + qualificatori modali) | ✅ definita post Test #3 + verifica Haiku, blocco additivo in PROMPT_LOG |
 | Spec v3.1 | ✅ confermata 95/100, nessuna patch richiesta dalla prof |
 | Cartella progetto Cursor | ⏳ da creare in Lez. 4 (struttura nel Promemoria prof) |
 | `prompts/system_prompt.md` separato | ⏳ da creare in Fase 1 Cursor + integrare patch v2 |
