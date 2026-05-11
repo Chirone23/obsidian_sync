@@ -139,10 +139,14 @@ specter-ai/
 | Asset | Stato |
 |---|---|
 | 8 PDF contratti reali (5/5 tipologie) | ✅ pronti in `prog1/specterai/contratti/` |
-| Prompt v1-final validato cross-contratto | ✅ 4/8 PDF (Demanio appalto + ERSU co.co.co. + Consip Cond. Gen. + NDA Politecnico Milano) |
+| Prompt v1-final validato cross-contratto | ✅ **5/8 PDF** (mini-suite completata: Demanio appalto + ERSU co.co.co. + Consip Cond. Gen. + NDA Politecnico Milano + Locazione INPS) |
 | Patch v2 prompt (ellissi + calcoli) | ✅ definite, blocco pronto da incollare in PROMPT_LOG (post Test #2) |
 | Patch v2.1 prompt (grounding stretto + qualificatori modali) | ✅ definita post Test #3 + verifica Haiku, blocco additivo in PROMPT_LOG |
-| Patch v2.2 prompt (anti-speculazione + no inferenza giurisprudenziale) | ✅ definita post Test #4 + verifica Haiku (pattern 5 "foro probabile Milano"), blocco additivo in PROMPT_LOG |
+| Patch v2.2 prompt (anti-speculazione + no inferenza giurisprudenziale + clausola positiva "if absent → say so") | ✅ definita post Test #4 e rafforzata post Test #5 (pattern 5b asserzione non-qualificata), blocco additivo in PROMPT_LOG |
+| Sintesi cumulativa 5/5 test in PROMPT_LOG | ✅ tabella 8 pattern catalogati + decisioni finali pre-Cursor (patch + schema Pydantic + few-shot + 2 nuovi test T13/T14) |
+| Schema Pydantic `raw_excerpt: list[str]` (vs `str`) | ⏳ da implementare in Cursor Fase 1 (richiesta dalla patch v2.1) |
+| Few-shot esempio "if absent → say so" (clausola positiva v2.2) | ⏳ da aggiungere in Cursor Fase 2 |
+| Test T13 (grep speculazione=0) + T14 (grounding plain↔raw_excerpt) in test plan §8 | ⏳ da integrare in Lez. 5 |
 | Spec v3.1 | ✅ confermata 95/100, nessuna patch richiesta dalla prof |
 | Cartella progetto Cursor | ⏳ da creare in Lez. 4 (struttura nel Promemoria prof) |
 | `prompts/system_prompt.md` separato | ⏳ da creare in Fase 1 Cursor + integrare patch v2 |

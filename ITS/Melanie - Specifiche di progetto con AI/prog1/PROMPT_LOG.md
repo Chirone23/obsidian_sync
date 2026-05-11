@@ -27,6 +27,7 @@
 | 2026-05-11 | Test data + prompt test | 8 PDF reali scaricati via Perplexity free (INC-000g) + primo test prompt su Claude.ai con Sonnet su 1 contratto reale | Output JSON conforme schema 7 cat inglesi, autovalut. 4-5/5, 2 osservazioni da verificare (ellissi raw_excerpt, numeri calcolati in plain_language) |
 | 2026-05-11 | Test runtime #2 e #3 | Sonnet v1-final su co.co.co. ERSU + Consip Condizioni Generali; verifica fattuale Consip delegata a Haiku via Claude.ai | Test #2 zero pattern; Test #3 scopre pattern 3 (cross-article extraction + drift semantico "automatica" vs "potrà"). Definita patch v2.1 grounding stretto plain_language ↔ raw_excerpt |
 | 2026-05-11 | Test runtime #4 | Sonnet v1-final su NDA Politecnico Milano (baseline negativo); verifica fattuale delegata a Haiku via Claude.ai | Pattern 1/2 non riprodotti, pattern 3 confermato 1/2 (termination cross-article), pattern 4 (riempimento allucinato) escluso. **Scoperto pattern 5 nuovo:** inferenza speculativa esplicitata su fatti giurisprudenziali ("foro probabile Milano" da firma a Milano). Definita patch v2.2 anti-speculazione |
+| 2026-05-11 | Test runtime #5 + cumulativo 5/5 | Sonnet v1-final su Locazione INPS (Caltanissetta/Palermo); verifica fattuale delegata a Haiku via Claude.ai | Cross-article 2/4 + SIMILE 1/4 (Caltanissetta da premesse, Art.2 template vuoto = pattern 6 candidato) + ASSENTE 1/4 ("diritto italiano" = pattern 5b asserzione non-qualificata). Chiusura mini-suite pre-Cursor: 8 pattern catalogati, patch v2+v2.1+v2.2 finalizzate, schema Pydantic `raw_excerpt: list[str]` decisa, 2 test T13/T14 aggiunti al test plan §8 |
 
 ---
 
@@ -617,6 +618,94 @@ CONSTRAINTS (additional — patch v2.2, 2026-05-11)
 **Quando applicare:** in Lez. 4 insieme alle patch v2 e v2.1, in `prompts/system_prompt.md`. Nessuna modifica schema Pydantic richiesta — vincolo puro a livello di prompt.
 
 **Test post-applicazione:** la mini-suite della patch v2.1 (Consip ri-test + Demanio re-run + NDA baseline) verifica anche v2.2. Test specifico: nel JSON di output, grep di `(probabil|presumibil|verosimil|potrebbe|plausibil|implicit)` deve restituire zero match.
+
+---
+
+## Test runtime #5 — 2026-05-11 — Prompt v1-final su Sonnet via Claude.ai (contratto reale n.5/8)
+
+**Contesto:** Quinto e ultimo test della mini-suite pre-Cursor sui 5 PDF prioritari. Schema Contratto Locazione INPS (Allegato C), tipologia "contratto pubblico immobiliare con foro fisso + asimmetrie locatore/conduttore + template con campi non compilati". Scopo: chiudere la copertura cross-tipologia (appalto, co.co.co., fornitura, NDA, locazione) e validare le ipotesi pattern-emergenti su un'ultima configurazione.
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/32561_Allegato-C-Schema-contratto-locazione.pdf`
+- System prompt + user message: identici a Test #1-#4 (v1-final, spec v3.1 §6)
+- Esecuzione: chat Claude.ai NUOVA
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione 5/5/5/4. Risk distribution: 1 high (termination — recesso asimmetrico INPS), 4 medium (auto_renewal, penalties, liability_limitation, governing_law), 2 low (payment_terms, intellectual_property — quest'ultima correttamente `present:false`).
+
+**Verifica anti-pattern:**
+
+| Pattern | Esito Test #5 | Note |
+|---|---|---|
+| Ellissi `[...]` raw_excerpt | ✅ Assente 0/6 | Coerente con Test #2/#3/#4 |
+| Calcoli aritmetici espliciti | ✅ Assente | Locazione non fornisce stimoli percentuale + importo base contigui |
+| Cross-article extraction nel plain_language | ⚠️ **2/4 confermati + 1/4 borderline** | Pattern sistemico ormai |
+| Pressione di schema → riempimento (pattern 4) | ✅ Escluso | `intellectual_property: present:false` correttamente motivato |
+| Inferenza speculativa qualificata (pattern 5 v.Test #4) | ✅ Assente — nessun "probabil*/presumibil*" | |
+| **🆕 Inferenza legale ASSERTIVA non-qualificata (pattern 5b)** | ⚠️ **1/4 confermato** | "Il diritto italiano si applica in ogni caso" senza "probabile" — peggio del Test #4 |
+
+**Verifica delegata a Haiku via Claude.ai sul PDF allegato — riepilogo:**
+
+| # | Affermazione di Sonnet | Verdetto Haiku | Posizione PDF |
+|---|---|---|---|
+| 1 | Pagamento bonifico bancario entro 30gg dalla fattura | ✅ PRESENTE | Art. 6 c.5 |
+| 2 | Disdetta 12 mesi locatore + 6 mesi conduttore | ✅ PRESENTE | Art. 4 c.1 |
+| 3 | Immobile ubicato a Caltanissetta | ⚠️ SIMILE — presente in premesse procedurali e art. 3; Art. 2 ha "comune di ____" non compilato (template) | Art. 3 + procedura; Art. 2 c.1 vuoto |
+| 4 | Esplicita applicazione del diritto italiano | ❌ **ASSENTE** — solo rinvii a L.392/78 e CC senza clausola di scelta legge | Art. 21 |
+
+Sintesi: 2/4 PRESENTI + 1/4 SIMILE + 1/4 ASSENTE. Zero allucinazioni vere; cross-article (#1, #2) + lettura da contesto extra-clausola (#3) + asserzione inferenziale (#4).
+
+**🚨 Caso #3 (Caltanissetta) — sotto-pattern nuovo "lettura da campo template non compilato":**
+
+Sonnet ha asserito "immobile a Caltanissetta" leggendo dalle premesse procedurali e dalla destinazione d'uso ("Archivio della Direzione Provinciale di Caltanissetta"), **ignorando che l'art. 2 c.1 con il campo specifico "comune di ___" è vuoto** (template non compilato). Il fatto è materialmente vero (Caltanissetta è l'ubicazione operativa), ma per legal-AI in produzione: un contratto-template **vuoto** restituirebbe comunque un'ubicazione "dedotta dal contesto", che è un comportamento pericoloso se il PDF caricato è una bozza da firmare con campi da compilare. Implicazione: il prompt dovrebbe distinguere tra "campo compilato" e "campo placeholder/vuoto" e segnalare l'incompletezza al non-avvocato.
+
+**🚨 Caso #4 (diritto italiano) — pattern 5b distinto da pattern 5 di Test #4:**
+
+In Test #4 Sonnet aveva inferito "foro probabile Milano" **con qualificatore esplicito** ("probabile"). In Test #5 Sonnet ha scritto "Il diritto italiano si applica in ogni caso" **come asserzione netta**, senza "probabile" né "presumibile". Verifica Haiku: ASSENTE clausola di scelta legge, solo rinvii impliciti a L.392/78 e CC. La patch v2.2 attualmente vieta i marker speculativi e l'inferenza giurisprudenziale da extra-testo → tecnicamente copre anche questo caso (l'inferenza è giuridica). Tuttavia la formulazione assertiva è **peggio** perché manca la trasparenza speculativa: il lettore non-avvocato non ha alcun segnale che si tratta di un'inferenza.
+
+**Implicazione:** la patch v2.2 va rafforzata con un vincolo positivo aggiuntivo (non solo "vieta speculazione" ma anche "se la clausola è assente, dichiaralo esplicitamente"). Già presente nella formulazione attuale ("plain_language must say so: 'Il contratto non specifica [fatto X]'") — non serve nuova patch, va solo verificato che Sonnet la rispetti su Test post-applicazione. Aggiunta minore al few-shot in Cursor: includere un esempio con "il contratto non specifica la legge applicabile, chiarire con la controparte" come gold standard.
+
+**Aggiornamenti collegati:** nessuna modifica spec v3.1. Nessuna nuova patch v2.3 — pattern 5b già coperto da v2.2 con clausola positiva "if absent → say so".
+
+---
+
+## Cumulativo Test #1→#5 — Sintesi pre-Cursor (2026-05-11)
+
+**Copertura test mini-suite:** 5/5 PDF prioritari analizzati con prompt v1-final invariato; 4/5 verifiche fattuali delegate a Haiku via Claude.ai (Test #2 ERSU non richiedeva verifica perché 0 pattern).
+
+**Tipologie contrattuali coperte:** appalto pubblico (Demanio), co.co.co. (ERSU), Condizioni Generali fornitura PA (Consip), NDA unilaterale (Politecnico), locazione PA (INPS). Mancano dalla mini-suite i restanti 3 PDF (servizi, fornitura B2B, NDA bilaterale) — possono essere usati post-Cursor come regression test delle patch v2/v2.1/v2.2.
+
+**Pattern emersi (consolidato):**
+
+| Pattern | Definizione | Test in cui appare | Patch | Stato |
+|---|---|---|---|---|
+| 1. Ellissi `[...]` nei raw_excerpt | Sonnet condensa due brani contigui con marker di ellissi | #1 Demanio (1/5) | v2 | Risolto a prompt-level |
+| 2. Calcoli aritmetici espliciti | Sonnet calcola spontaneamente percentuali su importi citati (es. 1‰ × 143.315 = 143/giorno) | #1 Demanio (1/5) | v2 | Risolto a prompt-level |
+| 3. Cross-article extraction nel plain_language | Sonnet sintetizza fatti veri da articoli diversi dal raw_excerpt citato | #3 Consip, #4 NDA, #5 Locazione (3/5) — sistemico su contratti multi-articolo | v2.1 + schema Pydantic `raw_excerpt: list[str]` | Risolto a prompt-level + schema-level |
+| 3b. Drift semantico su qualificatore modale | "Potrà risolvere" (facoltà) riqualificato come "risoluzione automatica" | #3 Consip (1/5) | v2.1 (mirror qualificatori) | Risolto a prompt-level |
+| 4. Riempimento allucinato sotto pressione schema | Inventare clausole per evitare `present:false` | Nessun test (0/5) | Regola spec già esistente | Escluso — regola tiene |
+| 5. Inferenza speculativa qualificata | "Probabile foro Milano" da firma a Milano | #4 NDA (1/5) | v2.2 | Risolto a prompt-level |
+| 5b. Asserzione inferenziale non-qualificata | "Il diritto italiano si applica" senza clausola di scelta legge | #5 Locazione (1/5) | v2.2 (clausola positiva "if absent → say so") + few-shot Cursor | Risolto a prompt-level |
+| 6. Lettura da campo template non compilato | Asserire ubicazione da premesse mentre campo specifico è vuoto | #5 Locazione (1/5) | Da decidere in Cursor (estensione few-shot) | Aperto, non-bloccante per MVP |
+
+**Decisioni finali da portare in Cursor (Lez. 4 Fase 1):**
+
+1. **Patch v2 + v2.1 + v2.2** vanno integrate tutte e tre nel file `prompts/system_prompt.md`, in ordine, nella sezione `CONSTRAINTS (additional)` del system prompt corrente (text-level spec v3.1 §6). I 3 BLOCCHI PRONTI DA INCOLLARE sono già scritti sopra in questo PROMPT_LOG.
+2. **Schema Pydantic** modificare `raw_excerpt: str` → `raw_excerpt: list[str]` con `min_length=1`, ogni elemento `min_length=20`, **nessuno** contenente ellissi marker (validator post-init). Questa è la modifica unica di schema richiesta dalle patch.
+3. **Few-shot examples** aggiungere in Cursor 1 esempio gold-standard "if absent → say so" (es. "il contratto non specifica la legge applicabile, chiarire con la controparte") per rafforzare la clausola positiva di v2.2. Mantenere i 14 esempi esistenti (2x7 categorie).
+4. **Pattern 6 (template vuoto) NON bloccante** per MVP corso. Annotare come future-work in INC-001 candidato post-MVP (verifica campi `___` / `XXX` / `[da compilare]` nel raw_excerpt).
+5. **Test plan §8 Lez. 5** — aggiungere 2 test specifici:
+   - T13: grep nel JSON di output di `(probabil|presumibil|verosimil|potrebbe|plausibil|implicit)` → deve restituire 0 match
+   - T14: per ogni categoria con `present:true`, controllare che ogni numero / data / riferimento normativo / qualificatore modale del `plain_language` sia presente anche in almeno uno degli span di `raw_excerpt` (regex grounding test)
+
+**Lezioni metodologiche complessive:**
+
+- ✅ **Test cross-tipologia su 5 PDF reali con prompt invariato** ha rivelato 8 pattern distinti (di cui 6 attivi). Una mini-suite di 1-2 contratti avrebbe lasciato il 60% dei pattern non scoperti. Per legal-AI la diversità tipologica è essenziale.
+- ✅ **Delega verifica fattuale a un secondo LLM** (Haiku via Claude.ai) è stata efficace e gratuita: 4 verifiche, ~10 min totali, 0 falsi positivi. Pattern riusabile per QA legale post-MVP (validation set semi-automatico).
+- ✅ **Logging granulare** (1 entry PROMPT_LOG per test + 1 BLOCCO patch per scoperta) ha trasformato un'esplorazione in pipeline riproducibile. Conferma il valore del framework del corso (PROMPT_LOG come deliverable).
+- ⚠️ La spec v3.1 fuzzy match 0.92 su `raw_excerpt` protegge solo dal pattern 1 (ellissi/parafrasi). I pattern 3, 3b, 5, 5b sono **fuori dal suo perimetro**. Da segnalare alla prof come edge-case scoperto post-spec (non richiede patch alla spec — la spec è confermata 95/100 e va consegnata invariata; le mitigazioni vivono nel prompt operativo).
+- ⚠️ La logica "Sonnet riassume tutto il contratto nel plain_language" è un comportamento **sistemico** (3/5 PDF), non un'eccezione. Architetturalmente significa: o il `plain_language` resta libero di sintetizzare e accetta cross-article (allora il `raw_excerpt` deve diventare lista multi-span come da patch v2.1), o il `plain_language` viene vincolato strettamente al singolo span (allora alcune categorie diventano povere). Trade-off da rivisitare in Lez. 6 se i test §8 mostrano qualità sub-target.
+
+**Budget consegna aggiornato:** zero costo runtime sostenuto (tutti i test sono stati eseguiti su Claude.ai free + Haiku free su Claude.ai). Budget API a pagamento ancora intero (~1,50 € disponibili per test plan §8 + demo).
 
 ---
 
