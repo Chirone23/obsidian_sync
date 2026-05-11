@@ -360,6 +360,22 @@ DO NOT: Invent clauses, use legal jargon, advise sign/don't sign, return text ou
 
 **Aggiornamenti collegati:** nessuna modifica spec v3.1 (prompt text invariato). Eventuale v2 del prompt da loggare separatamente quando le mitigazioni saranno integrate.
 
+### Esito verifica numeri — 2026-05-11
+
+Verifica manuale sul PDF Demanio (Ctrl+F):
+- `143.315,16 €` → **presente nel contratto** come importo contrattuale base.
+- `2.282.328,93 €` → **presente** come valore lavori (citazione diretta, ok).
+- `143 €/giorno` → **non presente** — Sonnet ha calcolato 1‰ × 143.315,16 = 143,31 €. Calcolo aritmetico.
+- `14.331 €` → **non presente** — Sonnet ha calcolato 10% × 143.315,16 = 14.331,52 €. Calcolo aritmetico.
+
+**Conclusione:** osservazione #2 confermata. Sonnet 4.6 esegue spontaneamente aritmetica sui numeri citati. Per un'app legal-AI a target non-avvocato il rischio è alto: un calcolo errato passa inosservato e si propaga come fatto. **Mitigazione obbligatoria in prompt v2 prima di aprire Cursor.**
+
+**Patch da applicare al prompt (v1-final → v2):**
+1. Vincolo no-ellissi nei raw_excerpt: *"raw_excerpt deve essere un singolo brano contiguo letterale, mai concatenare con `[...]`. Se servono due passaggi distinti, scegli il più rappresentativo."*
+2. Vincolo no-calcoli: *"plain_language non deve contenere numeri assenti letteralmente dal contratto. Vietate operazioni aritmetiche (percentuali, moltiplicazioni, conversioni) sui numeri citati. Usa termini qualitativi: 'una piccola percentuale giornaliera', 'una frazione del corrispettivo'. I numeri compaiono solo dove citati testualmente nel raw_excerpt."*
+
+Decisione di scope: le 2 patch sono **prevention**, non fix di un fallimento già occorso in produzione. Vanno integrate nel prompt v2 da committare insieme allo scaffolding di `prompts/system_prompt.md` quando si crea la struttura progetto in Cursor (Fase 1 Promemoria Lez. 4).
+
 ---
 
 ## Template per v2+ (Future iterations)
