@@ -378,6 +378,71 @@ Decisione di scope: le 2 patch sono **prevention**, non fix di un fallimento gi�
 
 ---
 
+## Test runtime #2 — 2026-05-11 — Prompt v1-final su Sonnet via Claude.ai (contratto reale n.2/8)
+
+**Contesto:** Secondo test del prompt v1-final **senza modifiche** rispetto a Test #1, su un secondo PDF di tipologia diversa (co.co.co.) per verificare se i 2 pattern problematici osservati sul Demanio (ellissi nei `raw_excerpt`, calcoli aritmetici nei `plain_language`) sono sistemici o contesto-dipendenti. Falsificazione preventiva delle patch v2 prima di applicarle.
+
+**Nota operativa (INC candidato):** primo run del Test #2 fallito per **context bleed in Claude.ai**: rieseguendo il prompt nella stessa chat del Test #1 con un nuovo upload, il modello ha restituito un'analisi che era ancora del PDF Demanio (foro Bologna, BIM, RUP, importi 143.315,16 € / 2.282.328,93 €) ignorando il nuovo allegato. Identificato confrontando entità non sovrapposte (Bologna vs Messina, appalto vs co.co.co.). **Mitigazione:** chat Claude.ai NUOVA per ogni run di test, mai riusare conversazione anche se cambia il PDF allegato. Da loggare come INC-000h se il pattern si ripresenta.
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/Schema-Contratto-CO.CO_.CO_.-1.pdf` (co.co.co. ERSU Messina, schema-tipo, compenso flat 8.000 € lordi, scadenza 15/10/2021, foro Messina)
+- System prompt: identico a Test #1 (spec v3.1 §6, invariato)
+- User message: identico a Test #1 (vincoli espliciti + auto-valutazione 4 dimensioni)
+- Esecuzione: chat Claude.ai NUOVA (post-mitigazione context bleed)
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione 5/5 su tutte e 4 le dimensioni. Risk distribution: 2 high (`liability_limitation`, `termination`), 2 medium (`payment_terms`, `governing_law`, `intellectual_property` — in realtà 3), 2 low (`auto_renewal` e `penalties` correttamente assenti). Top_3_risks coerenti con i 2 high + 1 medium economico. Disclaimer presente.
+
+**Verifica anti-pattern (vs Test #1):**
+
+| Pattern | Test #1 (Demanio) | Test #2 (co.co.co.) | Esito |
+|---|---|---|---|
+| Ellissi `[...]` in raw_excerpt | Presente in `payment_terms` | **Assente in tutti i 7** | ✅ Non riprodotto |
+| Calcoli aritmetici in plain_language | Presente in `penalties` + `liability_limitation` (143€/g, 14.331€, 2.282.328,93€) | **Assente** — unico numero (`8.000€ lordi`) è citazione letterale | ✅ Non riprodotto |
+| `auto_renewal` `present:false` motivato senza inventare | OK (durata 720gg) | OK (durata fino 15/10/2021) | ✅ Confermato cross-contratto |
+| `present:false` per categorie assenti senza allucinare | OK | OK (3 categorie correttamente assenti: `penalties`, `liability_limitation`, `intellectual_property`) | ✅ Confermato |
+
+**Lezione metodologica chiave:**
+
+I 2 pattern problematici del Test #1 sono **contesto-dipendenti, non sistemici**. Si attivano in presenza di:
+- **Articoli lunghi con clausole multiple contigue** → Sonnet condensa con `[...]` per stare entro un excerpt leggibile
+- **Numeri-percentuale (1‰, 10%) accanto a importi base (143.315,16 €)** → Sonnet calcola spontaneamente per "rendere concreto" il rischio al non-avvocato
+
+Sul co.co.co., assenti entrambi gli stimoli, il prompt v1-final si comporta in modo impeccabile.
+
+**Implicazione per le patch v2:** non sono falsificate, sono **dormienti**. In produzione SpecterAI riceverà sia contratti densi (appalti, fornitura B2B) sia contratti semplici (co.co.co., NDA brevi). I 2 pattern riemergeranno appena un appalto pubblico entra nel sistema. → **patch v2 confermate come prevention obbligatoria** prima di Cursor (Fase 1).
+
+**Lezione metodologica secondaria (context bleed):** la prassi di "test runtime" su Claude.ai richiede chat fresh per ogni PDF. Il modello non re-bootstrappa il contesto file su nuovo upload nella stessa conversazione: l'analisi del primo PDF resta dominante. Da formalizzare come regola operativa nel manuale di test (post-MVP) e potenzialmente in INC-000h se si ripresenta in Test #3+.
+
+**Aggiornamenti collegati:** nessuna modifica spec v3.1. Patch v2 invariate vs definizione del 2026-05-11 mattina (sezione "Esito verifica numeri"). Vedi sotto **blocco pronto da incollare**.
+
+---
+
+## Patch v2 prompt — BLOCCO PRONTO DA INCOLLARE in `prompts/system_prompt.md` (Cursor Fase 1)
+
+> Da inserire **al termine della sezione `CONSTRAINTS`** del system prompt corrente (spec v3.1 §6), prima del blocco `DO NOT`. Mantiene la struttura Ruolo → Task → Formato → Vincoli → Esclusioni intatta.
+
+```
+CONSTRAINTS (additional — patch v2, 2026-05-11)
+- raw_excerpt must be a single contiguous span from the contract text.
+  Never concatenate two separate passages with "[...]" or any ellipsis marker.
+  If two distinct passages are equally relevant, choose the most representative one.
+- plain_language must NOT contain numbers that are absent from the contract text
+  in literal form. Arithmetic operations on cited numbers (percentages of amounts,
+  multiplications, conversions, daily/monthly breakdowns) are forbidden.
+  Use qualitative terms instead: "una piccola percentuale giornaliera",
+  "una frazione del corrispettivo", "una quota proporzionale".
+  Numeric values may appear in plain_language ONLY if they are verbatim
+  quotes already present in the corresponding raw_excerpt.
+```
+
+**Provenance:** patch derivate da Test runtime #1 (Demanio, pattern attivo) + Test runtime #2 (co.co.co., pattern dormiente). Falsificate preventivamente su 2 PDF di tipologie diverse → giustificate come prevention.
+
+**Quando applicare:** in Lez. 4 quando si crea `prompts/system_prompt.md` separato dal text-level della spec. Non modificare la spec v3.1: il prompt vive nel file separato secondo la struttura del Promemoria prof.
+
+**Test post-applicazione:** rieseguire un mini-suite (1 contratto denso tipo appalto + 1 contratto semplice tipo NDA) e verificare in PROMPT_LOG sotto entry "Test runtime #3 — post patch v2".
+
+---
+
 ## Template per v2+ (Future iterations)
 
 ```markdown

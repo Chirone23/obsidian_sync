@@ -116,11 +116,32 @@ specter-ai/
 - ✅ `INCIDENTS.md` — 3 nuovi incident risolti (INC-000d/e/f) + date INC-001/002/003 allineate a Lez. 3-4
 - ✅ Riorg cartelle: `gap spec-v2/`, `spec precedenti/`, `valutazione x (prima valutazione)/`, `valutazione 10-5/` (nuova)
 
-**2026-05-11 (verifica nuovo feedback prof):**
+**2026-05-11 (verifica nuovo feedback prof + 2 test runtime prompt v1-final):**
 - ✅ Letti `valutazione 10-5/ChristianG_Valutazione_Aggiornata.md` e `ChristianG_Promemoria_Lezione4.md` → 95/100 confermato, nessuna patch spec richiesta
 - ✅ `README_DOCUMENTAZIONE.md` — rimosso flag "DA LEGGERE", aggiornato esito + spec confermata + fase a Lez. 4
-- ✅ `SESSION_HANDOFF.md` — questo file (checklist pre-building Lez. 4 + struttura cartelle + 5 fasi dal Promemoria prof)
+- ✅ `SESSION_HANDOFF.md` — checklist pre-building Lez. 4 + struttura cartelle + 5 fasi dal Promemoria prof
+- ✅ Scaricati 8 PDF contratti reali da Perplexity free in `prog1/specterai/contratti/` (5/5 tipologie: servizi, NDA, fornitura, co.co.co., locazione) — vedi INC-000g
+- ✅ **Test runtime #1** Sonnet via Claude.ai su Demanio appalto (PDF #1/8) → JSON conforme, autovalut. 4.75/5, 2 osservazioni: ellissi `[...]` in raw_excerpt + numeri calcolati (143€/g, 14.331€) in plain_language
+- ✅ Verifica manuale numeri: 143.315,16 e 2.282.328,93 sono nel PDF; 143/14.331 sono calcoli di Sonnet (1‰ e 10%) → conferma rischio aritmetica spontanea
+- ✅ **Test runtime #2** Sonnet via Claude.ai su co.co.co. ERSU Messina (PDF #2/8) **senza modifiche al prompt** → JSON conforme, autovalut. 5/5, **zero ellissi e zero calcoli**. Pattern Test #1 NON riprodotti → contesto-dipendenti (si attivano su contratti densi di percentuali + articoli lunghi)
+- ✅ Note operativa scoperta in Test #2: **context bleed Claude.ai** — chat fresh obbligatoria per ogni run di test (primo run #2 ha riusato il contesto del PDF Demanio ignorando il nuovo upload). Da formalizzare INC-000h se si ripresenta
+- ✅ **2 patch v2 prompt** definite e BLOCCO PRONTO DA INCOLLARE in `PROMPT_LOG.md` → da applicare a `prompts/system_prompt.md` quando si crea la struttura in Cursor (Fase 1 Lez. 4):
+  1. no-ellissi nei raw_excerpt (singolo brano contiguo, mai `[...]`)
+  2. no-calcoli nei plain_language (vietate operazioni aritmetiche su numeri citati; numeri ammessi solo se verbatim nel raw_excerpt corrispondente)
+- ✅ Decisione: prompt resta source-of-truth nella spec v3.1 (text-level invariato); patch v2 vivranno in `prompts/system_prompt.md` in Cursor → spec **non** viene modificata ora
 - ✅ Tutti i commit pushati su `obsidian_sync`
+
+### 🟢 Stato pre-Cursor (sintesi entrata Lez. 4)
+
+| Asset | Stato |
+|---|---|
+| 8 PDF contratti reali (5/5 tipologie) | ✅ pronti in `prog1/specterai/contratti/` |
+| Prompt v1-final validato cross-contratto | ✅ 2/8 PDF (Demanio appalto + ERSU co.co.co.) |
+| Patch v2 prompt | ✅ definite, blocco pronto da incollare in PROMPT_LOG (post Test #2) |
+| Spec v3.1 | ✅ confermata 95/100, nessuna patch richiesta dalla prof |
+| Cartella progetto Cursor | ⏳ da creare in Lez. 4 (struttura nel Promemoria prof) |
+| `prompts/system_prompt.md` separato | ⏳ da creare in Fase 1 Cursor + integrare patch v2 |
+| `.cursorrules` + prompt Composer schemas.py | ⏳ da preparare/recuperare prima di aprire Cursor (prep precedenti in conversazioni storiche, re-generabili) |
 
 ---
 
