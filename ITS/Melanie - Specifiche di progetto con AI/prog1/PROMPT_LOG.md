@@ -24,6 +24,7 @@
 | 2026-05-06 | Feedback prof (intermedio) | Valutazione 95/100, File2 + File3 stack tecnico | Sblocca Lez. 3 |
 | 2026-05-07 | Spec v3 | Review v2 + Meta-Review multi-agent + 4 query Perplexity → 13 fix integrati | AI Act riclassificato limited-risk |
 | 2026-05-10 | Spec v3.1 | 3 patch da feedback prof File3 (stretch goals, dev token strategy, build roadmap) + 2 fix da review Perplexity (retention 30gg→7gg, DPA esplicito) | Spec finale pre-consegna |
+| 2026-05-11 | Test data + prompt test | 8 PDF reali scaricati via Perplexity free (INC-000g) + primo test prompt su Claude.ai con Sonnet su 1 contratto reale | Output JSON conforme schema 7 cat inglesi, autovalut. 4-5/5, 2 osservazioni da verificare (ellissi raw_excerpt, numeri calcolati in plain_language) |
 
 ---
 
@@ -323,6 +324,41 @@ DO NOT: Invent clauses, use legal jargon, advise sign/don't sign, return text ou
 - **Strategia testing rivista:** il piano originale prof (Claude.ai + Gemini Flash + Cursor + Claude API) è stato semplificato a (Claude Code CLI + Cursor + Claude API) sfruttando l'abbonamento esistente. Stesso risultato a costo marginale zero per il dev workflow.
 
 **Aggiornamenti collegati:** Specifica v3.1 §2.bis, §7, §12.bis, §13 changelog (righe #11-15).
+
+---
+
+## Test runtime #1 — 2026-05-11 — Prompt v1-final su Sonnet via Claude.ai (contratto reale n.1/8)
+
+**Contesto:** Primo test del prompt v1-final (spec v3.1) su contratto reale, eseguito via Claude.ai (free) con Claude Sonnet 4.6. Scopo: validare la checklist pre-building punto 1 del Promemoria Lez. 4 prima di aprire Cursor.
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/210701_DRE_Capitolato-Tecnico-di-Appalto.pdf` (Agenzia del Demanio 2021, golden test — copre tutte le 7 categorie)
+- System prompt: copiato dalla Spec v3.1 §Prompt di Sistema (text-level invariato dalla v2)
+- Schema atteso: 7 categorie inglesi previste dalla spec v3.1 (`payment_terms, auto_renewal, penalties, liability_limitation, termination, governing_law, intellectual_property`) — NOTA: il Promemoria della prof traduceva con nomi italiani approssimati (`durata, recesso, ...`), ma la spec è source-of-truth e usa i nomi inglesi
+- User message: vincoli espliciti (solo JSON, italiano, 7 cat esatte, raw_excerpt testuale, present:false se assente, auto-valutazione 4 dimensioni)
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione media 4.75/5 (Completezza 5, Fedeltà raw_excerpt 4, Coerenza risk_level 5, Italiano output 5). Risk distribution: 3 high (penalties, termination, liability_limitation), 3 medium (payment_terms, governing_law, intellectual_property), 1 low (auto_renewal correttamente assente). Disclaimer presente. Top_3_risks coerenti.
+
+**Osservazioni → da verificare / iterare:**
+
+1. **Ellissi `[...]` in raw_excerpt di payment_terms** — Sonnet ha concatenato due brani contigui dello stesso articolo con `[...]`. Auto-valutazione 4/5 lo ha segnalato. Impatto: la soglia fuzzy match 0.92 della spec potrebbe non passare se l'ellissi resta nella stringa. **Decisione di prompt:** in produzione vietare l'ellissi → *"raw_excerpt deve essere un singolo brano contiguo, mai concatenare con `[...]`. Se servono due passaggi distinti, scegliere il più rilevante"*. Da aggiungere al prompt v2 prima di Cursor.
+
+2. **Numeri calcolati in plain_language** — Sonnet ha scritto "circa 143 € al giorno", "circa 14.331 €", "€ 2.282.328,93" in `penalties` e `liability_limitation`. Sono **calcoli derivati** (1‰ e 10% dell'importo contrattuale), non citazioni. Rischio: in produzione un calcolo sbagliato passa inosservato e si propaga al non-avvocato come fatto. **Da verificare manualmente sul PDF** se i numeri sono presenti letteralmente o derivati. Se derivati → aggiungere al prompt v2: *"plain_language non deve contenere numeri non presenti letteralmente nel contratto; usa termini qualitativi (es. 'una piccola percentuale giornaliera') se il numero non è testuale"*.
+
+3. **Auto_renewal `present: false` ben gestito** — Sonnet non ha inventato una clausola assente, ha motivato l'assenza contestualmente (durata legata al cronoprogramma di 720 giorni). Pattern positivo da confermare su altri PDF.
+
+**Lezioni metodologiche:**
+- ✅ La struttura del user message con auto-valutazione 4 dimensioni si conferma utile: Sonnet ha **dichiarato spontaneamente** il problema dell'ellissi (4/5 invece di 5/5). Senza auto-valutazione probabilmente non l'avrei colto subito.
+- ✅ Il golden PDF Demanio era la scelta giusta come primo test: coprire tutte e 7 le categorie in un singolo run accelera la verifica rispetto a testare 7 PDF mono-categoria.
+- ⚠️ Possibile drift "prompt → calcolo" da sorvegliare: Sonnet 4.6 ha aritmetica integrata e la usa spontaneamente se i numeri sono nel contesto. Vincolarlo nel prompt è essenziale per app legal-AI.
+
+**Prossimi step (in ordine):**
+1. Verifica manuale numeri (Ctrl+F sul PDF su 143/14.331/2.282.328,93)
+2. Test prompt v1-final su un secondo PDF SENZA modifiche (es. ERSU Messina co.co.co.) per confermare che il pattern regge cross-contratto
+3. Se entrambi ok → checklist pre-building sbloccata, prompt resta v1-final, ma le 2 mitigazioni (no ellissi, no calcoli) vanno introdotte in v2 quando arriva il primo failure runtime
+4. Se nuovo PDF rompe pattern → iterazione prompt v2 con le 2 mitigazioni preventive + log nuovo entry qui
+
+**Aggiornamenti collegati:** nessuna modifica spec v3.1 (prompt text invariato). Eventuale v2 del prompt da loggare separatamente quando le mitigazioni saranno integrate.
 
 ---
 
