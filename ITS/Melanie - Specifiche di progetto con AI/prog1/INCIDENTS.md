@@ -16,6 +16,7 @@
 | **INC-000d** | **2026-05-07** | **Spec — AI Act classification** | **Sovraclassificazione AI Act (high-risk → limited-risk)** | **High (compliance)** | **✅ RESOLVED** |
 | **INC-000e** | **2026-05-07** | **Spec — cost estimate** | **Sottostima costo Sonnet (~0,02 → ~0,04 €/analisi)** | **Medium** | **✅ RESOLVED** |
 | **INC-000f** | **2026-05-10** | **Spec — Anthropic retention drift** | **Retention log API 30gg obsoleta — policy aggiornata a 7gg da set 2025** | **Low (fact drift)** | **✅ RESOLVED** |
+| **INC-000g** | **2026-05-11** | **Test data — Perplexity free ricerca contratti** | **8/10 PDF trovati (1/2 servizi e locazione, 2/2 altre 3 tipologie) + 2 citazioni allucinate (wikipedia) + 1 falso negativo (URL "da verificare" valido)** | **Low (test data quality)** | **✅ RESOLVED** |
 | INC-001 | 2026-05-12 (Lez. 3) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🔴 Open |
 | INC-002 | 2026-05-13 (Lez. 4) | Claude API timeout | Timeout su batch processing di contratti | High | 🔴 Open |
 | INC-003 | 2026-05-13 (Lez. 4) | JSON parsing / encoding | Caratteri speciali italiani (accenti, €) corrotti nel JSON | High | 🔴 Open |
@@ -196,6 +197,47 @@ User feedback: "assolutamente non va bene deve rianalizzare lui i file e trovare
 **Aggiornamenti Specifica:** Spec v3.1 §7 + §13 changelog riga #14.
 
 **Status:** ✅ Resolved 2026-05-10
+
+---
+
+## INC-000g — Perplexity free: copertura parziale e allucinazioni nella ricerca contratti
+
+**Data:** 2026-05-11 (durante setup test data — checklist pre-building Lez. 4)
+
+**Componente:** Raccolta contratti reali per `tests/contratti/` via Perplexity free.
+
+**Descrizione:** Eseguite 5 query (1 per tipologia: servizi, NDA, fornitura, co.co.co., locazione) chiedendo 2 PDF a query → 10 PDF target totali. Risultato effettivo: **8/10**.
+
+Breakdown:
+- Servizi: 1/2 (solo Agenzia del Demanio 2021, tutte e 7 le clausole)
+- NDA: 2/2 (Polimi + Unitelma Sapienza)
+- Fornitura: 2/2 (Consip/Comune Roma + Consiglio di Stato — il secondo con estrazione clausole parziale)
+- Co.co.co.: 2/2 (Sapienza + ERSU Messina)
+- Locazione: 1/2 (solo INPS gara 2026 — Perplexity inizialmente ha dichiarato 0 risultati, ma il link marcato "URL da verificare" si è rivelato valido alla verifica manuale)
+
+In più, 2 allucinazioni di citazione: `it.wikipedia.org/wiki/Contratto_reale` inserita come fonte legale nelle citazioni di query 1 e 4. Non sono PDF e non sono fonti legali — rumore di ricerca.
+
+**Severità:** Low (test data quality — non blocca, 8 PDF sono sufficienti per coprire il minimo della checklist di 3 contratti e tutte le 5 tipologie del test plan Fase 4).
+
+**Root cause:**
+- Perplexity free usa ricerca web shallow senza Sonar Pro → meno copertura, citazioni meno selettive.
+- Falso negativo locazione: il modello ha applicato un giudizio conservativo sul proprio output ("URL da verificare") senza realmente fallire il fetch.
+- Allucinazioni wikipedia: pattern noto di "padding" delle bibliografie quando il dominio della query è giuridico.
+
+**Soluzione:**
+- Verifica manuale di tutti gli URL "candidato PDF" cliccando uno per uno → 100% di tasso di validità.
+- Ignorate le citazioni numerate verso wikipedia, blog generalisti, siti immobiliare/idealista.
+- 8 PDF scaricati in `prog1/specterai/contratti di prova/` (staging) — verranno copiati e rinominati in `prog1/specterai/tests/contratti/` durante la creazione struttura progetto (Lez. 4).
+
+**Lezioni apprese:**
+- ✅ Su Perplexity free, splittare in N query brevi (1 per intento) batte 1 query massiva: meno allucinazioni, meno deriva.
+- ✅ Mai fidarsi del *self-assessment* di Perplexity sulla validità dei propri URL — verificare a mano è 30 secondi per link.
+- ✅ Le citazioni numerate `[^N_X]` sono spesso rumore: contano solo i link nominalmente associati a "PDF 1" / "PDF 2" nel corpo della risposta.
+- ✅ Per tipologie a basso indice web pubblico (es. locazione PA), aspettarsi 0-1 hit anche con prompt ben strutturato → preparare fallback Google `site:` come piano B.
+
+**Aggiornamenti Specifica:** nessuno (non impatta architettura — solo qualità dataset di test).
+
+**Status:** ✅ Resolved 2026-05-11 — 8 PDF coprono tutte e 5 le tipologie. Locazione ha solo 1 esemplare invece di 2: accettabile per il test plan (Fase 4 richiede 1 contratto per tipologia, non 2).
 
 ---
 
