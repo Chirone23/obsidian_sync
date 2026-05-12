@@ -1,0 +1,1 @@
+obbiettivo trovare il dato che non abbiamo o che non conosciamo e quindi determinarlo

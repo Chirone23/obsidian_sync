@@ -88,7 +88,10 @@
       "Bash(mkdir *)",
       "Bash(grep -q \"^\\\\.tmp\" .gitignore)",
       "Bash(echo \".tmp/\")",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebFetch(domain:meridianlabs-ai.github.io)",
+      "mcp__obsidian-mcp__obsidian_list_files_in_vault"
     ]
   }
 }

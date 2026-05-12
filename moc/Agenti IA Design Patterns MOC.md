@@ -202,3 +202,26 @@ Agente che **auto-modifica il proprio codice sorgente** per migliorare capacità
 - [[Skill MOC]] — n8n Avanzato, Agent Builder, orchestrazione
 - [[Knowledge MOC]] — AI e automazione
 - [[Index MOC]]
+
+---
+
+## Strumenti di Valutazione Reale
+
+### Petri — AI Alignment Testing
+
+**Nota completa:** [[../knowledge/Petri - AI Alignment Testing|Petri - AI Alignment Testing]]
+**Sviluppato da:** Anthropic → donato a **Meridian Labs** (no-profit) + UK AISI Red Team
+**Fonti:** https://www.anthropic.com/research/donating-open-source-petri · https://meridianlabs-ai.github.io/inspect_petri/
+
+Implementazione pratica dei Pattern 18 (Guardrails) + 19 (Evaluation and Monitoring): sistema automatizzato di red-teaming per LLM con 3 ruoli (Auditor / Target / Judge), 170+ scenari (Seeds), 38 dimensioni comportamentali misurate dal Judge.
+
+**Caratteristica chiave:** il componente "Dish" usa prompt e infrastrutture reali per impedire al modello di riconoscere di essere testato (`eval_awareness` è una delle dimensioni misurate — se alta, il test è compromesso).
+
+```bash
+pip install inspect-petri
+inspect eval inspect_petri/audit \
+  -T seed_instructions=tags:sycophancy \
+  --model-role auditor=anthropic/claude-sonnet-4-6 \
+  --model-role target=openai/gpt-5-mini \
+  --model-role judge=anthropic/claude-opus-4-6
+```

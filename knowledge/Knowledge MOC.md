@@ -254,3 +254,16 @@ Libri personalizzati AR per bambini. Questa è la documentazione tecnica di arch
 **Fonte:** Antonio Romano, *"Da Zero a Milioni Senza Investitori"* (NotebookLM)
 
 → [[Metodo FAST MOC]] — framework Focus/Action/Shift/Traction, 5 framework operativi (Bootstrapping Funnel, Lead Machine Loop, Cash Flow Financing, Social Performance, Adjacency Market Test), glossario CAC/LTV/Payback, 6 casi studio (PrimoTaglio, SpinUp, Infissi, Property Management, Spincare, Fiori artificiali).
+
+---
+
+## Ricerca Anthropic — AI Safety & Alignment
+
+### Petri 3.0 — Open-Source AI Alignment Tool
+
+**Nota completa:** [[Petri - AI Alignment Testing]]
+**Fonti:** https://www.anthropic.com/research/donating-open-source-petri · https://meridianlabs-ai.github.io/inspect_petri/
+
+Strumento per testare comportamenti problematici nei modelli AI (inganno, sycophancy, cooperazione con richieste dannose). Architettura a 3 LLM: Auditor simula scenari reali → Target risponde → Judge valuta su 38 dimensioni. Donato da Anthropic a Meridian Labs (no-profit) per indipendenza e credibilità verso governi e ricercatori.
+
+Connessioni: [[Agenti IA Design Patterns MOC]] (Pattern 18 Guardrails + Pattern 19 Evaluation) · [[../moc/Agenti IA Design Patterns MOC|Agenti IA Design Patterns MOC]]
