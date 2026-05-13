@@ -254,7 +254,7 @@ Protocolli interni che standardizzano il modo in cui Claude interagisce col vaul
 
 ## Sviluppare con l'AI nel 2026
 
-**Fonte:** [[skill/Sviluppare con l'AI nel 2026|Sviluppare con l'AI nel 2026]] — trascrizione video
+**Fonte:** [[Sviluppare con l'AI nel 2026.md|Sviluppare con l'AI nel 2026]] — trascrizione video
 
 Framework a 3 blocchi per ottenere output consistenti e funzionanti dall'AI:
 

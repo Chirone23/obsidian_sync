@@ -2,13 +2,13 @@
 
 Mappa della conoscenza generale: framework, metodologie e architetture.
 
-**Fonti:** [[knowladge/Knowlage copy.pdf]], [[knowladge/StoryTell_Architettura_v2.1.docx.pdf]]
+**Fonti:** [[knowledge/Knowlage copy.pdf]], [[knowledge/StoryTell_Architettura_v2.1.docx.pdf]]
 
 ---
 
 ## Copywriting — Fondamenta e Sistemi
 
-**Fonte:** `knowladge/Knowlage copy.pdf` (Andrei Pascu / Copywriting Mentorship)
+**Fonte:** `knowledge/Knowlage copy.pdf` (Andrei Pascu / Copywriting Mentorship)
 
 ### A.S.A. — Autonomous Service Activity
 

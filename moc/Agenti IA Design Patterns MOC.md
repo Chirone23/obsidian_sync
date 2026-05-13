@@ -197,11 +197,11 @@ Agente che **auto-modifica il proprio codice sorgente** per migliorare capacità
 
 ## Connessioni
 
-- [[Imprenditoria MOC]] — Compliance e regolamentazione AI (EU AI Act, FRIA, DDL settori)
-- [[Progettistica AI MOC]] — Specifiche progettuale sistemi AI
-- [[Skill MOC]] — n8n Avanzato, Agent Builder, orchestrazione
-- [[Knowledge MOC]] — AI e automazione
-- [[Index MOC]]
+- [[../ITS/Lorenzo - Imprenditoriale/Imprenditoria MOC.md]] — Compliance e regolamentazione AI (EU AI Act, FRIA, DDL settori)
+- [[../ITS/Melanie - Specifiche di progetto con AI/Progettistica AI MOC.md]] — Specifiche progettuale sistemi AI
+- [[../skill/Skill MOC.md]] — n8n Avanzato, Agent Builder, orchestrazione
+- [[../knowledge/Knowledge MOC.md]] — AI e automazione
+- [[Index MOC.md]]
 
 ---
 
@@ -209,7 +209,7 @@ Agente che **auto-modifica il proprio codice sorgente** per migliorare capacità
 
 ### Petri — AI Alignment Testing
 
-**Nota completa:** [[../knowledge/Petri - AI Alignment Testing|Petri - AI Alignment Testing]]
+**Nota completa:** [[../knowledge/Petri - AI Alignment Testing.md|Petri - AI Alignment Testing]]
 **Sviluppato da:** Anthropic → donato a **Meridian Labs** (no-profit) + UK AISI Red Team
 **Fonti:** https://www.anthropic.com/research/donating-open-source-petri · https://meridianlabs-ai.github.io/inspect_petri/
 

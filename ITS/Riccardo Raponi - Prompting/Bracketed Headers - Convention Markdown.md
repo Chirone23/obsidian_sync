@@ -3,7 +3,7 @@
 **Tipo:** Convenzione di formattazione prompt
 **Materia:** [[Prompting MOC]]
 **Tag:** #prompt #formatting #convention
-
+	
 ---
 
 ## Cosa è ##
