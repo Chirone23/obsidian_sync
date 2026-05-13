@@ -92,7 +92,8 @@
       "WebFetch(domain:www.anthropic.com)",
       "WebFetch(domain:meridianlabs-ai.github.io)",
       "mcp__obsidian-mcp__obsidian_list_files_in_vault",
-      "mcp__obsidian-mcp__obsidian_complex_search"
+      "mcp__obsidian-mcp__obsidian_complex_search",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Chirone\\\\Documents\\\\Secondo_Cervello\\\\ITS\\\\Melanie - Specifiche di progetto con AI\\\\prog1\\\\\" -Force | ForEach-Object { \"$\\($_.Name\\) - $\\($_.PSIsContainer\\)\" })"
     ]
   }
 }
