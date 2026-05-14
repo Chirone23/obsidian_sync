@@ -15,6 +15,9 @@ Ecosistema di lettura potenziata da AI. Progetto sviluppato nell'ambito del perc
 - [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/biblio_spec_tecnica_mvp_v0_1]]
 - [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/biblio_specs_funzionale_mvp]]
 
+**Sotto-MOC:**
+- [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/MyBibliò Implementation MOC]] — implementazione del chatbot AI nel sito WordPress
+
 ---
 
 ## Contenuto
