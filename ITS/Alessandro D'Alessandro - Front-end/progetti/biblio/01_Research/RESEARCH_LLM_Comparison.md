@@ -152,6 +152,24 @@ Performance gap USA-CN: **solo 2.7%** a favore USA.
 
 ---
 
+## 5c. Decisione finale (2026-05-14)
+
+Dopo verifica diretta sul pricing ufficiale DashScope + lista completa OpenRouter Qwen, decisione definitiva:
+
+**🏆 Qwen Plus 0728** ($0.26 input / $0.78 output Mtok)
+- Costo MVP a 2.000 calls/mese: **~$1.40**
+- 1M context window, hybrid reasoning, non-thinking di default
+- Endpoint stabile EU/IT senza VPN
+- Free tier Qwen3 Next testato e scartato (rate limit istantaneo)
+
+**Backup definiti** in caso di problema qualità:
+- Qwen3.6 Plus ($2.54/mese) se italiano insufficiente
+- Claude Haiku 4.5 ($7/mese) se serve DPA EU stretto
+
+Implementazione provider-agnostic resta requisito non negoziabile.
+
+---
+
 ## 6. Connessioni
 
 - [[MyBibliò AI Implementation MOC]] — sezione 7 "Punti aperti #1"

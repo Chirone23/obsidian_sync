@@ -30,7 +30,7 @@ Costruire un chatbot assistente libreria che:
 | Linguaggio backend | PHP 8.3 | `wp_remote_post()` per chiamate API |
 | Linguaggio frontend | Vanilla JS | no React, no framework |
 | Retrieval | `WP_Query` su prodotti WC + meta `_biblio_*` | zero tabelle custom in MVP |
-| LLM provider | TBD (ricerca Perplexity in corso) | provider-agnostic via `mybiblio_llm_call()` |
+| LLM provider | **Qwen Plus 0728** (~$1.40/mese a 2k calls) | provider-agnostic via `mybiblio_llm_call()`, backup: Qwen3.6 Plus / Claude Haiku 4.5 |
 | Memoria conversazione | `$_SESSION` PHP (ultime N risposte) | no DB |
 | Profilo gusti | `user_meta._mybiblio_profile` (JSON) | implicito + esplicito + GDPR |
 | Hosting | Infinity Free Free Tier | vedi [[BRIEF_WordPress_InfinityFree]] |
@@ -144,7 +144,7 @@ inc/mybiblio/
 
 ## 7. Punti aperti
 
-1. **Scelta LLM** — in attesa di ricerca Perplexity (3 prompt forniti in conversazione)
+1. ✅ ~~Scelta LLM~~ — **Qwen Plus 0728** (deciso 2026-05-14, vedi RESEARCH_LLM_Comparison)
 2. **SSE su Infinity Free** — da testare, fallback fake-streaming pronto
 3. **Live takeover admin** — valutare ridimensionamento a "lettura + messaggio scriptato" per MVP
 4. **Outbound HTTPS** — verificare che Infinity Free non blocchi `api.anthropic.com` / `dashscope.aliyuncs.com`
