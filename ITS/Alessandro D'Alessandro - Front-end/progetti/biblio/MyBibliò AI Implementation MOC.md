@@ -123,7 +123,8 @@ inc/mybiblio/
 - [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/01_Research/ADR_WordPress_InfinityFree]]
 
 ### Ricerche completate
-- ✅ [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/01_Research/RESEARCH_LLM_Comparison]] — verdetto Perplexity: Qwen3-Turbo vincitore (4.50). Raccomandazione TL: **Claude Haiku 4.5 per MVP** (italiano verificato 5/5, ~€7/mese a 2k calls, switch a Qwen3 in fase scale via `mybiblio_llm_call()` provider-agnostic)
+- ✅ [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/01_Research/RESEARCH_LLM_Comparison]] — comparativa Perplexity + Qwen research + lista OpenRouter
+- ✅ [[ITS/Alessandro D'Alessandro - Front-end/progetti/biblio/01_Research/DECISION_Qwen_Plus_0728]] — documento di decisione completo con motivazione su 9 punti di vista (economico, qualità, tecnico, geografico, strategico, operativo, decision sheet, trigger di revisione)
 
 ### Da creare durante l'implementazione
 - `01_Research/SPEC_MyBiblio_Chatbot.md` — spec tecnica esecutiva da approvare prima del codice
