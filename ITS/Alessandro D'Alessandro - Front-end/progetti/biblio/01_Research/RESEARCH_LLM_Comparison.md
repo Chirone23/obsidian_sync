@@ -115,6 +115,43 @@ Pesi: Costo 30% · Italiano 25% · Latenza 20% · Geo-stab 15% · Tool use 10%
 
 ---
 
+## 5b. Addendum — Ricerca Qwen su gap USA vs Asia (2026-05-14)
+
+**Query:** "punteggio reale differenza LLM asiatici vs americani 1-10"
+**Fonte:** Qwen3 deep research (Stanford AI Index 2026 + LMSys Arena)
+
+**Verdetto secco: gap = 3/10** (1 = parità, 10 = dominio USA totale)
+Performance gap USA-CN: **solo 2.7%** a favore USA.
+
+### Top modelli Arena Elo Marzo 2026
+| USA | Elo | Cina | Elo |
+|---|---:|---|---:|
+| Gemini 3 Pro | 1490 | Ernie-5.0-preview | 1446 |
+| Claude Opus 4.5 | 1469 | GLM-4.7 | 1443 |
+| GPT-5.1-high | 1457 | Qwen3-235B | 1422-1449 |
+| | | DeepSeek-R1/V3.2 | 1423-1424 |
+
+### Categorie
+| Categoria | Gap | Vincitore |
+|---|---|---|
+| Ragionamento complesso | 2/10 | USA |
+| Matematica/AIME | 1/10 | Parità (DeepSeek 96.7) |
+| Coding LiveCodeBench | 3/10 | USA |
+| Efficienza compute | 8/10 | **🇨🇳 Asia** (10x meno compute) |
+| Multimodalità video | 4/10 | USA (Sora 2, Veo 3) |
+| Lingue asiatiche | 9/10 | **🇨🇳 Asia** |
+| Open-weight | 2/10 | **🇨🇳 Asia** (Qwen3-235B leader) |
+
+### Lettura per MyBibliò
+- **Capacità grezza**: gap trascurabile → Qwen3 può tenere il passo
+- **Italiano**: NON misurato — la categoria "lingue asiatiche" non si applica al nostro caso
+- **Compliance/enterprise EU**: ancora vantaggio USA
+- **Costo**: vantaggio netto Asia
+
+**Implicazione sul verdetto:** la differenza tecnica è marginale, la scelta resta operativa/legale, non di "intelligenza".
+
+---
+
 ## 6. Connessioni
 
 - [[MyBibliò AI Implementation MOC]] — sezione 7 "Punti aperti #1"
