@@ -12,20 +12,26 @@
     });
   });
 
-  /* ── Chat: storage ──────────────────────────────────────────── */
-  var STORAGE_KEY = 'biblio_chat_history';
+  /* ── Chat: storage (localStorage, TTL 24h) ──────────────────── */
+  var STORAGE_KEY = 'biblio_chat_v2';
+  var TTL_MS      = 24 * 60 * 60 * 1000; // 24 ore
 
   /*
    * Ogni entry: { role: 'user'|'assistant', display: html, raw: plain_text }
-   * - display: testo safe per innerHTML (newline → <br>, utente escaped)
-   * - raw:     testo pulito da mandare all'LLM (no HTML entities, no <br>)
+   * - display: testo safe per innerHTML
+   * - raw:     testo pulito per l'API (no HTML entities)
+   * Struttura in localStorage: { ts: timestamp, messages: [...] }
    */
   function loadHistory() {
-    try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || []; }
-    catch (e) { return []; }
+    try {
+      var stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!stored) return [];
+      if (Date.now() - stored.ts > TTL_MS) { localStorage.removeItem(STORAGE_KEY); return []; }
+      return stored.messages || [];
+    } catch (e) { return []; }
   }
   function saveHistory(h) {
-    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ ts: Date.now(), messages: h })); }
     catch (e) {}
   }
 
@@ -45,10 +51,16 @@
   }
 
   /* Converte la risposta del bot in HTML safe:
-     - newline → <br>
-     - nessun altro HTML (il bot non deve iniettare markup) */
+     - escape prima di tutto
+     - newline reali → <br>
+     - pattern lista "1. X 2. Y" (senza newline) → <br> prima di ogni N. */
   function botTextToHtml(text) {
-    return escapeHtml(text).replace(/\n/g, '<br>');
+    var s = escapeHtml(text);
+    // newline reali
+    s = s.replace(/\n/g, '<br>');
+    // "spazio + numero + punto + spazio" → va a capo (es: " 2. Titolo")
+    s = s.replace(/\s+(\d+\.\s)/g, '<br>$1');
+    return s;
   }
 
   /* ── Helpers ────────────────────────────────────────────────── */
