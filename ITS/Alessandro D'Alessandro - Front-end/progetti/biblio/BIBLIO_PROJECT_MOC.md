@@ -18,6 +18,9 @@
 ### Audit & plan tema attuale
 - [[BIBLIO_AUDIT_2026-05-14]] — Audit completo `biblio-theme` + plan 6 fasi (cleanup, refactor CSS, icons, chat MyBibliò, polish, perf)
 
+### Storia delle modifiche
+- [[02_Development/CHANGELOG_biblio-theme]] — Racconto sessione per sessione dei cambiamenti al tema (bug fix, refactor, nuove feature)
+
 ### Asset
 - `Bibliò_Neural_Reading_Ecosystem.pdf` — Concept MyBibliò (chatbot AI)
 
