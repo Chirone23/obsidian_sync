@@ -1,109 +1,232 @@
-# Bibliò — Proposta Reader Libri Noleggiati
+# Bibliò — Proposta Reader Libri Noleggiati (v2)
 
 > Proposta tecnica per area di lettura libri noleggiati su WordPress + InfinityFree.
-> Data: 2026-05-15 — da rivalutare prima di implementare.
+> v1: 2026-05-15 — proposta iniziale
+> v2: 2026-05-15 — revisione post-validazione (red flag IF integrati come prerequisiti hard)
 > Collegato a: [[README]], [[CONTEXT_NUOVA_SESSIONE]], [[BIBLIO_AUDIT_2026-05-14]]
 
 ---
 
 ## Obiettivo
 
-Permettere agli utenti che hanno noleggiato un libro di leggerlo dentro il sito, con testo che si adatta al display (reflowable) e caricamento incrementale (no file intero, solo il capitolo corrente).
+Permettere agli utenti che hanno noleggiato un libro di leggerlo dentro il sito, con testo reflowable che si adatta al display e caricamento incrementale (solo capitolo corrente, mai file intero).
 
 ---
 
-## Vincoli ambiente (recap)
+## TL;DR cambiamenti v1 → v2
 
-- Hosting **InfinityFree** gratuito: 5 GB disk, ~30k inode, ~40-128 MB RAM, kill processi pesanti
-- PHP 8.3, MySQL 8.0, WordPress + WooCommerce attivi
-- cURL outbound bloccato (irrelevante per il reader, tutto interno)
-- No streaming reale, no `X-Sendfile`
-- Tema standalone `biblio-theme` v0.3.0, deploy file singolo via File Manager
+La v1 era scritta come se IF fosse hosting normale: in laboratorio funziona, in prod free salta al primo utente attivo. La v2 integra 5 fix come **prerequisiti hard**:
 
----
-
-## Strategia: ePub + estrazione per capitolo
-
-### Perché ePub e non PDF
-
-- **PDF** = layout fisso, mobile inutilizzabile, non si adatta al display
-- **ePub** = ZIP di XHTML per capitolo + CSS + immagini → reflowable nativo
-- PHP ha `ZipArchive` builtin → estraibile 1 capitolo alla volta senza librerie esterne
-
-### Principio chiave
-
-**Mai servire il file intero.** Ogni richiesta = 1 capitolo (50-200 KB) estratto on-the-fly dallo ZIP, con check noleggio attivo + non scaduto.
+1. **Pre-estrazione capitoli in cache statica** (no `wp_kses_post` on-the-fly ad ogni richiesta)
+2. **Cloudflare davanti obbligatorio** (no "valutare se serve")
+3. **Tabella custom `wp_biblio_rentals`** (no order meta WC)
+4. **Endpoint snello senza bootstrap WC** per `chapter/{n}` (SHORTINIT o loader minimale)
+5. **Rate limit su `user_meta` con timestamp**, non transient (evita scritture su `wp_options`)
 
 ---
 
-## Architettura
+## Vincoli ambiente — letti correttamente stavolta
+
+- **Hits/day ~50k** per account free IF (non "bandwidth non dichiarato")
+- **CPU/EP limit aggressivo**: ogni hit REST = bootstrap WP completo (~30-60 MB RAM) → rischio 503 in burst
+- **No object cache**: transient finiscono in `wp_options` (DB write per ogni uso)
+- **Ban IF senza preavviso** per abuso CPU
+- ~40-128 MB RAM, PHP 8.3, MySQL 8.0, `ZipArchive` builtin, cURL outbound bloccato
+
+---
+
+## Strategia: ePub + cache statica pre-estratta + CDN
+
+### Principio rivisto
+
+**Mai servire il file intero. E mai estrarre on-the-fly.**
+
+1. All'upload del libro → job che estrae **tutti i capitoli**, sanitizza con `wp_kses_post` una volta sola, salva HTML statico in `books-protected/cache/{book_id}/{n}.html`
+2. Endpoint `chapter/{n}` legge il file pre-sanitizzato dalla cache (solo `file_get_contents` + auth check) — niente `ZipArchive` runtime, niente sanitize runtime
+3. Cloudflare cacha la risposta per utenti autenticati con cache key derivata dal cookie auth + book_id + chapter_idx (TTL 24h+)
+
+Trasformiamo un problema CPU/RAM in un problema inode (che ne abbiamo): 100-300 libri × ~20 capitoli = 2-6k file dentro budget 30k.
+
+---
+
+## Architettura v2
 
 ```
-Browser                            Server (PHP / WP REST)
-─────────                          ───────────────────────
-GET /leggi/<book-slug>/      →     page-reader.php
-                                   - check utente loggato + noleggio valido
-                                   - render shell reader (no contenuto libro)
+UPLOAD libro (one-time, admin)
+─────────────────────────────
+admin upload .epub
+  → inc/reader-ingest.php
+    - ZipArchive open
+    - per ogni capitolo dello spine:
+        - estrai XHTML
+        - wp_kses_post() (sanitize una volta)
+        - opzionale: strip immagini non essenziali (riduce peso)
+        - salva books-protected/cache/{book_id}/{n}.html
+    - salva manifest (TOC) in cache/{book_id}/manifest.json
+  → libro pronto, file ePub originale può anche essere rimosso
 
-GET biblio/v1/read/{id}/manifest → - ZipArchive open
-                             ←     JSON: TOC (spine + titoli + idx ultimo letto)
 
-GET biblio/v1/read/{id}/chapter/{n} → - check noleggio (scadenza order meta)
-                                      - ZipArchive::getFromName(spine[n])
-                                      - sanitize via wp_kses_post
-                             ←     HTML pulito del solo capitolo
+READING (runtime, ogni utente)
+──────────────────────────────
+Browser                           Server                       Cloudflare
+─────────                         ───────                      ──────────
+GET /leggi/<book-slug>/      →    page-reader.php              MISS → origin
+                                  - check noleggio (1 query    cache HTML shell
+                                    SELECT su wp_biblio_rentals)
+                                  - render shell (no contenuto)
 
-Render client-side:
-- CSS columns per paginazione visiva ("2-4 pagine alla volta")
-- Swipe / frecce per avanzare pagina virtuale
-- Fine capitolo → fetch successivo
-- Salva chapter_idx + scroll_pos in user_meta ogni X secondi
+GET biblio/v1/read/{id}/manifest → loader snello              HIT 24h → CDN
+                                  - skip WC bootstrap
+                                  - file_get_contents(manifest.json)
+                                  - auth: 1 SELECT su rentals
+                             ←    JSON TOC
+
+GET biblio/v1/read/{id}/chapter/{n} → loader snello          HIT 24h → CDN
+                                    - auth: 1 SELECT su rentals
+                                    - rate limit: check user_meta
+                                      _biblio_last_chapter_ts
+                                    - file_get_contents(cache/{id}/{n}.html)
+                                    - update user_meta progress
+                             ←    HTML statico pre-sanitizzato
+
+Client: CSS columns paginazione + swipe (invariato vs v1)
 ```
 
 ---
 
-## Componenti da costruire
+## Componenti rivisti
 
 ```
 biblio-theme/
 ├── inc/
-│   ├── rental.php          ← auth: check ordine WC attivo + scadenza 30gg
-│   │                         meta order: _biblio_rental_expires_at
-│   ├── reader-api.php      ← REST endpoints manifest + chapter
-│   │                         ZipArchive + sanitize + rate limit
-│   └── reader-progress.php ← save/load posizione lettura in user_meta
-├── page-reader.php         ← template lettore (shell HTML)
+│   ├── reader-ingest.php      ← NUOVO: admin upload + pre-estrazione cache
+│   ├── reader-loader.php      ← NUOVO: bootstrap WP minimale per endpoint chapter
+│   │                              define('SHORTINIT', true) o loader custom
+│   │                              salta WC interamente
+│   ├── reader-api.php         ← endpoints manifest + chapter (legge cache statica)
+│   ├── rental.php             ← CRUD wp_biblio_rentals, check scadenza
+│   └── reader-progress.php    ← save/load posizione in user_meta
+├── page-reader.php            ← template shell reader
 ├── assets/
-│   ├── js/reader.js        ← paginazione CSS columns, swipe, save progress
-│   └── css/reader.css      ← tipografia lettura, sepia/notte, responsive
-└── books-protected/        ← FUORI da uploads, .htaccess deny all
-    └── BOOK-1001.epub
+│   ├── js/reader.js           ← paginazione CSS columns + swipe + progress
+│   └── css/reader.css         ← typo lettura, sepia/notte, responsive
+└── books-protected/
+    ├── .htaccess              ← Deny from all
+    ├── originals/             ← .epub originali (post-ingest opzionali)
+    └── cache/
+        └── {book_id}/
+            ├── manifest.json
+            ├── 0.html
+            ├── 1.html
+            └── ...
+
+DB:
+wp_biblio_rentals
+├── id, user_id (idx), book_id (idx), expires_at (idx)
+├── created_at, source_order_id (nullable)
+└── PRIMARY (id), UNIQUE (user_id, book_id)
 ```
 
 ---
 
-## Come funziona la paginazione "2-4 pagine per volta"
+## Tabella `wp_biblio_rentals` (decisione chiusa)
 
-Lato client, non server. Il capitolo arriva come blocco HTML; il container reader usa:
+Niente meta su ordine WC. Tabella custom dedicata:
+
+```sql
+CREATE TABLE wp_biblio_rentals (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  book_id BIGINT UNSIGNED NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  source_order_id BIGINT UNSIGNED NULL,
+  UNIQUE KEY user_book (user_id, book_id),
+  KEY user_active (user_id, expires_at),
+  KEY book_id (book_id)
+) ENGINE=InnoDB;
+```
+
+Check noleggio = 1 query indicizzata:
+
+```sql
+SELECT 1 FROM wp_biblio_rentals
+WHERE user_id = ? AND book_id = ? AND expires_at > NOW()
+LIMIT 1;
+```
+
+Hook su `woocommerce_order_status_completed` per inserire la riga quando un ordine include un prodotto noleggiabile. Disaccoppiato dal resto: il reader non chiama mai codice WC.
+
+---
+
+## Bootstrap snello per endpoint capitolo
+
+Endpoint `chapter/{n}` è il più caldo (1 fetch per cambio capitolo virtuale × N utenti). Bootstrap WP completo è insostenibile.
+
+**Opzioni in ordine di preferenza:**
+
+1. **File PHP dedicato fuori da REST WP** (`/wp-content/themes/biblio-theme/reader-chapter.php`) con `define('SHORTINIT', true)` prima di `wp-load.php` → carica solo DB + base, no plugin, no theme, no WC. Auth via validazione cookie WP a mano (`wp_validate_auth_cookie`).
+2. Se SHORTINIT rompe `wp_validate_auth_cookie` su IF, fallback: bootstrap WP normale ma `remove_all_actions('init')` prima di servire (riduce caricamento plugin pesanti).
+3. Ultimo: REST normale + Cloudflare cache aggressiva che assorbe il grosso (origin colpita 1× per capitolo per finestra di cache).
+
+**Da testare empiricamente al primo prototipo.**
+
+---
+
+## Cloudflare come prerequisito hard
+
+Non opzionale. Configurazione minima Fase 7:
+
+- DNS Bibliò → proxied via Cloudflare (orange cloud)
+- Page Rule su `/wp-json/biblio/v1/read/*/chapter/*`: Cache Everything, Edge TTL 24h, Browser TTL 1h
+- Cache key include cookie auth user (Cloudflare Workers o cache key custom) → utenti diversi non si vedono il contenuto a vicenda
+- WAF rule: blocca user agent script noti, rate limit 30 req/min per IP sull'endpoint chapter
+
+Con CDN davanti, IF vede 1 richiesta ogni 24h per (utente × capitolo) invece di N. Hits/day giornaliero rientra anche con 50+ lettori attivi.
+
+---
+
+## Rate limit senza transient
+
+Transient → `wp_options` write ogni hit = DB pressure. Sostituire con:
+
+```php
+$last_ts = (int) get_user_meta($user_id, '_biblio_last_chapter_ts', true);
+if (time() - $last_ts < 3) {
+    wp_send_json_error('rate_limited', 429);
+}
+update_user_meta($user_id, '_biblio_last_chapter_ts', time());
+```
+
+`user_meta` è già scritto comunque per progress → costo marginale.
+
+---
+
+## Paginazione client (invariata da v1)
 
 ```css
 .reader-content {
-  column-width: 100vw;        /* 1 colonna mobile */
+  column-width: 100vw;
   column-gap: 0;
-  height: calc(100vh - 80px); /* viewport pieno meno header */
+  height: calc(100vh - 80px);
   overflow: hidden;
 }
-
 @media (min-width: 900px) {
-  .reader-content {
-    column-width: 50vw;       /* 2 colonne tablet/desktop */
-  }
+  .reader-content { column-width: 50vw; } /* 2 colonne */
 }
 ```
 
-Avanzamento pagina = `translateX(-100vw)` con animazione. JS gestisce swipe (touch) + frecce (keyboard) + fine capitolo → fetch successivo.
+JS: swipe + frecce + fine capitolo → fetch successivo. Font size / line-height / tema (light/sepia/notte) via CSS vars + localStorage.
 
-Controlli utente: font size, line-height, tema (light/sepia/notte) → CSS variables sul container, persistite in localStorage.
+---
+
+## Pre-processing ePub all'ingest
+
+Limite 5 MB della v1 era stretto. v2:
+
+- Limite upload **15 MB**
+- All'ingest: opzione "strip immagini non-cover" (toggle admin) per ridurre peso cache statica
+- Cover libro: estratta separatamente e salvata come `cache/{book_id}/cover.jpg`
 
 ---
 
@@ -111,73 +234,91 @@ Controlli utente: font size, line-height, tema (light/sepia/notte) → CSS varia
 
 | Misura | Implementazione |
 |---|---|
-| File ePub fuori da public | `books-protected/` + `.htaccess` `Deny from all` |
-| Auth ogni capitolo | check `is_user_logged_in()` + ordine WC + scadenza meta |
-| Rate limit | max 1 capitolo / 3s per utente (transient) → scoraggia scraping |
-| Sanitize HTML | `wp_kses_post()` su contenuto estratto (rimuove script/style malevoli) |
-| Niente URL diretto al file | tutto via REST con nonce + cookie auth |
+| ePub originali fuori da public | `books-protected/originals/` + `.htaccess Deny` |
+| Cache HTML fuori da public | `books-protected/cache/` + `.htaccess Deny`; servita solo via PHP |
+| Auth ogni capitolo | 1 SELECT su `wp_biblio_rentals` + validate cookie |
+| Rate limit | `user_meta` timestamp, 1 capitolo / 3s |
+| Sanitize HTML | `wp_kses_post` **all'ingest** (una volta), no runtime |
+| Cloudflare WAF | rate limit IP + UA filtering |
 
-**Limite onesto:** chi vuole scrapare con script può farlo. Non è DRM, è friction. Per un MVP/portfolio con libri di pubblico dominio è proporzionato.
+Limite onesto: zero DRM. Friction per scraping casuale, non protezione anti-pirata professionale. Coerente con MVP/portfolio + libri pubblico dominio.
 
 ---
 
-## Stima sforzo
+## Stima sforzo (revisionata)
 
 | Pezzo | Effort |
 |---|---|
-| `inc/rental.php` (auth + scadenza order meta) | 1-2h |
-| `inc/reader-api.php` (manifest + chapter con ZipArchive) | 2-3h |
+| Migration `wp_biblio_rentals` + `inc/rental.php` (CRUD + hook WC order completed) | 2-3h |
+| `inc/reader-ingest.php` (admin upload + ZipArchive + sanitize + cache write) | 3-4h |
+| `inc/reader-loader.php` (bootstrap snello + test SHORTINIT su IF) | 2-4h ⚠️ rischio empirico |
+| `inc/reader-api.php` (endpoints manifest + chapter, legge cache) | 1-2h |
 | `page-reader.php` template | 1h |
-| `assets/js/reader.js` (paginazione + swipe + save progress) | 4-6h |
+| `assets/js/reader.js` (paginazione + swipe + progress) | 4-6h |
 | `assets/css/reader.css` (typo, sepia/notte, responsive) | 2-3h |
-| Test con 1 ePub Pirandello / Verga | 1h |
-| **Totale MVP** | **~12-16h** |
+| Setup Cloudflare + Page Rules + test cache | 1-2h |
+| Test end-to-end con 1 ePub Pirandello | 2h |
+| **Totale MVP v2** | **~18-27h** |
+
+Aumento vs v1 (12-16h) giustificato da: ingest pipeline, loader snello, CDN setup, tabella custom.
 
 ---
 
-## Scope MVP vs futuro
+## Decisioni chiuse in v2
 
-**MVP (Fase 7 audit, da valutare):**
-- 1-3 ePub demo di pubblico dominio (Pirandello, Verga, Pirandello)
-- Auth via ordine WC simulato (no pagamento reale)
-- Reader funzionante con paginazione + progress save
-- Mobile + desktop
-
-**Fuori MVP:**
-- Libri sotto copyright (problema legale, non tecnico — hosting gratuito + libri commerciali = no)
-- Annotazioni / highlight utente
-- TTS (text-to-speech)
-- Sincronizzazione progress multi-device avanzata
-- DRM serio
+| Decisione v1 | v2 |
+|---|---|
+| Formato fonti | **Solo ePub** (PDF reflowable scartato, complica troppo) |
+| Modello noleggio | **Tabella custom `wp_biblio_rentals`** (no order meta) |
+| Scadenza | **30gg fisso** dalla creazione riga rental (configurabile per libro = post-MVP) |
+| Pagina "i miei libri" | **`/biblioteca/`** sezione dedicata (non dentro `/il-mio-account/`) |
+| Demo libri | **Da scegliere**: 3 titoli pubblico dominio (proposta: Pirandello _Il fu Mattia Pascal_, Verga _I Malavoglia_, Svevo _La coscienza di Zeno_) |
+| Sanitize | **All'ingest, una volta sola** (non runtime) |
+| Cache | **Statica su disco + Cloudflare** (non transient runtime) |
 
 ---
 
-## Rischi e mitigazioni
+## Rischi residui v2
 
 | Rischio | Mitigazione |
 |---|---|
-| `ZipArchive` lento con ePub grandi (>10 MB) | Limite upload 5 MB per ePub; cache capitolo in transient 1h |
-| IF kill processo se richiesta troppo lunga | Capitoli piccoli (max 300 KB HTML); timeout PHP 30s sufficiente |
-| Inode esaurito se molti libri | ePub = 1 file ciascuno; 100-300 libri ok dentro 30k inode totali |
-| Bandwidth IF non dichiarato | Monitor primi giorni; se taglia, valutare CDN cache (Cloudflare free) |
-| Copyright libri reali | Solo pubblico dominio nel MVP; per prod serve hosting pagato + licenze |
+| SHORTINIT incompatibile con auth cookie su IF | Test al primo sprint; fallback bootstrap normale + Cloudflare assorbe |
+| Ban IF per abuso CPU comunque | Backup deploy strategy: Cloudflare Pages per asset statici + hosting pagato low-cost (~3€/mese) come piano B prima di prod |
+| Inode esauriti se 300+ libri | Monitor `df -i` via plugin diagnostico; sotto 80% conservativo |
+| Cache stantia se libro aggiornato | Versioning path: `cache/{book_id}/v{n}/...` + bump version all'ingest |
+| Cloudflare cache leak tra utenti | Cache key include hash cookie auth; in dubbio, Bypass Cache su cookie presente + cache solo manifest (più piccolo, OK colpire origin per chapter) |
 
 ---
 
-## Decisioni aperte (da chiudere prima di partire)
+## Roadmap implementativa proposta
 
-1. **Formato fonti**: solo ePub o anche PDF reflowable (PDF.js text layer)?
-2. **Modello noleggio**: meta su ordine WC o tabella custom `wp_biblio_rentals`?
-3. **Scadenza**: 30gg da acquisto fisso, o configurabile per libro?
-4. **Pagina lista "i miei libri"**: dentro `/il-mio-account/` o sezione dedicata `/biblioteca/`?
-5. **Demo libri**: quali 3 titoli di pubblico dominio?
+**Sprint 1 — Fondamenta (5-7h)**
+- Tabella `wp_biblio_rentals` + `rental.php`
+- `reader-ingest.php` con 1 ePub test
+- Verifica cache scritta correttamente
+
+**Sprint 2 — Endpoint + loader (4-6h)**
+- `reader-loader.php` con test SHORTINIT su IF reale
+- `reader-api.php` manifest + chapter
+- Setup Cloudflare + page rule
+
+**Sprint 3 — Frontend (6-9h)**
+- `page-reader.php` + `reader.js` + `reader.css`
+- Test paginazione mobile + desktop
+
+**Sprint 4 — Hardening (3-5h)**
+- Rate limit, progress save, pagina `/biblioteca/`
+- Test carico simulato (10 utenti concorrenti)
+- Documentazione deploy
 
 ---
 
-## Prossimo passo se approvato
+## Verdetto post-validazione
 
-Partire da `inc/reader-api.php` (parsing ePub + endpoint chapter) perché decide il contratto di tutto il resto: se quello regge su IF, il reader frontend è solo CSS + JS senza sorprese.
+Fattibile come Fase 7 audit. La v2 è realistica nei limiti IF reali (50k hits/day, no object cache, ban CPU). Senza Cloudflare + cache statica pre-estratta + tabella custom + bootstrap snello, la v1 sarebbe saltata al primo utente attivo.
+
+Prossimo passo se approvato: **Sprint 1** (rentals + ingest), perché valida l'ipotesi cache statica prima di toccare frontend.
 
 ---
 
-*Proposta v1 — 2026-05-15. Rivalutare insieme a [[BIBLIO_AUDIT_2026-05-14]] per decidere se diventa Fase 7.*
+*Proposta v2 — 2026-05-15. Da rivalutare ancora se SHORTINIT non regge su IF.*
