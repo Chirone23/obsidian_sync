@@ -8,9 +8,18 @@
 
 ---
 
-## ⚠️ Stato decisionale
+## ✅ Decisione presa (2026-05-15)
 
-**Decisione in sospeso prima di procedere.** La v2 conteneva 3 assunzioni che non reggono alla seconda validazione:
+**Scelta: Opzione 1 — MVP demo su IF.**
+Contesto: progetto scuola/ITS, deliverable portfolio. Leak fra utenti accettato perché libri = pubblico dominio. Niente CF Workers, niente SHORTINIT custom.
+
+**Da rivedere in un secondo momento:** quando il progetto passerà a uso reale, riapriamo la proposta con misure di sicurezza più rigide (auth per-chapter robusta, hosting pagato, DRM-friction più seria, audit ToS hosting). v3 resta valida come baseline tecnica, cambia solo l'opzione di deploy.
+
+---
+
+## ⚠️ Contesto blocker (storico v2→v3)
+
+La v2 conteneva 3 assunzioni che non reggono alla seconda validazione:
 
 1. **CF free non supporta cache-key-per-utente** (servono Workers ~5€/mese o Enterprise). Sul free piano hai solo `Bypass Cache on Cookie` → cache utente-specifica impossibile senza budget.
 2. **SHORTINIT non carica `pluggable.php`** → niente `wp_validate_auth_cookie`. Loader snello deve o ricaricare pluggable (≈ bootstrap pieno) o riscrivere auth a mano (rischio sicurezza in MVP). Guadagno reale ~3-4× non 10×.
@@ -403,10 +412,18 @@ Cosa cambia per opzione:
 
 ## Prossimo passo
 
-**Decisione necessaria prima di scrivere codice**: opzione 1, 2 o 3?
+Decisione presa: **Opzione 1**. Quando si parte:
 
-Una volta scelta, riscrivo solo la sezione "Architettura" allineata all'opzione e si parte da Sprint 1 (rentals + ingest, comune a tutte e tre).
+1. Sprint 1 (rentals + ingest) — comune all'opzione 1
+2. Adattamenti opz. 1: niente auth per-chapter sul contenuto, CF Page Rule "Cache Everything" pubblica (se serve), bootstrap WP normale (no SHORTINIT)
+3. Demo con 3 ePub pubblico dominio
+
+**Nota per la revisione futura "produzione vera":** quando si passerà a uso reale, rivedere come minimo:
+- Auth per-chapter robusta (Workers o hosting con cache-key utente)
+- Hosting fuori IF (ToS + capacità)
+- DRM-friction più seria (watermark utente, signed URL temporanei, audit log accessi)
+- Compliance copyright se libri non pubblico dominio
 
 ---
 
-*Proposta v3 — 2026-05-15. Aperta in attesa di decisione opzione.*
+*Proposta v3 — 2026-05-15. Decisione: Opzione 1 (demo scuola). Revisione produzione: da pianificare.*
