@@ -15,6 +15,9 @@
 - [[BIBLIO_SETUP_GUIDE]] — Setup iniziale: DB custom, prodotti di prova, plugin, WooCommerce
 - [[BIBLIO_WORDPRESS_TEMPLATE_2026]] — Template WordPress + child theme Astra + workaround InfinityFree
 
+### Audit & plan tema attuale
+- [[BIBLIO_AUDIT_2026-05-14]] — Audit completo `biblio-theme` + plan 6 fasi (cleanup, refactor CSS, icons, chat MyBibliò, polish, perf)
+
 ### Asset
 - `Bibliò_Neural_Reading_Ecosystem.pdf` — Concept MyBibliò (chatbot AI)
 
