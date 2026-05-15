@@ -12,72 +12,81 @@
     });
   });
 
-  /* ── Chat: storage key ──────────────────────────────────────── */
+  /* ── Chat: storage ──────────────────────────────────────────── */
   var STORAGE_KEY = 'biblio_chat_history';
 
-  /* Legge la history da sessionStorage (array di {role, html}) */
+  /*
+   * Ogni entry: { role: 'user'|'assistant', display: html, raw: plain_text }
+   * - display: testo safe per innerHTML (newline → <br>, utente escaped)
+   * - raw:     testo pulito da mandare all'LLM (no HTML entities, no <br>)
+   */
   function loadHistory() {
     try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || []; }
     catch (e) { return []; }
   }
-
-  /* Salva la history */
-  function saveHistory(history) {
-    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(history)); }
+  function saveHistory(h) {
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(h)); }
     catch (e) {}
   }
 
-  /* Rende un messaggio utente nel DOM */
-  function renderUser(html, container) {
+  /* ── DOM render ─────────────────────────────────────────────── */
+  function renderUser(displayHtml, container) {
     var d = document.createElement('div');
     d.style.cssText = 'text-align:right;margin-bottom:10px;';
-    d.innerHTML = '<span style="background:var(--fg);color:var(--bg);padding:8px 12px;border-radius:8px;display:inline-block;font-size:14px;">' + html + '</span>';
+    d.innerHTML = '<span style="background:var(--fg);color:var(--bg);padding:8px 12px;border-radius:8px;display:inline-block;font-size:14px;">' + displayHtml + '</span>';
     container.appendChild(d);
   }
 
-  /* Rende un messaggio bot nel DOM */
-  function renderBot(html, container) {
+  function renderBot(displayHtml, container) {
     var d = document.createElement('div');
-    d.style.cssText = 'margin-bottom:10px;color:var(--fg);font-size:14px;border-left:2px solid var(--fg);padding-left:10px;';
-    d.innerHTML = html;
+    d.style.cssText = 'margin-bottom:10px;color:var(--fg);font-size:14px;border-left:2px solid var(--fg);padding-left:10px;line-height:1.6;';
+    d.innerHTML = displayHtml;
     container.appendChild(d);
   }
 
-  /* Recupera la categoria attiva dalla pagina corrente */
+  /* Converte la risposta del bot in HTML safe:
+     - newline → <br>
+     - nessun altro HTML (il bot non deve iniettare markup) */
+  function botTextToHtml(text) {
+    return escapeHtml(text).replace(/\n/g, '<br>');
+  }
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
   function getCurrentCategorySlug() {
-    /* Prova dal path URL: /wp-categoria-prodotto/<slug>/ */
     var m = window.location.pathname.match(/\/(?:product-category|wp-categoria-prodotto)\/([^\/]+)/);
     if (m) return m[1];
-    /* Prova dal filtro attivo nella sidebar */
-    var active = document.querySelector('.filter-item.active');
-    if (active && active.dataset.slug) return active.dataset.slug;
+    var active = document.querySelector('.filter-item.active[data-slug]');
+    if (active) return active.dataset.slug;
     return '';
   }
 
-  /* Costruisce la lista messaggi da mandare al backend (last 6 turns) */
-  function buildApiHistory(history) {
-    var last = history.slice(-6);
-    return last.map(function (m) {
-      return { role: m.role, content: m.text };
+  /* Ultimi N turni in formato API (raw text, no HTML) */
+  function buildApiHistory(history, n) {
+    return history.slice(-(n || 6)).map(function (m) {
+      return { role: m.role, content: m.raw };
     });
   }
 
-  /* Chiamata REST al backend */
-  async function inviaMessaggio(testo) {
+  /* ── REST call ──────────────────────────────────────────────── */
+  async function inviaMessaggio(rawText) {
     var history = loadHistory();
-    var payload = {
-      message: testo,
-      category_slug: getCurrentCategorySlug(),
-      history: buildApiHistory(history)
-    };
     try {
       var res = await fetch(biblio_api.url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-WP-Nonce': biblio_api.nonce
-        },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': biblio_api.nonce },
+        body: JSON.stringify({
+          message:       rawText,
+          category_slug: getCurrentCategorySlug(),
+          history:       buildApiHistory(history)
+        })
       });
       var data = await res.json();
       return data.reply || 'Errore nella risposta.';
@@ -88,25 +97,21 @@
 
   /* ── Chat UI ────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
-    var inputField   = document.getElementById('chat-input');
-    var submitBtn    = document.getElementById('chat-submit');
-    var chatContent  = document.getElementById('chat-content');
-    var minimizeBtn  = document.getElementById('chat-minimize');
-    var fullWrapper  = document.getElementById('biblio-chatbot-container');
+    var inputField  = document.getElementById('chat-input');
+    var submitBtn   = document.getElementById('chat-submit');
+    var chatContent = document.getElementById('chat-content');
+    var minimizeBtn = document.getElementById('chat-minimize');
 
     if (!submitBtn || !inputField || !chatContent) return;
 
-    /* Ripristina la conversazione precedente dalla sessionStorage */
-    var history = loadHistory();
-    if (history.length > 0) {
-      history.forEach(function (m) {
-        if (m.role === 'user') renderUser(m.text, chatContent);
-        else renderBot(m.text, chatContent);
-      });
-      chatContent.scrollTop = chatContent.scrollHeight;
-    }
+    /* Ripristina conversazione da sessionStorage */
+    loadHistory().forEach(function (m) {
+      if (m.role === 'user') renderUser(m.display, chatContent);
+      else renderBot(m.display, chatContent);
+    });
+    if (loadHistory().length) chatContent.scrollTop = chatContent.scrollHeight;
 
-    /* Gestione quick pick (pulsanti suggerimento) */
+    /* Quick pick buttons */
     document.querySelectorAll('[data-chat-pick]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         inputField.value = btn.dataset.chatPick;
@@ -115,37 +120,36 @@
     });
 
     async function handleChat() {
-      var query = inputField.value.trim();
-      if (!query) return;
+      var rawText = inputField.value.trim();
+      if (!rawText) return;
 
-      /* Mostra messaggio utente */
-      renderUser(escapeHtml(query), chatContent);
+      var userDisplay = escapeHtml(rawText);
+      renderUser(userDisplay, chatContent);
       inputField.value = '';
       chatContent.scrollTop = chatContent.scrollHeight;
 
-      /* Salva in history */
+      /* Salva turno utente */
       var history = loadHistory();
-      history.push({ role: 'user', text: escapeHtml(query) });
+      history.push({ role: 'user', display: userDisplay, raw: rawText });
       saveHistory(history);
 
-      /* Indicatore di caricamento */
+      /* Loader */
       var loader = document.createElement('div');
-      loader.style.cssText = 'margin-bottom:10px;color:var(--fg-muted);font-size:13px;padding-left:12px;';
+      loader.style.cssText = 'color:var(--fg-muted);font-size:13px;padding-left:12px;margin-bottom:8px;';
       loader.textContent = '…';
       chatContent.appendChild(loader);
       chatContent.scrollTop = chatContent.scrollHeight;
 
-      /* Chiama backend */
-      var reply = await inviaMessaggio(query);
+      var replyRaw = await inviaMessaggio(rawText);
 
-      /* Rimuovi loader e mostra risposta */
       chatContent.removeChild(loader);
-      renderBot(reply, chatContent);
+      var replyDisplay = botTextToHtml(replyRaw);
+      renderBot(replyDisplay, chatContent);
       chatContent.scrollTop = chatContent.scrollHeight;
 
-      /* Aggiorna history con risposta bot */
+      /* Salva turno bot */
       history = loadHistory();
-      history.push({ role: 'assistant', text: reply });
+      history.push({ role: 'assistant', display: replyDisplay, raw: replyRaw });
       saveHistory(history);
     }
 
@@ -158,17 +162,12 @@
     if (minimizeBtn) {
       var inputRow = inputField.parentElement;
       minimizeBtn.addEventListener('click', function () {
-        var isHidden = chatContent.style.display === 'none';
-        chatContent.style.display    = isHidden ? 'flex'  : 'none';
-        inputRow.style.display       = isHidden ? 'flex'  : 'none';
-        minimizeBtn.textContent      = isHidden ? '−' : '+';
+        var hidden = chatContent.style.display === 'none';
+        chatContent.style.display = hidden ? 'flex' : 'none';
+        inputRow.style.display    = hidden ? 'flex' : 'none';
+        minimizeBtn.textContent   = hidden ? '−' : '+';
       });
     }
   });
-
-  /* Escaping base per testo utente nel DOM */
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
 
 })();
