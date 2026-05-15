@@ -145,15 +145,17 @@ function biblio_product_card($product_id, $compact = false) {
 
 /** Query prodotti con buoni default per Bibliò. */
 function biblio_products_query($args = []) {
+    // WC 3.0+: _visibility è deprecata, usare product_visibility taxonomy
     $defaults = [
-        'post_type' => 'product',
+        'post_type'      => 'product',
         'posts_per_page' => 6,
-        'post_status' => 'publish',
-        'no_found_rows' => false,
-        'meta_query' => [[
-            'key' => '_visibility',
-            'value' => ['hidden'],
-            'compare' => 'NOT IN',
+        'post_status'    => 'publish',
+        'no_found_rows'  => false,
+        'tax_query'      => [[
+            'taxonomy' => 'product_visibility',
+            'field'    => 'name',
+            'terms'    => ['exclude-from-catalog'],
+            'operator' => 'NOT IN',
         ]],
     ];
     return new WP_Query(array_merge($defaults, $args));

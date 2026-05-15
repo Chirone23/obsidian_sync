@@ -1,67 +1,83 @@
-# Bibliò — WordPress Theme
+# Bibliò — WordPress Theme v0.3.0
 
-Tema editoriale italiano per Bibliò. Pensato per Infinity Free hosting.
+Tema editoriale italiano per Bibliò. Pensato per InfinityFree hosting + WooCommerce.
 
-## Installazione
-
-1. In WordPress: **Aspetto → Temi → Aggiungi nuovo → Carica tema**
-2. Carica `biblio-theme.zip` e attivalo.
-3. Vai su **Aspetto → Menu** e crea un menu in posizione "Menu principale" (es. Catalogo, Plus, Noleggio).
-4. **Impostazioni → Lettura → La tua home page mostra**: seleziona "Una pagina statica" e scegli una pagina (oppure lascia "I tuoi articoli più recenti" per usare automaticamente `front-page.php`).
-5. **Impostazioni → Permalink**: imposta su "Nome articolo" e salva (rigenera i rewrite rules per il CPT `book`).
-
-## Aggiungere libri
-
-- Sidebar admin → **Libri → Aggiungi libro**
-- Inserisci titolo, contenuto (descrizione lunga), e nel box **Dettagli libro**: autore, prezzo, prezzo noleggio, ISBN, pagine, anno, rating, badge, stile copertina, blurb.
-- Assegna un **Genere** dalla tassonomia (Libri → Generi).
-- L'**immagine in evidenza** sostituisce la copertina generata; se assente, si usa lo "Stile copertina" (0-5) per il gradiente.
-
-## Pagine consigliate da creare
-
-- `Plus` (`/plus/`)
-- `Noleggio vs Acquisto` (`/noleggio-vs-acquisto/`)
-- `MyBibliò` (`/mybiblio/`) — chat / contatti
-- `Contatti`, `FAQ`, `Privacy`, `Termini`, `Cookie`
-
-## WooCommerce (opzionale)
-
-- Installa WooCommerce. Il tema dichiara `add_theme_support('woocommerce')`.
-- I libri sono CPT separati; se vuoi vendita reale, crea Prodotti WC corrispondenti, oppure aggiungi supporto WC al CPT `book` (richiede customizzazione).
-
-## Ottimizzazioni per Infinity Free
-
-- Stile e font caricati una sola volta; Google Fonts via `@import` (HTTP cache lato browser).
-- `heartbeat` ridotto a 60s, emoji/oembed/wlwmanifest rimossi (CPU saving).
-- Niente plugin obbligatori: meta box nativi, niente ACF.
-- **Consigliato**: installare WP Super Cache; tenere ≤4 plugin totali; rispettare ~25k inode.
-
-## Struttura tema (≈15 file)
+## Struttura tema
 
 ```
 biblio-theme/
-├── style.css           Tokens + tutto il CSS
-├── functions.php       Setup + enqueue + hooks
-├── header.php          Nav
-├── footer.php          Footer + chat FAB
-├── front-page.php      Home
-├── archive-book.php    Catalogo + filtri
-├── single-book.php     Pagina libro
-├── search.php          Risultati ricerca
-├── page.php            Pagina statica
-├── singular.php        Post singolo (fallback)
-├── index.php           Fallback generico
+├── style.css              Metadati WP (header obbligatorio) — stili in css/
+├── css/
+│   ├── tokens.css         CSS custom properties (palette, font, spacing, easing)
+│   ├── base.css           Reset, tipografia, font import (Google Fonts)
+│   ├── components.css     UI: nav, btn, card, cover, footer, chat-fab, ecc.
+│   └── pages.css          Layout pagine (hero, catalog, detail) + responsive
+├── functions.php          Setup, enqueue, performance hooks, includes
+├── header.php             Nav
+├── footer.php             Footer
+├── front-page.php         Home (usa WooCommerce)
+├── woocommerce.php        Router WC: single product, shop/catalog, taxonomy
+├── archive-book.php       Archive CPT 'book' (legacy — CPT non più in prod)
+├── single-book.php        Single CPT 'book' (legacy)
+├── search.php             Risultati ricerca
+├── page.php               Pagina statica
+├── singular.php           Post singolo (fallback)
+├── index.php              Fallback generico
 ├── 404.php
 ├── searchform.php
 ├── inc/
-│   ├── post-types.php  CPT 'book' + tax 'book_genre'
-│   ├── helpers.php     biblio_book_card(), biblio_book_cover(), ecc.
-│   └── meta-boxes.php  Dettagli libro (autore, prezzo, ecc.)
+│   ├── post-types.php     CPT 'book' + taxonomy 'book_genre' (legacy, has_archive=false)
+│   ├── helpers.php        biblio_meta(), biblio_price(), helper book-* (legacy)
+│   ├── meta-boxes.php     Meta box 'Dettagli Bibliò' su prodotti WC
+│   ├── wc-integration.php Helper WC: biblio_product_card(), biblio_product_cover(), biblio_products_query()
+│   └── chatbot.php        MyBibliò AI: REST endpoint /biblio/v1/chat + footer UI
 └── assets/js/main.js
 ```
 
-## Cosa NON è incluso (da fare a mano)
+## Installazione
 
-- Form di contatto / MyBibliò chat (pagina statica oppure plugin Contact Form 7)
-- Integrazione checkout WooCommerce su CPT book (PHASE 2)
-- Pagine `/plus/`, `/account/` ecc. (creale da WP-admin)
+1. Installa WooCommerce **prima** di attivare il tema.
+2. **Aspetto → Temi → Aggiungi nuovo → Carica tema** → carica `biblio-theme.zip`.
+3. **Aspetto → Menu** → crea menu in posizione "Menu principale".
+4. **Impostazioni → Lettura** → home page statica oppure "Ultimi articoli" (usa `front-page.php` automaticamente).
+5. **Impostazioni → Permalink** → "Nome articolo" → Salva (rigenera rewrite rules).
+
+## Chiave API Groq (chatbot)
+
+La chiave è hardcoded in `inc/chatbot.php` come fallback. Per sostituirla senza toccare il tema:
+
+```php
+// In wp-config.php, prima di "/* That's all, stop editing! */":
+define('BIBLIO_GROQ_KEY', 'gsk_la_tua_chiave');
+```
+
+## Aggiungere libri
+
+- **Prodotti WooCommerce** → Aggiungi prodotto
+- In ogni prodotto compare il box **Dettagli Bibliò**: autore, anno, pagine, rating, prezzo noleggio, noleggiabile, badge, stile copertina (0-5), blurb.
+- Se il prodotto ha un'immagine in evidenza la usa; altrimenti genera una copertina con gradiente CSS (stile 0-5).
+
+## Pagine da creare in WP-admin
+
+- `/plus/` — piano abbonamento
+- `/mybiblio/` — pagina chat/account
+- `/noleggio-vs-acquisto/`, `/contatti/`, `/faq/`, `/privacy/`, `/termini/`, `/cookie/`
+
+## Ottimizzazioni InfinityFree
+
+- CSS suddiviso in 4 file enqueued (cache granulare per browser).
+- Heartbeat ridotto a 60s, emoji/oembed/wlwmanifest rimossi.
+- Niente plugin obbligatori per i meta: meta box nativi.
+- Consigliato: WP Super Cache; max 4 plugin; ≤25k inode.
+
+## Bug fix v0.3.0
+
+| Bug | Fix |
+|---|---|
+| `_visibility` meta_query deprecata WC 3.0+ | Sostituita con `tax_query` su `product_visibility` in `biblio_products_query()` |
+| CPT `book` archive slug `catalogo` → conflitto URL WC | `has_archive => false` in `post-types.php` |
+| Chatbot inline in `functions.php` (900 righe) | Spostato in `inc/chatbot.php` |
+| CSS monolitico 305 righe | Splittato in 4 file in `css/` |
+| `front-page.php` branch `$use_wc=false` dead code | Rimosso; solo WC path |
+| Recensioni hardcoded "1.240" | Dinamico via `get_comments_number()` |
+| Emoji feature icon (🛒 📦 ✨ ⭐ 🔍) | Rimossi/sostituiti con HTML entity o testo |

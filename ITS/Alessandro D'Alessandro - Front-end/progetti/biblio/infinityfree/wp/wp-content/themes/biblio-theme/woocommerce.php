@@ -44,7 +44,14 @@ if (is_singular('product')):
     <?php endif; ?>
 
     <div class="detail-meta-row">
-      <span class="detail-rating">⭐ <b><?php echo esc_html($rating); ?></b><span class="meta"> · 1.240 recensioni</span></span>
+      <span class="detail-rating"><b><?php echo esc_html($rating); ?>/5</b>
+        <?php
+        $review_count = get_comments_number($id);
+        if ($review_count > 0) {
+            echo '<span class="meta"> · ' . number_format_i18n((int)$review_count) . ' ' . _n('recensione', 'recensioni', (int)$review_count, 'biblio') . '</span>';
+        }
+        ?>
+      </span>
       <?php if ($pages): ?><span class="meta"><?php echo esc_html($pages); ?> pagine</span><?php endif; ?>
       <?php if ($sku): ?><span class="meta">SKU <?php echo esc_html($sku); ?></span><?php endif; ?>
     </div>
@@ -72,7 +79,7 @@ if (is_singular('product')):
 
     <div class="buyrent-card <?php echo ($rentable && $rent > 0) ? '' : 'no-rent'; ?>">
       <div>
-        <div class="eyebrow" style="margin-bottom:6px;">🛒 Acquista</div>
+        <div class="eyebrow" style="margin-bottom:6px;">Acquista</div>
         <div class="buyrent-price buy">
           <?php
           $regular = $product->get_regular_price();
@@ -97,7 +104,7 @@ if (is_singular('product')):
 
       <?php if ($rentable && $rent > 0): ?>
         <div class="buyrent-rent-col">
-          <div class="eyebrow" style="margin-bottom:6px;color:var(--biblio-rent);">📦 Noleggia</div>
+          <div class="eyebrow" style="margin-bottom:6px;color:var(--biblio-rent);">Noleggia</div>
           <div class="buyrent-price rent"><?php echo esc_html(biblio_price($rent)); ?></div>
           <div class="meta" style="margin-bottom:14px;">30 giorni · ritiro gratuito</div>
           <a class="btn btn-rent btn-block" href="#">Noleggia 30gg</a>
@@ -106,8 +113,8 @@ if (is_singular('product')):
     </div>
 
     <p class="meta" style="max-width:620px;">
-      ✨ <span style="color:var(--biblio-gold);font-weight:500;">Con Plus</span> spedizione gratuita e accesso anticipato alle novità.
-      <a href="<?php echo esc_url(home_url('/plus/')); ?>">Scopri Plus →</a>
+      <span style="color:var(--biblio-gold);font-weight:500;">Con Plus</span> spedizione gratuita e accesso anticipato alle novità.
+      <a href="<?php echo esc_url(home_url('/plus/')); ?>">Scopri Plus &rarr;</a>
     </p>
   </div>
 </div>
@@ -179,7 +186,7 @@ elseif (is_shop() || is_product_taxonomy()):
       <div class="filter-group">
         <div class="eyebrow">Ricerca</div>
         <div class="search-input-wrap">
-          <span class="icon">🔍</span>
+          <span class="icon" aria-hidden="true">&#128269;</span>
           <input class="search-input" type="search" name="s" value="<?php echo esc_attr($current_search); ?>" placeholder="Autore, titolo, SKU…">
         </div>
       </div>
@@ -213,7 +220,6 @@ elseif (is_shop() || is_product_taxonomy()):
     <div class="sidebar-cta">
       <div style="font:500 14px var(--font-serif);margin-bottom:4px;">Non trovi nulla?</div>
       <p class="meta" style="margin-bottom:10px;">MyBibliò conosce tutto il catalogo. Raccontagli cosa cerchi.</p>
-      <a class="btn btn-sm btn-primary" href="<?php echo esc_url(home_url('/mybiblio/')); ?>">✨ Apri la chat</a>
     </div>
   </aside>
 
@@ -244,7 +250,7 @@ elseif (is_shop() || is_product_taxonomy()):
       </div>
     <?php else: ?>
       <div style="text-align:center;padding:60px;color:var(--fg-muted);">
-        <div style="font-size:40px;margin-bottom:12px;">📚</div>
+        <div style="font-size:40px;margin-bottom:12px;">&#128218;</div>
         <p>Nessun risultato. Prova con altri filtri.</p>
       </div>
     <?php endif; wp_reset_postdata(); ?>

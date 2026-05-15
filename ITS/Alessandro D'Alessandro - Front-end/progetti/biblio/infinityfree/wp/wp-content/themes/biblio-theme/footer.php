@@ -1,11 +1,6 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 </main>
 
-<a class="chat-fab" href="<?php echo esc_url(home_url('/mybiblio/')); ?>">
-  <span class="av">✨</span>
-  <span>Chiedi a MyBibliò</span>
-</a>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -15,10 +10,7 @@
     <div>
       <h4>Esplora</h4>
       <?php
-      $biblio_footer_shop = class_exists('WooCommerce')
-          ? get_permalink(wc_get_page_id('shop'))
-          : get_post_type_archive_link('book');
-      if (!$biblio_footer_shop) $biblio_footer_shop = home_url('/catalogo/');
+      $biblio_footer_shop = get_permalink(wc_get_page_id('shop')) ?: home_url('/shop/');
       ?>
       <a href="<?php echo esc_url($biblio_footer_shop); ?>">Catalogo</a>
       <a href="<?php echo esc_url(home_url('/plus/')); ?>">Plus</a>

@@ -14,7 +14,7 @@ function biblio_register_book_cpt() {
             'menu_name' => 'Libri',
         ],
         'public' => true,
-        'has_archive' => 'catalogo',
+        'has_archive' => false, // era 'catalogo' — disabilitato per evitare conflitto URL con pagina WC /catalogo/
         'menu_icon' => 'dashicons-book-alt',
         'supports' => ['title','editor','thumbnail','excerpt'],
         'rewrite' => ['slug' => 'libro'],

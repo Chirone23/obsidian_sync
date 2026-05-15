@@ -1,0 +1,74 @@
+:root {
+  --biblio-coral: #C75550;
+  --biblio-coral-dark: #A8423E;
+  --biblio-coral-soft: #E8A9A6;
+  --biblio-ink: #2A2A2A;
+  --biblio-ink-soft: #4A4440;
+  --biblio-cream: #F5F1E8;
+  --biblio-cream-deep: #EDE6D3;
+  --biblio-navy: #3A4A5C;
+  --biblio-navy-soft: #6B7A8C;
+  --biblio-gray: #E8E3DB;
+  --biblio-gray-2: #D6CFC2;
+  --biblio-gray-3: #9A928A;
+  --biblio-gold: #C4A062;
+  --biblio-gold-soft: #E8D9B4;
+  --biblio-rent: #8B6F4E;
+  --biblio-rent-soft: #E3D5C2;
+  --biblio-success: #4A7A5C;
+  --biblio-error: #B8413E;
+
+  --bg: var(--biblio-cream);
+  --bg-alt: var(--biblio-cream-deep);
+  --bg-inverse: var(--biblio-ink);
+  --surface: #FFFFFF;
+  --surface-alt: var(--biblio-cream-deep);
+  --fg: var(--biblio-ink);
+  --fg-soft: var(--biblio-ink-soft);
+  --fg-muted: var(--biblio-gray-3);
+  --fg-on-dark: var(--biblio-cream);
+  --accent: var(--biblio-coral);
+  --accent-hover: var(--biblio-coral-dark);
+  --accent-soft: var(--biblio-coral-soft);
+  --border: var(--biblio-gray);
+  --border-strong: var(--biblio-gray-2);
+
+  --font-display: 'Playfair Display', 'Playfair', Georgia, serif;
+  --font-serif: 'Lora', 'Charter', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-display: clamp(40px, 5.2vw, 68px);
+  --t-h1: clamp(32px, 3.6vw, 48px);
+  --t-h2: 32px;
+  --t-h3: 24px;
+  --t-h4: 20px;
+  --t-body-lg: 18px;
+  --t-body: 16px;
+  --t-small: 14px;
+  --t-micro: 12px;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.3;
+  --lh-body: 1.55;
+  --lh-loose: 1.7;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(42,42,42,.06), 0 1px 1px rgba(42,42,42,.04);
+  --shadow-2: 0 4px 10px rgba(42,42,42,.07), 0 2px 4px rgba(42,42,42,.05);
+  --shadow-3: 0 14px 30px rgba(42,42,42,.10), 0 4px 10px rgba(42,42,42,.05);
+  --shadow-book: 4px 6px 18px rgba(42,42,42,.18);
+
+  --ease-out: cubic-bezier(.22,.8,.32,1);
+  --ease-soft: cubic-bezier(.4,0,.2,1);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+}

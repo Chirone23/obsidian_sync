@@ -86,7 +86,6 @@ $genres = biblio_get_genres(8);
     <div class="sidebar-cta">
       <div style="font:500 14px var(--font-serif);margin-bottom:4px;">Non trovi nulla?</div>
       <p class="meta" style="margin-bottom:10px;">MyBibliò conosce tutto il catalogo. Raccontagli cosa cerchi.</p>
-      <a class="btn btn-sm btn-primary" href="<?php echo esc_url(home_url('/mybiblio/')); ?>">✨ Apri la chat</a>
     </div>
   </aside>
 
