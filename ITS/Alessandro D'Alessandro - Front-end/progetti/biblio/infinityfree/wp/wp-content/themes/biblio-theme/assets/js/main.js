@@ -12,22 +12,20 @@
     });
   });
 
-  /* ── Chat: storage (localStorage, TTL 24h) ──────────────────── */
+  /* ── Chat: storage ──────────────────────────────────────────── */
   var STORAGE_KEY = 'biblio_chat_v2';
-  var TTL_MS      = 24 * 60 * 60 * 1000; // 24 ore
+  var TTL_MS = 24 * 60 * 60 * 1000;
 
   /*
    * Ogni entry: { role: 'user'|'assistant', display: html, raw: plain_text }
-   * - display: testo safe per innerHTML
-   * - raw:     testo pulito per l'API (no HTML entities)
-   * Struttura in localStorage: { ts: timestamp, messages: [...] }
+   * localStorage + TTL 24h: sopravvive ai cambi di pagina e ai nuovi tab
    */
   function loadHistory() {
     try {
-      var stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (!stored) return [];
-      if (Date.now() - stored.ts > TTL_MS) { localStorage.removeItem(STORAGE_KEY); return []; }
-      return stored.messages || [];
+      var s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (!s) return [];
+      if (Date.now() - s.ts > TTL_MS) { localStorage.removeItem(STORAGE_KEY); return []; }
+      return s.messages || [];
     } catch (e) { return []; }
   }
   function saveHistory(h) {
@@ -51,14 +49,11 @@
   }
 
   /* Converte la risposta del bot in HTML safe:
-     - escape prima di tutto
-     - newline reali → <br>
-     - pattern lista "1. X 2. Y" (senza newline) → <br> prima di ogni N. */
+     - newline → <br>
+     - nessun altro HTML (il bot non deve iniettare markup) */
   function botTextToHtml(text) {
     var s = escapeHtml(text);
-    // newline reali
     s = s.replace(/\n/g, '<br>');
-    // "spazio + numero + punto + spazio" → va a capo (es: " 2. Titolo")
     s = s.replace(/\s+(\d+\.\s)/g, '<br>$1');
     return s;
   }
