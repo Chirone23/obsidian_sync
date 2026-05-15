@@ -30,7 +30,7 @@
 | Hosting | **InfinityFree** (gratuito) |
 | CMS | WordPress 6.6+ |
 | E-commerce | WooCommerce 9.x |
-| Tema | Astra (parent) + `astra-biblio` (child) |
+| Tema | `biblio-theme` standalone (v0.3.0) |
 | Cache | WP Super Cache (file-based) |
 | Backup | UpdraftPlus → Google Drive |
 | Email | WP Mail SMTP + Brevo (300 email/giorno gratis) |
@@ -87,7 +87,7 @@ Se il progetto deve andare in produzione reale con clienti paganti, **migrare a 
 | Libreria utente | Template `page-libreria.php` (richiede login) |
 | Catalogo | Template `page-catalogo.php` + filtri JS |
 | Conversione noleggio → acquisto | ⏳ Non ancora implementato (vedi spec §12.6) |
-| MyBibliò chatbot | ⏳ Fase successiva |
+| MyBibliò chatbot | ✅ MVP in v0.3.0 — `inc/chatbot.php` + Groq llama-3.1-8b |
 | PDF viewer protetto | ⏳ Da sviluppare — endpoint `/reader?accesso=...` |
 
 ---

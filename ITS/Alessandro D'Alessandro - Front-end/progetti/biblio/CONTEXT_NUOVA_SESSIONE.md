@@ -1,7 +1,7 @@
 # Bibliò — Context per nuova sessione
 
 > Leggi questo file all'inizio di ogni sessione prima di fare qualsiasi modifica al tema.
-> Ultimo aggiornamento: 2026-05-13
+> Ultimo aggiornamento: 2026-05-15
 
 ---
 
@@ -9,7 +9,7 @@
 
 **Bibliò** è un e-commerce italiano di libri (acquisto + noleggio 30gg).
 Design system originale: React SPA su https://github.com/Chirone23/biblio
-Convertito in **WordPress theme** da caricare su Infinity Free hosting.
+Convertito in **WordPress theme standalone** (`biblio-theme`, non child theme).
 
 ---
 
@@ -30,35 +30,36 @@ Convertito in **WordPress theme** da caricare su Infinity Free hosting.
 ## 📦 Tema installato
 
 - **Nome**: Bibliò (`biblio-theme`)
-- **Versione attuale**: v0.2.0
-- **Zip locale**: `C:\Users\Chirone\Downloads\biblio-theme.zip`
-- **Sorgente locale**: `C:\tmp\biblio-theme\`
+- **Versione attuale**: v0.3.0
+- **Zip backup locale**: `C:\Users\Chirone\Documents\Secondo_Cervello\ITS\Alessandro D'Alessandro - Front-end\progetti\biblio\infinityfree\wp\wp-content\themes\biblio-theme_ultimate-v3.zip`
+- **Sorgente locale**: `C:\Users\Chirone\Documents\Secondo_Cervello\ITS\Alessandro D'Alessandro - Front-end\progetti\biblio\infinityfree\wp\wp-content\themes\biblio-theme\`
 
 ### Regola aggiornamenti (IMPORTANTE)
 
-Il tema **NON si può più cancellare e ricaricare da WP admin**.
+Il tema **NON si può cancellare e ricaricare da WP admin** (inode).
 Ogni modifica va consegnata come **file singolo** da sostituire via File Manager Infinity Free.
 
 Workflow standard per ogni modifica:
-1. Leggi il file reale da `C:\tmp\biblio-theme\<file>`
+1. Leggi il file reale dalla sorgente locale
 2. Modifica solo quello che serve
-3. Salva il file aggiornato in `C:\tmp\biblio-theme\<file>`
+3. Salva il file aggiornato
 4. Di' all'utente: "sostituisci `<file>` in `wp-content/themes/biblio-theme/`"
-
-Se l'utente ha scaricato i file reali dal server, si trovano in:
-`C:\Users\Chirone\Documents\Secondo_Cervello\ITS\Alessandro D'Alessandro - Front-end\progetti\biblio\wp-site\`
-→ Leggi da lì invece che da `C:\tmp\biblio-theme\` (quelli sono più aggiornati).
 
 ---
 
-## 🏗️ Architettura del tema
+## 🏗️ Architettura del tema (v0.3.0)
 
 ### Struttura file
 
 ```
 biblio-theme/
-├── style.css              Tutti i CSS (design tokens + componenti)
-├── functions.php          Setup + enqueue + require inc/
+├── style.css              Header tema (metadata only in v0.3.0)
+├── css/
+│   ├── tokens.css         Design tokens (tutte le CSS custom properties)
+│   ├── base.css           Reset, typography, Google Fonts @import
+│   ├── components.css     Nav, buttons, book-card, cover, footer, chat-fab
+│   └── pages.css          Hero, catalog layout, detail page, responsive
+├── functions.php          v0.3.0 — Setup + enqueue CSS + require inc/
 ├── header.php             Nav sticky con logo + menu + icone WC
 ├── footer.php             Footer 4 colonne + chat FAB
 ├── front-page.php         Home (hero + griglia + categorie + Plus banner)
@@ -68,31 +69,56 @@ biblio-theme/
 │                            else → woocommerce_content() fallback
 ├── archive-book.php       Catalogo CPT book (legacy, non più usato)
 ├── single-book.php        Dettaglio CPT book (legacy, non più usato)
-├── search.php             Risultati ricerca
-├── page.php               Pagina statica generica
-├── singular.php / index.php / 404.php
+├── search.php / page.php / singular.php / index.php / 404.php
 ├── searchform.php
 ├── inc/
+│   ├── chatbot.php        ← NUOVO in v0.3.0 — REST endpoint MyBibliò
 │   ├── post-types.php     CPT 'book' + tax 'book_genre' (legacy)
-│   ├── helpers.php        biblio_book_card(), biblio_book_cover(), biblio_meta(), biblio_price()...
+│   ├── helpers.php        biblio_meta(), biblio_price(), biblio_book_card()...
 │   ├── meta-boxes.php     Meta box "Dettagli libro" su CPT book
-│   └── wc-integration.php Meta box "Dettagli Bibliò" su product WC + biblio_product_card() + biblio_product_cover()
-└── assets/js/main.js      JS minimale
+│   └── wc-integration.php Meta box "Dettagli Bibliò" su product WC
+└── assets/js/main.js      Nav highlight + Chat UI con localStorage TTL 24h
 ```
 
 ### File più importanti da conoscere
 
-- **`woocommerce.php`** — tocca questo per qualsiasi modifica a shop, catalogo, dettaglio prodotto
-- **`style.css`** — tocca questo per colori, font, layout, componenti CSS
-- **`front-page.php`** — tocca questo per la home
-- **`inc/wc-integration.php`** — tocca questo per meta box prodotto e card/cover WC
-- **`header.php`** / **`footer.php`** — nav e footer
+- **`woocommerce.php`** — qualsiasi modifica a shop, catalogo, dettaglio prodotto
+- **`css/tokens.css`** — colori, font, spacing (source of truth design)
+- **`css/components.css`** — card, bottoni, nav, chat
+- **`front-page.php`** — home
+- **`inc/chatbot.php`** — REST API MyBibliò chatbot
+- **`inc/wc-integration.php`** — meta box prodotto e card/cover WC
+
+---
+
+## 🤖 MyBibliò chatbot (implementato in v0.3.0)
+
+### Stack
+
+| Layer | Scelta |
+|---|---|
+| Backend | `inc/chatbot.php` — REST endpoint `biblio/v1/chat` |
+| LLM provider | **Groq** (`llama-3.1-8b-instant`) via `wp_remote_post()` |
+| API key | `BIBLIO_GROQ_KEY` in `functions.php` |
+| Retrieval | `WP_Query` su prodotti WC + filtro per `product_cat` taxonomy |
+| Storico multi-turn | Ultimi 6 messaggi passati a Groq |
+| Frontend | Vanilla JS in `assets/js/main.js` |
+| Persistenza | localStorage (key `biblio_chat_v2`, TTL 24h) |
+
+### Come funziona
+
+1. JS legge il category slug dall'URL (`/wp-categoria-prodotto/<slug>/`)
+2. POST a `/wp-json/biblio/v1/chat` con `{message, category_slug, history[]}`
+3. PHP filtra i prodotti WC per categoria (se slug presente)
+4. Costruisce context con titoli/autori/prezzi del catalogo filtrato
+5. Chiama Groq con system prompt + history multi-turn
+6. JS renderizza risposta; converte `\n` → `<br>` e liste numerate inline
 
 ---
 
 ## 🎨 Design System Bibliò
 
-### Palette colori (CSS variables in style.css)
+### Palette colori (in `css/tokens.css`)
 
 | Variable | Valore | Uso |
 |---|---|---|
@@ -114,193 +140,65 @@ biblio-theme/
 | `--font-serif` | Lora | Titoli libro (italic), blockquote |
 | `--font-sans` | Inter | Body, UI, meta |
 
-### Classi CSS chiave
-
-```
-.btn .btn-primary    → coral, testo bianco
-.btn .btn-secondary  → outline scuro
-.btn .btn-rent       → marrone noleggio
-.btn .btn-gold       → oro Plus
-.btn-lg / .btn-sm / .btn-block
-
-.book-card           → card libro con hover
-.book-cover.cover-0..5 → copertina gradiente (6 stili)
-.eyebrow             → label uppercase coral
-.lead                → paragrafo intro grande
-.meta                → testo piccolo grigio
-.section + .section-head
-.grid-4 / .grid-6 / .grid-cat
-.plus-banner         → banner scuro Plus
-.catalog-layout      → sidebar + griglia (catalogo)
-.detail-grid         → 2 colonne (singolo prodotto)
-```
-
-### Stili copertina (0-5)
-
-- **0** Navy → blu profondo
-- **1** Coral → rosso scuro
-- **2** Marrone caldo
-- **3** Crema (testo scuro)
-- **4** Nero → oro (Plus look)
-- **5** Verde scuro
-
 ---
 
 ## 🛒 WooCommerce — stato attuale
 
-### Prodotti presenti
+10 prodotti attivi, SKU BOOK-1001...BOOK-1010. Categorie: Thriller, Fantasy, Romance, Drammatico, Psicologico, Giallo, Storico.
 
-10 prodotti attivi, SKU BOOK-1001...BOOK-1010. Categorie WC: Thriller, Fantasy, Romance, Drammatico, Psicologico, Giallo, Storico (e probabilmente altri).
+Ogni prodotto ha meta `_biblio_*`:
 
-Ogni prodotto ha:
-- Prezzo regular + prezzo scontato (sale price) → mostrati barrato + prezzo finale
-- **Nessuna immagine prodotto** ancora → il tema usa copertina gradiente CSS
+| Campo | Meta key |
+|---|---|
+| Autore | `_biblio_author` |
+| Anno | `_biblio_year` |
+| Pagine | `_biblio_pages` |
+| Rating | `_biblio_rating` |
+| Prezzo noleggio | `_biblio_rent` |
+| Noleggiabile | `_biblio_rentable` |
+| Badge | `_biblio_badge` |
+| Stile copertina | `_biblio_cover_idx` (0-5) |
+| Blurb | `_biblio_blurb` |
 
-### Meta box "Dettagli Bibliò" sui prodotti WC
-
-Campi aggiuntivi (in `inc/wc-integration.php`) su ogni prodotto:
-
-| Campo | Meta key | Note |
-|---|---|---|
-| Autore | `_biblio_author` | |
-| Anno | `_biblio_year` | |
-| Pagine | `_biblio_pages` | |
-| Rating | `_biblio_rating` | default 4.5 |
-| Prezzo noleggio | `_biblio_rent` | 0 = disattivo |
-| Noleggiabile | `_biblio_rentable` | 0/1 |
-| Badge | `_biblio_badge` | Novità/Bestseller/Plus |
-| Stile copertina | `_biblio_cover_idx` | 0-5 |
-| Blurb | `_biblio_blurb` | riassunto breve |
+**Nessuna immagine prodotto** ancora → copertina gradiente CSS.
 
 ### Pagine WC attive
 
-- `/shop/` — Catalogo (renderizzato da `woocommerce.php` con design Bibliò)
-- `/categoria-prodotto/<slug>/` — Filtro categoria
+- `/shop/` — Catalogo
+- `/categoria-prodotto/<slug>/` — Filtro categoria (usato da chatbot per context)
 - `/prodotto/<slug>/` — Singolo prodotto
-- `/carrello/` — Cart WC standard
-- `/pagamento/` — Checkout WC standard
-- `/il-mio-account/` — Account WC standard
-
-### Noleggio — stato
-
-**Non funzionale** lato acquisto. Il box noleggio si mostra solo se `_biblio_rentable=1` e `_biblio_rent>0`. Il pulsante "Noleggia 30gg" è un placeholder `href="#"`. **PHASE 2.**
+- `/carrello/`, `/pagamento/`, `/il-mio-account/`
 
 ---
 
 ## ⚠️ Vincoli Infinity Free
 
-| Vincolo | Limite | Regola |
-|---|---|---|
-| Disk | 5 GB | Niente immagini pesanti in locale → Cloudinary CDN |
-| Inode | ~30k | Max 4 plugin, tema lean |
-| CPU/Memory | ~40-128MB | WP Super Cache obbligatorio |
-| PHP | 8.3 | OK |
-| MySQL | 8.0 | Query semplici, no JOIN complessi |
+| Vincolo | Limite |
+|---|---|
+| Disk | 5 GB |
+| Inode | ~30k (max 4 plugin, tema lean) |
+| CPU/Memory | ~40-128 MB |
+| PHP | 8.3 |
+| cURL outbound | ❌ bloccato — usare `wp_remote_post()` |
 
-### Plugin attivi (max 4 regola)
-
-- WooCommerce ← obbligatorio
-- _(WP Super Cache — da installare se non già fatto)_
-- Slot liberi: 2-3
-
-### Ottimizzazioni già incluse nel tema
+### Ottimizzazioni nel tema
 
 - Emoji script rimossi
 - oEmbed/WLW/RSD rimossi
 - Heartbeat ridotto a 60s
-- CSS unico, JS minimale (~15 righe)
+- CSS split in 4 file (tokens/base/components/pages)
 
 ---
 
-## 📄 Pagine WordPress create
-
-| Pagina | Slug | Stato |
-|---|---|---|
-| Plus | `/plus/` | ✅ Pubblicata |
-| Shop | `/shop/` | ✅ WooCommerce |
-| Carrello | `/carrello/` | ✅ WooCommerce |
-| Il mio account | `/il-mio-account/` | ✅ WooCommerce |
-| Pagamento | `/pagamento/` | ✅ WooCommerce |
-| Noleggio vs Acquisto | `/noleggio-vs-acquisto/` | ⚠️ Da creare o WIP |
-| MyBibliò | `/mybiblio/` | ⚠️ Placeholder |
-| Contatti | `/contatti/` | ⚠️ Da creare |
-
----
-
-## 🔧 CPT "Libri" — stato
-
-Il Custom Post Type `book` è ancora registrato nel tema ma **non più usato**.
-I contenuti editoriali sono tutti su **Prodotti WooCommerce**.
-`archive-book.php` e `single-book.php` sono file legacy ancora nel tema ma non vengono toccati.
-
----
-
-## 📋 Decisioni prese (non riaprire)
-
-| Decisione | Scelta |
-|---|---|
-| Architettura | Option A: WP Theme ottimizzato (no headless, no static export) |
-| Contenuti | Prodotti WooCommerce (no CPT book) |
-| CSS framework | Vanilla CSS con design tokens (no Tailwind, no Bootstrap) |
-| Meta campi | Meta box nativi PHP (no ACF, risparmio inode) |
-| Plugin aggiuntivi | Max 4 totali, solo essenziali |
-| Immagini CDN | Cloudinary per media pesanti (da configurare) |
-
----
-
-## 🚧 In sospeso / PHASE 2
+## 🚧 Phase 2 (non implementato)
 
 - [ ] Noleggio funzionale (pulsante placeholder → logica reale)
 - [ ] Immagini copertina reali (ora solo gradient CSS)
 - [ ] WP Super Cache configurato
 - [ ] Pagine `/contatti/`, `/noleggio-vs-acquisto/` con contenuto reale
 - [ ] Menu principale configurato in WP Admin
-- [ ] MyBibliò chat (Claude API o form)
-- [ ] Test WooCommerce checkout su Infinity Free (72h stress test)
-- [ ] Self-host font se Google Fonts dà problemi su Infinity Free
+- [ ] MyBibliò chatbot v2 (profilo gusti, rate limit, auth gating)
 
 ---
 
-## 📁 File locali importanti
-
-| File | Path |
-|---|---|
-| Tema sorgente | `C:\tmp\biblio-theme\` |
-| Tema zip | `C:\Users\Chirone\Downloads\biblio-theme.zip` |
-| Guida completa MD | `...\biblio\BIBLIO_THEME_GUIDA_COMPLETA.md` |
-| Guida completa DOCX | `...\biblio\BIBLIO_THEME_GUIDA_COMPLETA.docx` |
-| Design originale React | https://github.com/Chirone23/biblio |
-| Brief tecnico | `C:\Users\Chirone\Downloads\BRIEF_Biblio_WordPress_InfinityFree.md` |
-| Convertitore MD→DOCX | `...\Melanie - Specifiche di progetto con AI\prog1\md2docx.js` |
-| Launcher MD→DOCX | `C:\Users\Chirone\Documents\Secondo_Cervello\MD2DOCX.bat` |
-| File tema server | `...\biblio\wp-site\` ← se scaricati da Infinity Free |
-
-Prefisso path comune:
-`C:\Users\Chirone\Documents\Secondo_Cervello\ITS\Alessandro D'Alessandro - Front-end\progetti\biblio\`
-
----
-
-## 🗣️ Come lavorare in questa sessione
-
-### Prima di modificare qualsiasi file
-
-1. Controlla se `wp-site/` esiste e ha i file aggiornati dal server → usali come source of truth
-2. Altrimenti usa `C:\tmp\biblio-theme\` come riferimento
-
-### Per ogni modifica richiesta
-
-- Genera **file singolo** aggiornato pronto da sostituire
-- Di' esattamente: "sostituisci `inc/wc-integration.php` in `wp-content/themes/biblio-theme/inc/`"
-- NON rigenerare lo zip completo (non serve più)
-
-### Richieste tipo che funzionano bene
-
-- "Modifica il colore del pulsante noleggio"
-- "Aggiungi campo ISBN visibile nella card"
-- "Fix: la sidebar del catalogo non si vede su mobile"
-- "Aggiungi sezione recensioni nella pagina singolo prodotto"
-- "Cambia il numero di colonne nella griglia home da 6 a 4"
-
----
-
-*Context v1.0 — 2026-05-13. Aggiorna questo file dopo ogni sessione che cambia qualcosa di strutturale.*
+*Context v0.3.0 — 2026-05-15. Aggiorna questo file dopo ogni sessione che cambia qualcosa di strutturale.*

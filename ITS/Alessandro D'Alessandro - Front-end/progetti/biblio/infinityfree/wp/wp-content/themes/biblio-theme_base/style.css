@@ -3,24 +3,14 @@ Theme Name: Bibliò
 Theme URI: https://github.com/Chirone23/biblio
 Author: Bibliò
 Description: Tema editoriale italiano per Bibliò — catalogo libri, noleggio, Plus, MyBibliò. Ottimizzato per Infinity Free.
-Version: 0.3.0
+Version: 0.1.0
 License: GPL-2.0-or-later
 Text Domain: biblio
 Tags: editorial, bookstore, italian, custom-post-type
 */
 
-/*
- * CSS è suddiviso in 4 file enqueued via functions.php:
- *   css/tokens.css    — custom properties (palette, font, spacing, easing)
- *   css/base.css      — reset, typography, font import
- *   css/components.css — UI: nav, btn, card, cover, footer, etc.
- *   css/pages.css     — layout pagine specifiche + responsive
- *
- * Questo file rimane vuoto dopo i metadati WP (richiesto da WordPress
- * come entry-point del tema, ma gli stili vengono enqueued separatamente).
- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* fallback: legacy :root inline per ambienti senza enqueue corretto */
 :root {
   --biblio-coral: #C75550;
   --biblio-coral-dark: #A8423E;
