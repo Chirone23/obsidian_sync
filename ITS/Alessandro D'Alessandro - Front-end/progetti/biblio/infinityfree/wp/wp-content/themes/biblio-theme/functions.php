@@ -86,3 +86,7 @@ require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/meta-boxes.php';
 require_once get_template_directory() . '/inc/wc-integration.php';
 require_once get_template_directory() . '/inc/chatbot.php';
+require_once get_template_directory() . '/inc/rental.php';
+if (is_admin()) {
+    require_once get_template_directory() . '/inc/reader-ingest.php';
+}
