@@ -1,9 +1,24 @@
-# Bibliò — Proposta Reader Libri Noleggiati (v2)
+# Bibliò — Proposta Reader Libri Noleggiati (v3)
 
 > Proposta tecnica per area di lettura libri noleggiati su WordPress + InfinityFree.
 > v1: 2026-05-15 — proposta iniziale
-> v2: 2026-05-15 — revisione post-validazione (red flag IF integrati come prerequisiti hard)
+> v2: 2026-05-15 — revisione post-validazione #1 (red flag IF integrati come prerequisiti hard)
+> v3: 2026-05-15 — revisione post-validazione #2 (blocker reali identificati, 3 opzioni concrete)
 > Collegato a: [[README]], [[CONTEXT_NUOVA_SESSIONE]], [[BIBLIO_AUDIT_2026-05-14]]
+
+---
+
+## ⚠️ Stato decisionale
+
+**Decisione in sospeso prima di procedere.** La v2 conteneva 3 assunzioni che non reggono alla seconda validazione:
+
+1. **CF free non supporta cache-key-per-utente** (servono Workers ~5€/mese o Enterprise). Sul free piano hai solo `Bypass Cache on Cookie` → cache utente-specifica impossibile senza budget.
+2. **SHORTINIT non carica `pluggable.php`** → niente `wp_validate_auth_cookie`. Loader snello deve o ricaricare pluggable (≈ bootstrap pieno) o riscrivere auth a mano (rischio sicurezza in MVP). Guadagno reale ~3-4× non 10×.
+3. **ToS InfinityFree vieta esplicitamente** file hosting, media streaming e uso commerciale. Un endpoint autenticato ad alto traffico è esattamente il pattern che bannano. Ban diventa modalità di failure probabile a 50+ utenti, non edge case.
+
+Le 3 opzioni in fondo al doc chiudono questa proposta in una direzione concreta.
+
+---
 
 ---
 
@@ -313,12 +328,85 @@ Aumento vs v1 (12-16h) giustificato da: ingest pipeline, loader snello, CDN setu
 
 ---
 
-## Verdetto post-validazione
+## Blocker reali v3 (post-validazione #2)
 
-Fattibile come Fase 7 audit. La v2 è realistica nei limiti IF reali (50k hits/day, no object cache, ban CPU). Senza Cloudflare + cache statica pre-estratta + tabella custom + bootstrap snello, la v1 sarebbe saltata al primo utente attivo.
+### 🔴 Blocker
 
-Prossimo passo se approvato: **Sprint 1** (rentals + ingest), perché valida l'ipotesi cache statica prima di toccare frontend.
+| # | Problema | Impatto |
+|---|---|---|
+| B1 | **CF free**: solo `Bypass on Cookie`, no cache-key-per-utente senza Workers (~5€/mo) | Fix #2 v2 non implementabile gratis. O bypass su auth → CF non aiuta → IF salta come v1. O cache pubblica chapter → leak fra utenti |
+| B2 | **SHORTINIT** non carica `pluggable.php` → no `wp_validate_auth_cookie`, no `update_user_meta` | Loader snello v2 finisce ~10-15 MB RAM (3-4× guadagno), non 2-5 MB. Riscrittura auth a mano = rischio security in MVP |
+| B3 | **ToS InfinityFree** vieta file hosting, media streaming, uso commerciale | Pattern reader autenticato ad alto traffico = ban probabile a 50+ utenti, non edge case |
+
+### 🟡 Problemi minori
+
+| # | Problema | Mitigazione |
+|---|---|---|
+| M1 | CF + dominio custom su IF: SSL Flexible = MITM su cookie auth, serve Full Strict + cert su origin | Validare setup SSL prima di Sprint 2, non durante |
+| M2 | Inode reale IF ~30k cap, WP+WC+uploads già consumano 5-8k | Strip immagini non-cover diventa obbligatorio (non opzionale come in v2) |
+| M3 | `upload_max_filesize` IF free = 5-10 MB (non alzabile da .htaccess) | Limite ePub safe a 8 MB, oppure ePub grandi via FTP + ingest da pulsante admin |
+| M4 | Hook WC `order_status_completed` carica WC al checkout | Non specifico del reader; WC su IF in generale stressato |
 
 ---
 
-*Proposta v2 — 2026-05-15. Da rivalutare ancora se SHORTINIT non regge su IF.*
+## 🎯 Le 3 opzioni concrete
+
+### Opzione 1 — MVP demo su IF, cache pubblica chapter
+- Niente auth per-chapter sul contenuto (solo sulla pagina `/leggi/`)
+- Leak fra utenti accettato perché libri = pubblico dominio
+- Niente Workers, niente SHORTINIT custom, niente budget
+- **Sprint 1-3 fattibili come v2**, salta loader snello e CF page rule complesse
+- **Effort: ~14-18h** (vs 18-27h v2)
+- ⚠️ Resta rischio ban IF a uso intenso, ma demo portfolio reggerà
+- **Quando sceglierla**: questo è portfolio ITS / dimostrativo
+
+### Opzione 2 — MVP serio su hosting low-cost (~3€/mese)
+- Aruba / Netsons / Serverplan / VPS Hetzner CX11 (~4€)
+- Architettura v2 quasi as-is, ma elimini fix #2 (CF hard) e #4 (bootstrap snello)
+- Niente paura ban, niente CF Workers, SSL/cron standard
+- **Effort: ~14-18h** (risparmi loader snello + CF setup complesso)
+- **Quando sceglierla**: vuoi che giri davvero con utenti reali
+
+### Opzione 3 — IF + CF Workers Paid (~5€/mese)
+- Architettura v2 piena, cache-key-per-utente via Workers
+- Accetti rischio ban IF residuo
+- **Effort: ~18-27h** + complessità Workers
+- **Worst ratio sforzo/risultato** — costo simile a opzione 2 con più complessità
+
+---
+
+## 📌 Raccomandazione
+
+- **Portfolio ITS** → Opzione 1 (MVP demo su IF, leak accettato su pubblico dominio)
+- **Produzione utenti reali** → Opzione 2 (hosting 3€/mo, architettura pulita)
+- **Opzione 3 sconsigliata** (paghi quanto opzione 2 con più rischi)
+
+---
+
+## Cosa resta valido dalla v2
+
+Indipendentemente dall'opzione scelta:
+
+- ✅ Pre-estrazione + sanitize one-shot all'ingest
+- ✅ Tabella `wp_biblio_rentals` custom (no order meta WC)
+- ✅ `user_meta` per rate limit (no transient)
+- ✅ Sprint plan: rentals+ingest prima del frontend
+- ✅ CSS columns per paginazione client-side
+- ✅ Strip immagini non-cover all'ingest (ora obbligatorio per M2)
+
+Cosa cambia per opzione:
+- **Opzione 1**: rimuovi auth per-chapter, CF Page Rule semplice "Cache Everything" pubblica
+- **Opzione 2**: tutta v2 ma senza loader snello (bootstrap WP normale OK su VPS) e senza CF Workers
+- **Opzione 3**: v2 piena + Workers per cache key
+
+---
+
+## Prossimo passo
+
+**Decisione necessaria prima di scrivere codice**: opzione 1, 2 o 3?
+
+Una volta scelta, riscrivo solo la sezione "Architettura" allineata all'opzione e si parte da Sprint 1 (rentals + ingest, comune a tutte e tre).
+
+---
+
+*Proposta v3 — 2026-05-15. Aperta in attesa di decisione opzione.*
