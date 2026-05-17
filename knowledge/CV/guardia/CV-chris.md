@@ -87,20 +87,36 @@ impianti critici.
 
 ### Studente ITS — AI & Digital Innovation
 **ITS ICT Academy | 12/2025 – presente | EUR, Roma**
-Lezioni pomeridiane — disponibilità lavorativa su turni mattutini, serali e weekend.
-
+Percorso di alta specializzazione focalizzato sull'Intelligenza Artificiale, lo sviluppo software e l'innovazione digitale. Il corso richiede un forte pensiero analitico e mi sta permettendo di affinare capacità di problem-solving e un rapido apprendimento di nuovi sistemi tecnologici.
 ### Diploma Perito in Informatica e Telecomunicazioni
 **ITT Enrico Fermi | 09/2020 – 06/2025 | Frascati, Roma**
+Sviluppato capacità di problem-solving rapido e gestione della pressione attraverso progetti tecnici complessi in ambienti operativi reali.
 
 ---
 
 ## COMPETENZE
 
 **Hard Skills (rilevanti per sicurezza):**
-Gestione emergenze | Applicazione protocolli sicurezza | Antincendio | Primo soccorso / BLSD | Comunicazioni radio operative | Redazione report e verbali | Monitoraggio e sorveglianza | Controllo accessi | Prevenzione rischi | Privacy / GDPR | D.Lgs 81/08 | TULPS (in formazione)
+  - Gestione emergenze → Intermedio (4 anni PC, ma non professionale)
+  - Antincendio → Intermedio
+  - Primo soccorso / BLSD → Intermedio
+  - Comunicazioni radio → Intermedio
+  - Redazione report → Intermedio
+  - Protocolli sicurezza → Intermedio
+  - Monitoraggio/sorveglianza → Principiante (nessuna exp diretta formale)
+  - Controllo accessi → Principiante
+  - D.Lgs 81/08 → Principiante/Intermedio (certificato ma poca exp)
+  - TULPS → Principiante (in formazione)
+  - Privacy/GDPR → Principiante
 
 **Soft Skills:**
-Affidabilità comprovata | Gestione stress in alta pressione | Problem-solving rapido | Spirito di squadra | Marcato senso di responsabilità | Puntualità | Flessibilità operativa
+- Affidabilità comprovata → Avanzato
+- Gestione stress in alta pressione → Avanzato
+- Problem-solving rapido → Avanzato
+- Spirito di squadra → Avanzato
+- Marcato senso di responsabilità → Esperto
+- Puntualità → Esperto
+- Flessibilità operativa → Avanzato 
 
 **Patenti:** B & A2
 
