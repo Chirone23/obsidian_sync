@@ -163,18 +163,27 @@
 | Configuratore lenti | 6-8 step in negozio | Online multi-step | **3 step online** (graduazione → tipo lente → trattamenti) |
 | Mega-nav | Sì, ampia | Menu semplice | **Mega-nav selettiva** — Uomo/Donna/Vista/Sole/Outlet/Brand |
 
-### 8.4 🎨 Design tokens raccomandati (input per open-design)
+### 8.4 🎨 Design tokens — allineati al brand reale (Facebook 2026-05)
+
+**⚠️ Revisione palette 2026-05-18:** la teoria iniziale (navy+oro) ignorava l'identità visiva esistente. Lo screenshot FB mostra che Factory Ottica usa già un brand **viola/lavanda + bianco** consistente nei post promo ("Controllo visivo completo", "Non aspettare", ecc.). Cambiare colore = rifare il brand = lei non si riconosce nel pitch.
+
+**Decisione:** mantenere e nobilitare la palette viola esistente, aggiungendo neutri e accenti che le danno *"web profesional look"* senza tradire l'identità.
 
 | Token | Valore | Motivazione |
 |---|---|---|
-| Primary | `#1E3A5F` navy | Affidabile come catena, più caldo |
-| Secondary | `#C9A227` oro caldo | Outlet curato senza essere cheap |
-| Background | `#FFFFFF` | Minimal, price-first |
-| Text | `#1A1A1A` | WCAG AA |
-| Sale/discount | `#D9534F` | Urgenza senza diventare cheap |
-| Font titoli | Montserrat / Poppins | Moderno, geometric sans |
-| Font corpo | Inter / Open Sans | Leggibilità su prezzi e dettagli |
-| **Mood claim** | *"Affidabile caldo"* | Non clinico-blu (catena), non oro-lusso, non giallo cheap |
+| **Primary** | `#A98BD9` lavender / `#8B5FBF` purple medio | Già loro brand su FB — riconoscimento immediato |
+| **Primary scuro** | `#5E3B95` purple deep | Per testi su sfondo chiaro, header, footer |
+| **Background** | `#FFFFFF` + `#F7F3FB` lavender mist | Bianco con tocco caldo (non clinico) |
+| **Accent / CTA** | `#FFC857` giallo caldo | Contrasto vivace col viola → CTA si vedono (testato accessibilità AA su bianco) |
+| **Text** | `#1A1A1A` | WCAG AA |
+| **Sale/discount** | `#E63946` rosso corallo | Urgenza che dialoga col viola senza stonare |
+| **Font titoli** | Poppins / Montserrat Bold | Coerente con sans bold dei loro post FB |
+| **Font corpo** | Inter | Leggibilità prezzi e configuratore |
+| **Mood claim** | *"Viola accessibile + chiarezza educational"* | Già loro tono: post FB educano il cliente ("la vista cambia nel tempo") — il sito deve continuare quella voce, non sostituirla |
+
+**Sfumature/gradient consigliati** (sempre dal loro brand reale):
+- Gradient viola lavanda → bianco per sezioni hero secondarie
+- Card prodotto: bordo `#F7F3FB`, hover bordo `#A98BD9`
 
 ### 8.5 Layout di riferimento — Home
 
@@ -218,11 +227,28 @@ Genere · Forma · Colore montatura · Brand · Prezzo (slider 30–300€) · �
 
 ---
 
+## 9. Aggiornamenti da verifica diretta FB (2026-05-18)
+
+Da screenshot pagina FB ufficiale:
+
+- **Telefono FB:** `324 906 8488` (mobile, diverso da `06 9588307` listato altrove → probabilmente WhatsApp business / titolare)
+- **Indirizzo confermato:** Via Casilina 160, 00030 (San Cesareo)
+- **Follower FB:** 109 (community piccola, in crescita)
+- **Recensioni FB:** 0 (campo "ancora nessuna valutazione")
+- **Bio FB testuale:** *"Centro Ottico Prezzi di Fabbrica — i migliori occhiali a prezzi di fabbrica"* + emoji 👓 Ottico
+- **Brand visivo attivo:** viola/lavanda dominante, tono educational ("Non aspettare", "Ti abitui a vedere così così", "La tua vista è cambiata?"), focus su **controllo visivo gratuito** come hook principale
+- **Post recente (14 maggio):** *"Non fidarti solo delle sensazioni. La vista può cambiare nel tempo, anche senza segnali evidenti..."* → contenuto educational, non promo-prezzo
+
+**Implicazione strategica:** stanno già spingendo *"controllo visivo gratuito"* come acquisition hook → questo dev'essere il **CTA principale del sito**, non secondario. Il prezzo viene dopo.
+
+---
+
 ## ⚠️ Da rivalidare manualmente
 
-- [ ] Rating Google numerico + 1-2 recensioni testuali verificate (apri scheda da telefono, screenshotta)
-- [ ] ottica-avanzi.it non analizzato — apri tu nel browser e segna le 3 cose che colpiscono
-- [ ] Conferma che claim *"centro diagnostico oculare"* sia un servizio reale (chiedi a lei in fase di pitch)
+- [ ] Rating Google numerico (FB ha 0 recensioni, ma Google Maps probabilmente ne ha → screenshot da telefono)
+- [ ] ottica-avanzi.it non analizzato — apri nel browser, segna 3 cose che colpiscono
+- [ ] Conferma quale numero usa lei come principale (`324 906 8488` vs `06 9588307`)
+- [ ] Verificare se *"centro diagnostico oculare"* su IG corrisponde a un servizio reale o è claim marketing
 
 ---
 
