@@ -1,9 +1,9 @@
 # Piano d'Azione — Factory Ottica Demo E-commerce
 
-**Versione:** 1.0
-**Data:** 2026-05-17
+**Versione:** 1.1
+**Data:** 2026-05-17 (creato) · 2026-05-18 (aggiornato post-Discovery)
 **Autore:** Chirone
-**Status:** Pianificazione iniziale — pre-discovery
+**Status:** ✅ Fase 0 completata — vedi [[01_Discovery]] v1.1
 
 > Demo WordPress+WooCommerce credibile su InfinityFree da mostrare alla titolare di Factory Ottica per venderle il sito. **Non** è un sito in produzione: niente pagamenti, niente ordini reali, catalogo finto realistico.
 
@@ -18,7 +18,28 @@
 
 **Stack:** WordPress 7.x · WooCommerce (solo catalogo + carrello, no checkout) · PHP 8.3 · MySQL 8 · InfinityFree free tier · tema custom generato via [open-design](https://github.com/nexu-io/open-design) → port manuale a PHP.
 
-**Strumenti di ricerca:** [[skill/perplexity/SKILL]] — skill Perplexity free già configurata nel vault con workflow `analisi_competitiva`, `stack_tecnico`, `validazione_idea`, `sintesi_da_fonte`. Usata nelle Fasi 0 e 3a.
+**Strumenti di ricerca:** Perplexity free (web manuale) con prompt costruiti via framework C.I.A.R.E. di [[Prompting MOC|Riccardo Raponi]]. Skill `skill/perplexity` esiste ma in fase di test → usata via copia-incolla manuale.
+
+---
+
+## 🎯 Insight chiave dalla Fase 0 (driver di tutte le scelte successive)
+
+Dal [[01_Discovery]] v1.1 sono emersi 4 vincoli/opportunità che governano da qui in poi:
+
+1. **Hook reale = "Controllo visivo gratuito"**, NON il prezzo. La pagina FB già spinge questo nei post promo → il CTA principale del sito deve essere *"Prenota controllo gratuito"*, non *"Acquista ora"*. Il prezzo è il **secondo** argomento.
+
+2. **Brand visivo viola/lavanda esistente** — usare la palette FB reale (`#A98BD9` + `#8B5FBF` + bianco/`#F7F3FB` + accent `#FFC857`), NON imporre navy+oro. Riconoscibilità immediata in pitch.
+
+3. **Tono educational già loro voice** (post tipo *"Non fidarti solo delle sensazioni"*) → copy sito deve continuare quella narrativa, non sostituirla con copy commerciale aggressivo.
+
+4. **Community piccola (109 follower FB, 0 recensioni FB)** → il sito è anche **acquisition engine** per crescere il social, non solo vetrina. Newsletter + cattura lead = funzionalità prioritaria, non nice-to-have.
+
+**Posizionamento finalizzato:** *"Outlet curato + centro diagnostico"* — non catena, non puro online, non cheap.
+
+**Differenziatori killer per il pitch:**
+- Zero presenza web oggi → invisibilità Google dimostrabile in 30s
+- Critiche reali clienti su post-vendita opaco → il sito risolve esattamente quello
+- Centro diagnostico = vantaggio vs catene low-cost online
 
 ---
 
@@ -123,7 +144,15 @@ Per chiudere la vendita serve **più del sito**:
 
 ## Prossimo passo concreto
 
-Avviare Fase 0: estrazione info da Google Maps + Facebook + competitor scan → consegna `01_Discovery.md`.
+✅ ~~Fase 0~~ chiusa il 2026-05-18.
+
+**Da fare:**
+1. **Fase 1** — compilare `02_Specifica_Tecnica.md` usando il template Melani + insight Discovery (30-60 min)
+2. **Fase 3a** — scrivere `02_Design_Brief.md` per open-design partendo dalle sezioni 8.4-8.7 del Discovery + palette viola (1-2 ore)
+3. **Rivalidazioni manuali** elencate in `01_Discovery.md` §9 (5-10 min al telefono):
+   - Screenshot rating Google Maps + 1-2 recensioni testuali
+   - Quick scan ottica-avanzi.it
+   - Conferma numero principale (`324 906 8488` vs `06 9588307`)
 
 ---
 
