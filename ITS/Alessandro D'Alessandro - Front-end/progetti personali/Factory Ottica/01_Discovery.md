@@ -1,9 +1,9 @@
 # 01 — Discovery: Factory Ottica
 
-**Versione:** 0.5 (parziale — manca benchmark competitor)
+**Versione:** 1.0 — Fase 0 completata
 **Data:** 2026-05-18
-**Fonte primaria:** Perplexity (Prompt 1, vedi `00_Piano_Azione.md`)
-**Status:** ✅ Parte 1 (profilo negozio) · ⏳ Parte 2 (benchmark competitor)
+**Fonte primaria:** Perplexity (Prompt 1 + Prompt 2, vedi `00_Piano_Azione.md`)
+**Status:** ✅ Fase 0 chiusa — pronti per Fase 1 (Specifica Tecnica) e Fase 3a (Design Brief)
 
 ---
 
@@ -128,11 +128,101 @@
 
 ---
 
-## Da completare
+## 8. Benchmark e-commerce ottica IT (da Prompt 2)
 
-- [ ] Output Prompt 2 (benchmark e-commerce ottica IT) → sezione 8
-- [ ] Verifica manuale rating Google (apri scheda da telefono e screenshotta)
-- [ ] 1 cliente reale recensione testuale verificata (utile per pitch "voce del cliente")
+### 8.1 Sinottica competitor
+
+| Sito | Modello | Hero | Mood | Note rilevanti |
+|---|---|---|---|---|
+| Salmoiraghi & Viganò | Catena fisica + e-com | AI glasses Meta + abbonamento LAC | Clinico-professionale | "Try in negozio", Click & Collect |
+| VisionOttica | Rete franchising | 400+ centri Italia | Istituzionale | Trova centro più vicino |
+| GrandVision | Catena nazionale | Controllo vista + search | Professionale | Search bar prominente |
+| Occhiali24 | O2O ibrido | Buono sconto da ottico partner | Low-cost convenienza | Modello non puramente e-com |
+| **Lentiamo** ⭐ | E-com puro | "Mai più senza lenti" + ripeti ordine 2 clic | Minimal price-first | Migliore e-shop ottica IT (Corriere) |
+| Adrialenti | E-com puro | Più venduti above fold | Funzionale convenienza | Stock indicator "Disponibili" |
+| ottica-avanzi.it | ❌ | Non raggiungibile | — | Da rivalidare manualmente |
+
+### 8.2 Pattern STANDARD (must-have, da replicare)
+
+1. **Hero split con doppia CTA** — claim+benefit a sinistra, foto a destra, CTA primaria "Scopri" + secondaria "Prenota controllo vista"
+2. **Prenotazione esame vista above-the-fold** — widget visibile subito, trust signal + differenziatore vs e-com esteri
+3. **Bestseller grid sotto hero** — 6-8 prodotti con foto + prezzo grassetto + badge
+4. **Badge "Anche graduati"** sugli occhiali da sole — chiarezza critica nel settore
+5. **Recensioni Feedaty certificate** — score visibile in home (es. Lentiamo: 100% positive su 11.225)
+6. **Sticky header con search bar**
+7. **Prezzo in grassetto + originale barrato + % sconto** — price transparency
+8. **Stock indicator** *"Disponibili"* / *"Pronta consegna"* sotto prezzo
+
+### 8.3 Pattern DIVERGENTI (spazi di differenziazione per Factory Ottica)
+
+| Asse | Catene | E-com puri | **→ Posizionamento Factory Ottica** |
+|---|---|---|---|
+| Business model | Fisico + online integrato | Solo online | **Ibrido curato**: outlet indipendente + centro diagnostico reale |
+| Hero focus | Tech (AI glasses) | Retention/ripetizione | **Prezzo onesto + controllo vista incluso** |
+| Try-on | Solo negozio | Virtual try-on | **Virtual try-on leggero + "Prova a casa 3 modelli"** |
+| Configuratore lenti | 6-8 step in negozio | Online multi-step | **3 step online** (graduazione → tipo lente → trattamenti) |
+| Mega-nav | Sì, ampia | Menu semplice | **Mega-nav selettiva** — Uomo/Donna/Vista/Sole/Outlet/Brand |
+
+### 8.4 🎨 Design tokens raccomandati (input per open-design)
+
+| Token | Valore | Motivazione |
+|---|---|---|
+| Primary | `#1E3A5F` navy | Affidabile come catena, più caldo |
+| Secondary | `#C9A227` oro caldo | Outlet curato senza essere cheap |
+| Background | `#FFFFFF` | Minimal, price-first |
+| Text | `#1A1A1A` | WCAG AA |
+| Sale/discount | `#D9534F` | Urgenza senza diventare cheap |
+| Font titoli | Montserrat / Poppins | Moderno, geometric sans |
+| Font corpo | Inter / Open Sans | Leggibilità su prezzi e dettagli |
+| **Mood claim** | *"Affidabile caldo"* | Non clinico-blu (catena), non oro-lusso, non giallo cheap |
+
+### 8.5 Layout di riferimento — Home
+
+```
+[HERO SPLIT]
+  Sinistra: "Occhiali di qualità, prezzo senza sorprese.
+             Controllo vista incluso nel centro diagnostico."
+            [CTA: Scopri la collezione]   [CTA: Prenota controllo gratuito]
+  Destra:   Foto prodotto su modello
+
+[TRUST BAR]
+  🚚 Spedizione gratuita >50€ · 🔄 Reso 30gg · 🔧 Regola asta gratis · ⭐ 4.8/5
+
+[BESTSELLER]
+  Grid 4 prodotti × 2 righe
+
+[CENTRO DIAGNOSTICO] (sezione dedicata — differenziatore)
+
+[OUTLET / OCCASIONI]
+
+[BRAND ROW]
+
+[NEWSLETTER + MAPPA NEGOZIO]
+```
+
+### 8.6 Layout di riferimento — Scheda prodotto
+
+- **Sinistra (60%):** 3 foto + (opt) 360° + overlay virtual try-on
+- **Destra (40%):**
+  - Nome modello + badge *"Anche graduati"*
+  - Prezzo: `**79€** ~~105€~~ -25%`
+  - Configuratore 3 step: Tipo lente → Graduazione → Trattamenti
+  - CTA primaria: `[Aggiungi al carrello — 79€]`
+  - CTA secondaria outline: `[Prenota in negozio — San Cesareo]`
+  - CTA terziaria link: `📞 Consulenza WhatsApp`
+- **Sotto fold:** Tabs (Descrizione · Misure · Recensioni · Spedizioni)
+
+### 8.7 Filtri catalogo (faceted)
+
+Genere · Forma · Colore montatura · Brand · Prezzo (slider 30–300€) · ☑ Anche graduati · ☑ Blue420
+
+---
+
+## ⚠️ Da rivalidare manualmente
+
+- [ ] Rating Google numerico + 1-2 recensioni testuali verificate (apri scheda da telefono, screenshotta)
+- [ ] ottica-avanzi.it non analizzato — apri tu nel browser e segna le 3 cose che colpiscono
+- [ ] Conferma che claim *"centro diagnostico oculare"* sia un servizio reale (chiedi a lei in fase di pitch)
 
 ---
 
