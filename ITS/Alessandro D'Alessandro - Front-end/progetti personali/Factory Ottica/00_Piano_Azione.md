@@ -18,14 +18,16 @@
 
 **Stack:** WordPress 7.x · WooCommerce (solo catalogo + carrello, no checkout) · PHP 8.3 · MySQL 8 · InfinityFree free tier · tema custom generato via [open-design](https://github.com/nexu-io/open-design) → port manuale a PHP.
 
+**Strumenti di ricerca:** [[skill/perplexity/SKILL]] — skill Perplexity free già configurata nel vault con workflow `analisi_competitiva`, `stack_tecnico`, `validazione_idea`, `sintesi_da_fonte`. Usata nelle Fasi 0 e 3a.
+
 ---
 
 ## Fase 0 — Discovery (1-2 giorni)
 
 **Output:** `01_Discovery.md`
 
-1. **Estrazione info pubbliche** dai 2 URL salvati (Google Maps + Facebook): indirizzo, orari, telefono, recensioni, foto vetrina, post recenti, servizi citati (esame vista, lenti progressive, marche trattate).
-2. **Competitor scan rapido** — 3 ottici locali (Salmoiraghi, GrandVision, ottico indipendente zona) per capire pattern UX standard del settore.
+1. **Estrazione info pubbliche** dai 2 URL salvati (Google Maps + Facebook): indirizzo, orari, telefono, recensioni, foto vetrina, post recenti, servizi citati (esame vista, lenti progressive, marche trattate). → skill Perplexity workflow `sintesi_da_fonte` sui due URL.
+2. **Competitor scan** — 3 ottici locali + 2 e-commerce ottica italiani (Ottica Avanzi, Salmoiraghi online) per pattern UX del settore. → skill Perplexity workflow `analisi_competitiva`.
 3. **ICP del cliente** (la titolare): cosa la convince? Probabilmente *"il sito sembra già pronto, non un mockup"* + *"vedo i miei prodotti, non placeholder Lorem"*.
 
 **Domanda aperta da chiarire con lei prima del pitch (o da assumere e validare):** vuole vendere online davvero o solo presenza digitale + prenotazioni? La demo deve coprire entrambe le narrative.
@@ -57,7 +59,7 @@ CSV pronto per import via WooCommerce nativo (no plugin extra).
 
 Cuore tecnico del progetto. Workflow in 3 step:
 
-**3a. Brief per open-design** (`02_Design_Brief.md`):
+**3a. Brief per open-design** (`02_Design_Brief.md`) — input alimentato da skill Perplexity workflow `analisi_competitiva` su 5 siti ottica top (estrazione palette, layout hero, struttura schede prodotto):
 - Sezioni richieste: Homepage (hero + categorie + prodotti in evidenza + about + mappa), Shop, Single Product, Cart, Contatti, Servizi
 - Brand: palette warm/professionale (occhio = settore tradizionale ma moderno), tipografia serif+sans, mood *"ottica di quartiere ma curata"*
 - Output atteso da open-design: HTML + CSS production-ready, no framework JS pesanti
