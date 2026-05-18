@@ -56,7 +56,7 @@ Azienda: progetto ITS di Lorenzo — presentazione imprenditoriale.
 - Durata (36 / 48 mesi)
 - Sconto su canone
 - Assicurazione
-- Manutenzione (≈ 47% del canone secondo appunti — dai preventivi reali è 33–38%, da verificare)
+- Manutenzione (≈ 47% del canone secondo appunti — dai preventivi reali è 33–38%, dac verificare)
 
 ---
 

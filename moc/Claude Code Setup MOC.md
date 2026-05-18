@@ -29,11 +29,20 @@ Il sistema segue un'[[../CLAUDE.md|architettura a 3 livelli]]:
 
 ## MCP Servers
 
+<<<<<<< HEAD
 ### Diretti (settings.json) — 2
+=======
+### Diretti (settings.json) — 4
+>>>>>>> origin/main
 | Server | Scopo |
 |--------|-------|
 | `n8n-docs` | Documentazione n8n |
 | `n8n-mcp` | Controllo diretto workflow n8n |
+<<<<<<< HEAD
+=======
+| `perplexity` | Ricerca web con Perplexity AI |
+| `perplexity-playwright` | Perplexity + automazione browser |
+>>>>>>> origin/main
 
 ### Cloud (connessioni Claude.ai) — 3
 | Server | Scopo |
@@ -188,6 +197,10 @@ Memoria persistente in `~/.claude/projects/C--Users-Chirone/memory/`:
 - [[Skill MOC]] — skill e strumenti del vault
 - [[Agenti IA Design Patterns MOC]] — design pattern per sistemi agentici
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 ---
 
 ## Guida alla Replica su Nuovo Computer
@@ -238,6 +251,11 @@ Nel `settings.json` aggiungere la sezione `mcpServers` con:
 |--------|----------------------|
 | `n8n-mcp` | `npx -y @czlonkowski/n8n-mcp` |
 | `n8n-docs` | Knowledge MCP per docs n8n |
+<<<<<<< HEAD
+=======
+| `perplexity` | API key Perplexity necessaria |
+| `perplexity-playwright` | Perplexity + automazione browser |
+>>>>>>> origin/main
 
 MCP Cloud (Calendar/Drive/Notion) sono configurati da claude.ai → Settings → Connectors.
 
@@ -308,7 +326,11 @@ File da copiare in `~/.claude/projects/C--Users-Chirone/memory/`:
 - [ ] Copiato `CLAUDE.md` globale
 - [ ] Aggiunto marketplace `anthropics/claude-plugins-official`
 - [ ] Installati 37 plugin (15 external + 22 official)
+<<<<<<< HEAD
 - [ ] Configurati 2 MCP server (`n8n-mcp`, `n8n-docs`)
+=======
+- [ ] Configurati 4 MCP server (`n8n-mcp`, `n8n-docs`, `perplexity`, `perplexity-playwright`)
+>>>>>>> origin/main
 - [ ] Connessi 3 MCP cloud (Google Calendar/Drive, Notion) via claude.ai
 - [ ] Clonato `notebooklm` in `~/.claude/Skills/notebooklm/` + venv
 - [ ] Clonato repo `nexu-io/open-design` in `~/tools/open-design/`

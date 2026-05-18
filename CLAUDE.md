@@ -13,14 +13,14 @@
 
 ### Struttura cartelle
 
-| Cartella | Contenuto |
-|----------|-----------|
-| `moc/` | Mappe di Contenuto (Index MOC, topic MOC) — il centro del sistema |
-| `ITS/` | Progetti ITS (es. Bibliò) |
-| `idee/` | Idee grezze e brainstorming |
-| `knowladge/` | Conoscenza generale e architettura |
-| `skill/` | Guide, PDF, skill operative |
-| `daily/` | Note giornaliere |
+| Cartella     | Contenuto                                                         |
+| ------------ | ----------------------------------------------------------------- |
+| `moc/`       | Mappe di Contenuto (Index MOC, topic MOC) — il centro del sistema |
+| `ITS/`       | Progetti ITS                                                      |
+| `idee/`      | Idee grezze e brainstorming                                       |
+| `knowladge/` | Conoscenza generale e architettura                                |
+| `skill/`     | Guide, PDF, skill operative                                       |
+| `daily/`     | Note giornaliere                                                  |
 
 ---
 
