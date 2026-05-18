@@ -11,7 +11,7 @@
 
 | File | Scopo |
 |------|-------|
-| [[dettaglio-bot]] | **Documento principale** — obiettivo, fonti dati, sintesi numerica preventivi, voci configuratore, strategia "sottobanco", aperti |
+| `dettaglio-bot.docs` | **Documento principale** — obiettivo, fonti dati, sintesi numerica preventivi, voci configuratore, strategia "sottobanco", aperti |
 
 ---
 

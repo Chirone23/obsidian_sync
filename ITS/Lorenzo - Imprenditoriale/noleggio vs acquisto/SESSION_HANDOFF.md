@@ -26,7 +26,7 @@
 - Git push bloccato per divergenza con remote (conflict su `moc/Claude Code Setup MOC.md` non legato a questo progetto) — da risolvere manualmente
 
 ### 📁 File modificati in questa sessione
-- `ITS/Lorenzo - Imprenditoriale/noleggio vs acquisto/dettaglio-bot.md` (rinominato da `CONTESTO.md`)
+- `ITS/Lorenzo - Imprenditoriale/noleggio vs acquisto/dettaglio-bot.docs` (rinominato da `CONTESTO.md`)
 - `ITS/Lorenzo - Imprenditoriale/noleggio vs acquisto/README_DOCUMENTAZIONE.md` (nuovo)
 - `ITS/Lorenzo - Imprenditoriale/noleggio vs acquisto/BRAINSTORMING.md` (nuovo)
 - `ITS/Lorenzo - Imprenditoriale/noleggio vs acquisto/DECISIONI.md` (nuovo)
