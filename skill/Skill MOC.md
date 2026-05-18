@@ -267,3 +267,12 @@ Framework a 3 blocchi per ottenere output consistenti e funzionanti dall'AI:
 **Review Driven Development:** l'AI genera il piano → tu revisioni e commenti → l'AI aggiorna → solo dopo il tuo OK si genera codice.
 
 **Guard rail anti-allucinazione:** `"Utilizza solo le informazioni presenti nel contesto o nelle fonti esplicite. Motiva sempre le tue risposte."`
+
+
+---
+
+## Manutenzione Claude Code
+
+| Skill | Quando usarla |
+|-------|---------------|
+| [[Triage Sessioni Claude Code]] | Quando `.claude/projects/` cresce oltre ~150 MB — triage parallelo con 5 sub-agenti Haiku, output report + script di cleanup |

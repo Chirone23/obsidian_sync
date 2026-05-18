@@ -24,3 +24,5 @@ Mappa principale di tutte le aree di conoscenza.
 Quando leggi un articolo o un PDF, di' a Claude:
 > "Leggi questo e aggiorna il MOC più rilevante con nuovi insight. Crea [[backlink]] alle note correlate."
 
+
+- [[Claude Code Setup MOC]] — 37 plugin, MCP server, 24 agenti, comandi n8n, skill, memoria persistente

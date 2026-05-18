@@ -95,7 +95,9 @@
       "mcp__obsidian-mcp__obsidian_complex_search",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Chirone\\\\Documents\\\\Secondo_Cervello\\\\ITS\\\\Melanie - Specifiche di progetto con AI\\\\prog1\\\\\" -Force | ForEach-Object { \"$\\($_.Name\\) - $\\($_.PSIsContainer\\)\" })",
       "Bash(git revert *)",
-      "Bash(Sort-Object)"
+      "Bash(Sort-Object)",
+      "Bash(ls execution/)",
+      "Bash(ls script/)"
     ]
   }
 }
