@@ -25,13 +25,13 @@ Azienda: progetto ITS di Lorenzo — presentazione imprenditoriale.
 
 ### Sintesi numerica (tutti 48 mesi / 120.000 km / anticipo 0)
 
-| Auto | Listino | Tot. veicolo | Canone puro | Servizi | Canone tot. | Costo tot. 48m |
-|---|---:|---:|---:|---:|---:|---:|
-| KIA Picanto | 17.400 | 18.300 | 218,87 | 127,69 | **346,56** | 16.635 |
-| FIAT 500 Hybrid | 20.300 | 21.100 | 271,18 | 135,10 | **406,29** | 19.502 |
-| VW T-Cross | 29.608 | 29.718 | 324,12 | 187,56 | **511,69** | 24.561 |
-| Nissan Juke HEV | 30.527 | 31.727 | 343,39 | 210,88 | **554,29** | 26.606 |
-| Volvo XC40 B3 | 42.956 | 44.366 | 493,88 | 284,27 | **778,17** | 37.352 |
+| Auto            | Listino | Tot. veicolo | Canone puro | Servizi | Canone tot. | Costo tot. 48m |
+| --------------- | ------: | -----------: | ----------: | ------: | ----------: | -------------: |
+| KIA Picanto     |  17.400 |       18.300 |      218,87 |  127,69 |  **346,56** |         16.635 |
+| FIAT 500 Hybrid |  20.300 |       21.100 |      271,18 |  135,10 |  **406,29** |         19.502 |
+| VW T-Cross      |  29.608 |       29.718 |      324,12 |  187,56 |  **511,69** |         24.561 |
+| Nissan Juke HEV |  30.527 |       31.727 |      343,39 |  210,88 |  **554,29** |         26.606 |
+| Volvo XC40 B3   |  42.956 |       44.366 |      493,88 |  284,27 |  **778,17** |         37.352 |
 
 **Km eccedenti**: 0,07–0,19 €/km entro 15%, 0,10–0,19 €/km oltre 15%.
 **Quota servizi** sul canone totale: 33% (FIAT) → 38% (Volvo). Cresce con la fascia di prezzo.

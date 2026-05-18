@@ -48,6 +48,62 @@ Da incrociare con i canoni di noleggio NLT (ALD 4Vantage, 48m / 120.000 km) per 
 
 ---
 
+## Costi annui acquisto (TCO)
+
+### Bollo auto (Italia, annuale)
+
+| Auto | Potenza | Bollo annuo |
+|---|---:|---:|
+| KIA Picanto 1.0 GDi AMT Urban | 50 kW | 129,00 € |
+| FIAT 500 Hybrid Icon | 50 kW | 129,00 € |
+| VW T-Cross 1.0 TSI DSG | 85 kW | 219,30 € |
+| Nissan Juke 1.6 HEV N-Connecta | 105 kW | 261,87 € |
+| Volvo XC40 B3 automatico Core | 120 kW | 308,07 € |
+
+**Bollo totale 48 mesi (4 anni):**
+- KIA Picanto / FIAT 500: 516 €
+- VW T-Cross: 877 €
+- Nissan Juke: 1.047 €
+- Volvo XC40: 1.232 €
+
+### Assicurazione (annuale) — stima realistica v2
+
+> **Profilo cliente "italiano medio":** 42 anni, 22 anni patente, **classe 4**, 1 sinistro storico (fuori osservazione), Bologna (base), uso privato+commuting, 15.000 km/anno, coniuge come 2° guidatore, **strada pubblica, no scatola nera**, pagamento annuale.
+>
+> **Ancora hard:** premio medio RCA Italia dicembre 2025 = **629,24 €** (fonte Euroborsa/Auto.it — riflette il pagato reale, non il minimo civetta dei comparatori).
+
+| Auto | RCA realistica (Bologna) | Pacchetto completo (Bologna) | Δ Milano | Δ Roma | Cumulato 48m completo |
+|---|---:|---:|---:|---:|---:|
+| KIA Picanto | 540 € | 1.180 € | +12% | +18% | **4.720 €** |
+| FIAT 500 Hybrid | 580 € | 1.280 € | +12% | +18% | **5.120 €** |
+| VW T-Cross | 690 € | 1.620 € | +10% | +16% | **6.480 €** |
+| Nissan Juke HEV | 720 € | 1.690 € | +10% | +16% | **6.760 €** |
+| Volvo XC40 B3 | 980 € | 2.420 € | +9% | +14% | **9.680 €** |
+
+**Pacchetto completo** = RCA + Furto/Incendio + Kasko mini + Cristalli + Assistenza stradale (standard per auto nuova finanziata).
+
+**Variabili sensibili** (sul profilo realistico base):
+- Classe 4 → 6 (dopo sinistro recente): **+25/+40%** RCA, +15/+25% pacchetto (più forte a Roma)
+- Neopatentato in famiglia: **+20/+35%** RCA
+- Pagamento mensile vs annuale: **+4/+8%**
+- Rifiuto scatola nera scontata: -8/-15% di sconto perso
+- Preventivatore online vs agenzia tradizionale: agenzia tipicamente **+10/+20%**
+
+**Note metodologiche:**
+- La v1 (260-520 € RCA) era basata sui "minimi offerti online" — civetta scatola nera obbligatoria, classe 1 hardcoded, no guidatori aggiuntivi. **Numeri non realistici** per cliente medio italiano.
+- La v2 parte dal premio medio nazionale reale (629 €) e applica correttivi per segmento, valore veicolo, accessori. Coerente con il "pagato reale".
+- Range fascia city car 2026: 400–700 € RCA per profili tipo. Le stime sotto 400 € sono solo minimi promozionali, non rappresentativi.
+
+**Leva configuratore:** mostrare il pacchetto completo realistico (Bologna) come default — su Volvo XC40 sono **9.680 € in 4 anni di sola assicurazione**, voce che da sola riequilibra il confronto a favore del noleggio (che la include).
+
+**Fonti:** Euroborsa 2026 (premio medio nazionale), Auto.it (gennaio 2026), IVASS preventivatore, assicurazione.it (glossario premio di tariffa), guidaevai (sensibilità classe/neopatentato). Stima generata via Perplexity Pro su prompt v2 ancorato al premio reale ANIA-stile.
+
+### Svalutazione dopo 48 mesi
+
+*(da compilare)*
+
+---
+
 ## Confronto rapido Acquisto vs Noleggio (48m / 120.000 km)
 
 | Auto | Prezzo cliente | Canone NLT mensile | Costo NLT totale 48m |
