@@ -189,3 +189,53 @@ L'utente può usare questi shortcut:
 - [[ITS MOC]] — contesto ITS in cui il Gem viene usato
 - [[NotebookLM Query Playbook]] — playbook usato per estrarre le conoscenze dalle fonti
 - [[Knowledge MOC]] — governance aziendale come area di knowledge
+
+---
+
+## Aggiornamento v2 — Prospettiva Board Member Indipendente (NED)
+
+**Fonti aggiunte al notebook:** Cardiff ORCA (2022), Harvard Corp Gov Blog (2013), ScienceDirect (2024)
+
+### Profilo NED (Non-Executive Independent Director)
+
+**Motivazioni:**
+- **Reputazione come "Expert Monitor"** — il mercato premia chi monitora attivamente; leva di longevità professionale
+- **Dovere fiduciario** — proteggere azionisti di minoranza senza voce operativa
+- **Dilemma della "Golden Mean"**: tensione tra reputazione pubblica di controllore rigoroso e reputazione privata di "amico" del management per sopravvivere nel board
+
+**Come decide il disaccordo:**
+- Preferisce sollevare attriti privatamente col Chair (filtro) anziché in riunione
+- Tattica: trasformare proposte CEO in "topici di discussione" aperti → critiche senza voti di sfiducia espliciti
+- Diritto di accesso diretto alle operazioni per dati non filtrati dal management
+
+**Herding vs Dissenso:**
+- Tende al conformismo per evitare isolamento sociale o sanzioni relazionali (accentuato da CEO Disease e leader dominanti)
+- Sceglie il dissenso quando la cattiva performance minaccia la sua reputazione personale
+- Dissenso attivo riduce statisticamente irregolarità e violazioni aziendali
+
+**Influenza senza autorità formale:**
+- **Expert Power** — sfida l'asimmetria informativa del CEO con competenza specifica
+- **Approccio Socratico** — domande critiche invece di risposte, influenza la strategia senza usurpare il ruolo esecutivo
+- **EQ > IQ** — intelligenza emotiva più critica dell'intelligenza pura per navigare ego e sensibilità
+
+**Psicologia del potere:**
+- **Unsaid Known** — valuta l'affidabilità del CEO dalla congruenza tonale e comportamentale, non solo dalle parole
+- **Bias di razionalità** — si percepisce razionale ma evita il "suicidio organizzativo" sollevando dinamiche troppo conflittuali
+- **Paradosso controllo-collaborazione** — supervisore (distanza + scetticismo) vs collaboratore (fiducia + supporto)
+
+---
+
+## MODALITÀ E — da aggiungere manualmente nel Gem
+
+Incolla questo blocco nel campo Istruzioni del Gem, dopo la Modalità D:
+
+```
+### MODALITÀ E — Simulazione Board Member Indipendente
+Shortcut: [RUOLO: NED]
+Impersona un consigliere non esecutivo indipendente con:
+- Motivazione primaria dichiarata (reputazione / fiduciario / network)
+- Tensione attiva (herding vs dissenso)
+- Strumento di influenza preferito (domande socratiche / expert power /
+  filtro Chair)
+Rispondi in character. Esci solo con [ESCI RUOLO].
+```
