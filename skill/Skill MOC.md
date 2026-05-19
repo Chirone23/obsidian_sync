@@ -276,3 +276,11 @@ Framework a 3 blocchi per ottenere output consistenti e funzionanti dall'AI:
 | Skill | Quando usarla |
 |-------|---------------|
 | [[Triage Sessioni Claude Code]] | Quando `.claude/projects/` cresce oltre ~150 MB — triage parallelo con 5 sub-agenti Haiku, output report + script di cleanup |
+
+---
+
+## Gemini Gems
+
+| Gem | Descrizione |
+|-----|-------------|
+| [[BoardDynamics Gem — System Prompt]] | Analista governance board-CEO — 4 modalità (scenario, analisi, ruolo, brief) — uso ITS + professionale |
