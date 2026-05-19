@@ -9,10 +9,10 @@
 
 ## 1. Contesto e dettaglio progetto
 
-| File | Scopo |
-|------|-------|
-| `dettaglio-bot.docs` | **Documento principale** — obiettivo, fonti dati, sintesi numerica preventivi, voci configuratore, strategia "sottobanco", aperti |
-| [[Prezzi Auto MOC]] | Prezzi acquisto cliente B2C + confronto rapido con canoni NLT |
+| File                 | Scopo                                                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| [[dettaglio-bot.md]] | **Documento principale** — obiettivo, fonti dati, sintesi numerica preventivi, voci configuratore, strategia "sottobanco", aperti |
+| [[Prezzi Auto MOC]]  | Prezzi acquisto cliente B2C + confronto rapido con canoni NLT                                                                     |
 
 ---
 
