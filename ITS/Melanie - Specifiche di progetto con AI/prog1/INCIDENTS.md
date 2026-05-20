@@ -20,6 +20,7 @@
 | INC-001 | 2026-05-12 (Lez. 3) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🔴 Open |
 | INC-002 | 2026-05-13 (Lez. 4) | Claude API timeout | Timeout su batch processing di contratti | High | 🔴 Open |
 | INC-003 | 2026-05-13 (Lez. 4) | JSON parsing / encoding | Caratteri speciali italiani (accenti, €) corrotti nel JSON | High | 🔴 Open |
+| **INC-004** | **2026-05-20** | **llm_client.py — subprocess argv** | **WinError 206 su Windows con testi >40k char passati come argv** | **High** | **✅ RESOLVED** |
 
 ---
 
@@ -347,6 +348,39 @@ Sintomo atteso: "explanation": "Clausola con limite di danno (massimo € corrot
 **Aggiornamenti Specifica:** [Dipende da soluzione scelta]
 
 **Status:** 🔴 Open (pending MVP Fase 5 testing)
+
+---
+
+## INC-004 — WinError 206 su subprocess argv (testi lunghi)
+
+**Data:** 2026-05-20
+
+**Componente:** `llm_client.py` — `_call_claude()` via Claude Code CLI subprocess
+
+**Descrizione:** Su Windows, i contratti con testo estratto vicino al limite di troncamento (40k char) causavano `WinError 206: The filename or extension is too long` quando il messaggio utente veniva passato come argomento argv al subprocess Claude CLI. Il comando `["claude", "-p", user_message, ...]` falliva silenziosamente per testi lunghi. Contratti affetti: Consip Condizioni Generali Fornitura, Capitolato Tecnico Demanio (i 2 PDF più lunghi della suite). I 5 contratti brevi passavano correttamente.
+
+**Severità:** High (blocca analisi di contratti densi/lunghi — esattamente quelli più critici per un contract analyzer)
+
+**Root cause:** Windows ha un limite di lunghezza sulla riga di comando (MAX_PATH / CreateProcess). Testi di 40k char superano ampiamente questo limite quando inlineati come singolo argomento argv.
+
+**Soluzione:** Spostato `user_message` da argv a `input=` (stdin) nel `subprocess.run()`. Fix 2 righe:
+- rimosso `user_message` dalla lista argv
+- aggiunto `input=user_message` come parametro named
+
+Il fix è trasparente: Claude CLI legge da stdin quando `--print` (`-p`) è attivo e nessun messaggio è passato come argv.
+
+**Fix verificato:**
+- Consip Condizioni Generali (40k char) → 268s, `language: italian`, 7/7 categorie parse OK
+- Capitolato Tecnico Demanio (40k char) → 163s, `language: italian`, 5/7 categorie (atteso: appalto pubblico senza IP/governing_law esplicita)
+
+**Lezioni apprese:**
+- ✅ Su Windows, mai passare payload larghi come argv — usare sempre stdin
+- ✅ Il limite Windows per argv è ~32k caratteri (limite variabile per processo); per sicurezza, qualsiasi input >1k char va in stdin
+- ✅ L'errore WinError 206 è fuorviante (sembra un filesystem error) — mapparlo a "payload argv troppo lungo"
+
+**Aggiornamenti Specifica:** Nessuno (fix implementativo, non architetturale — la spec §6 indica correttamente subprocess senza specificare il meccanismo di passaggio)
+
+**Status:** ✅ Resolved 2026-05-20 — commit `d2dc4ba`
 
 ---
 

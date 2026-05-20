@@ -3,8 +3,8 @@
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)  
 **Data inizio progetto:** 2026-04-28 (brainstorming)  
 **Data prompt v1:** 2026-04-30
-**Versione prompt attuale:** v1-final (text-level invariato dalla Spec v2; spec attuale: v3.1 al 2026-05-10)
-**Stato:** Operativo — pronto per MVP testing (Lez. 3)
+**Versione prompt attuale:** v1-final + patch v2/v2.1/v2.2 (in `prompts/system_prompt.md`; spec: v3.1)
+**Stato:** MVP E2E funzionante — test plan §8 in attesa (Lez. 5)
 **Strategia testing:** Iterazione prompt + JSON quality check su Claude Code CLI (zero-cost, stesso modello del runtime). Runtime test plan §8 su Claude API a pagamento (~0,60 € totali). Esclusi Gemini Flash / OpenRouter free per evitare drift di modello.
 
 ---
@@ -28,6 +28,7 @@
 | 2026-05-11 | Test runtime #2 e #3 | Sonnet v1-final su co.co.co. ERSU + Consip Condizioni Generali; verifica fattuale Consip delegata a Haiku via Claude.ai | Test #2 zero pattern; Test #3 scopre pattern 3 (cross-article extraction + drift semantico "automatica" vs "potrà"). Definita patch v2.1 grounding stretto plain_language ↔ raw_excerpt |
 | 2026-05-11 | Test runtime #4 | Sonnet v1-final su NDA Politecnico Milano (baseline negativo); verifica fattuale delegata a Haiku via Claude.ai | Pattern 1/2 non riprodotti, pattern 3 confermato 1/2 (termination cross-article), pattern 4 (riempimento allucinato) escluso. **Scoperto pattern 5 nuovo:** inferenza speculativa esplicitata su fatti giurisprudenziali ("foro probabile Milano" da firma a Milano). Definita patch v2.2 anti-speculazione |
 | 2026-05-11 | Test runtime #5 + cumulativo 5/5 | Sonnet v1-final su Locazione INPS (Caltanissetta/Palermo); verifica fattuale delegata a Haiku via Claude.ai | Cross-article 2/4 + SIMILE 1/4 (Caltanissetta da premesse, Art.2 template vuoto = pattern 6 candidato) + ASSENTE 1/4 ("diritto italiano" = pattern 5b asserzione non-qualificata). Chiusura mini-suite pre-Cursor: 8 pattern catalogati, patch v2+v2.1+v2.2 finalizzate, schema Pydantic `raw_excerpt: list[str]` decisa, 2 test T13/T14 aggiunti al test plan §8 |
+| 2026-05-20 | MVP E2E runtime — test post-fix INC-004 | Fix WinError 206 in `llm_client.py` (user_message da argv → stdin). Consip (40k, 268s, 7/7 cat OK) + Capitolato Demanio (40k, 163s, 5/7 cat attesi OK). Contratto firmato.pdf rifiutato correttamente (scansionato). **7/8 PDF passano — 1 scansionato rifiutato by design.** Commit `d2dc4ba`. |
 
 ---
 

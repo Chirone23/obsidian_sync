@@ -2,13 +2,13 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
 **Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
-**Ultima sessione:** 2026-05-11 (lettura nuovo feedback prof in `valutazione 10-5/` → 95/100 confermato + nessuna patch richiesta)
-**Prossima sessione:** Lezione 4 — MVP Building (checklist pre-building del Promemoria prof, vedi sotto)
+**Ultima sessione:** 2026-05-20 (MVP completo e testato — fix INC-004 WinError 206, test 6/8 PDF verificati)
+**Prossima sessione:** Lezione 5 — Test plan §8 (T1-T12) + aggiornamento PROMPT_LOG/INCIDENTS con dati reali
 **Spec corrente:** v3.1 — **confermata dalla prof come finale** (file: `Specifica Tecnica v3 - SpecterAI.md`, changelog 18 righe)
 
 ---
 
-## 🟢 STATO ATTUALE (post-sessione 2026-05-10)
+## 🟢 STATO ATTUALE (post-sessione 2026-05-20)
 
 ### ✅ Completato dopo l'ultimo handoff (2026-05-04)
 
@@ -144,15 +144,15 @@ specter-ai/
 | Patch v2.1 prompt (grounding stretto + qualificatori modali) | ✅ definita post Test #3 + verifica Haiku, blocco additivo in PROMPT_LOG |
 | Patch v2.2 prompt (anti-speculazione + no inferenza giurisprudenziale + clausola positiva "if absent → say so") | ✅ definita post Test #4 e rafforzata post Test #5 (pattern 5b asserzione non-qualificata), blocco additivo in PROMPT_LOG |
 | Sintesi cumulativa 5/5 test in PROMPT_LOG | ✅ tabella 8 pattern catalogati + decisioni finali pre-Cursor (patch + schema Pydantic + few-shot + 2 nuovi test T13/T14) |
-| **`prompts/system_prompt.md` consolidato** | ✅ **creato 2026-05-20** in `specterai/specter-ai/prompts/` — v1-final + patch v2/v2.1/v2.2 + few-shot aggiornati (3 esempi incl. gold standard v2.2) |
-| **Convalida patch v2/v2.1/v2.2 su 3/3 PDF rimanenti** | ✅ **PASS 2026-05-20** — Test #6 (Dolomiti Energia), #7 (co.co.co. template), #8 (NDA alias universitario). 0 pattern nuovi. Prompt **pronto per Cursor Fase 2** |
-| Struttura cartelle `specter-ai/` (base) | ✅ creata 2026-05-20: `prompts/`, `templates/`, `tests/contratti/` |
-| Schema Pydantic `raw_excerpt: list[str]` (vs `str`) | ⏳ da implementare in Cursor Fase 1 (richiesta dalla patch v2.1) |
-| Few-shot esempio "if absent → say so" (clausola positiva v2.2) | ✅ già incluso nel system_prompt.md (Esempio 3 governing_law assente) |
-| Test T13 (grep speculazione=0) + T14 (grounding plain↔raw_excerpt) in test plan §8 | ⏳ da integrare in Lez. 5 |
+| **`prompts/system_prompt.md` consolidato** | ✅ creato 2026-05-20 — v1-final + patch v2/v2.1/v2.2 + few-shot |
+| **Convalida patch v2/v2.1/v2.2 su 3/3 PDF rimanenti** | ✅ PASS 2026-05-20 — Test #6/7/8. 0 pattern nuovi. |
+| **MVP Fase 1-3 completo** | ✅ `schemas.py`, `pdf_processor.py`, `regex_layer.py`, `privacy_filter.py` |
+| **MVP Fase 4 completo** | ✅ `llm_client.py` (fix INC-004 stdin), `main.py`, `templates/index.html`, `templates/report.html` |
+| **INC-004 WinError 206** | ✅ RESOLVED 2026-05-20 — stdin fix in `llm_client.py`, commit `d2dc4ba` |
+| **Test E2E: 7/8 PDF** | ✅ 5 OK precedenti + Consip OK (268s, 7/7 cat) + Capitolato Demanio OK (163s, 5/7 cat attesi) — Contratto firmato.pdf rifiutato correttamente (scansionato, no OCR) |
+| Test T13 (grep speculazione=0) + T14 (grounding plain↔raw_excerpt) in test plan §8 | ⏳ da eseguire in Lez. 5 |
 | Spec v3.1 | ✅ confermata 95/100, nessuna patch richiesta dalla prof |
-| File rimanenti `specter-ai/` (schemas.py, requirements.txt, .gitignore, .cursorrules) | ⏳ prossimo step prima di aprire Cursor |
-| `.cursorrules` + prompt Composer schemas.py | ⏳ da preparare prima di aprire Cursor |
+| Server uvicorn `main:app` | ⏳ da testare avvio manuale (`uvicorn main:app --reload`) |
 
 ---
 
