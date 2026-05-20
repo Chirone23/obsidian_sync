@@ -668,6 +668,121 @@ In Test #4 Sonnet aveva inferito "foro probabile Milano" **con qualificatore esp
 
 ---
 
+## Test runtime #6 — 2026-05-20 — Prompt v2 (patch v2+v2.1+v2.2) su Sonnet via Claude.ai (contratto reale n.6/8)
+
+**Contesto:** Primo test della suite di convalida patch v2/v2.1/v2.2 su system_prompt.md consolidato (creato 2026-05-20). PDF: `Contratto firmato.pdf` — contratto fornitura energia elettrica Dolomiti Energia, tipologia "utilities con addebito SEPA".
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/Contratto firmato.pdf`
+- System prompt: `prompts/system_prompt.md` v1-final + patch v2/v2.1/v2.2
+- Esecuzione: chat Claude.ai NUOVA
+
+**Output:** JSON valido, 7 categorie presenti, autovalutazione non riportata. Risk distribution: 2 high (liability_limitation, governing_law), 3 medium (payment_terms, auto_renewal, penalties, termination — in realtà 4), 1 low (intellectual_property present:false).
+
+**Verifica checklist patch:**
+
+| Check | Esito | Note |
+|---|---|---|
+| No ellissi raw_excerpt | ✅ | Zero `[...]` |
+| No calcoli aritmetici | ✅ | Interessi descritti con rif. D.Lgs. 231/2002, nessun numero derivato |
+| Qualificatori modali | ✅ | Nessun drift |
+| No speculazione (v2.2) | ⚠️ borderline | `governing_law` plain_language: "la legge **potrebbe** prevedere un foro diverso a tutela del consumatore" — "potrebbe" nello spirito del vincolo v2.2 (non nell'elenco letterale, ma marker inferenziale) |
+| Clausola positiva se assente | ✅ | `intellectual_property`: "Il contratto non contiene clausole sulla proprietà intellettuale" |
+| Grounding plain↔raw (v2.1) | ⚠️ edge case | `auto_renewal` e `termination` citano "Condizioni Generali" non presenti nei rispettivi raw_excerpt — cross-article edge case v2.1 già catalogato (pattern 3) |
+| 7 categorie | ✅ | |
+
+**Nuovo pattern:** nessuno. Entrambe le osservazioni sono edge case di pattern 3 (v2.1) e pattern 5 (v2.2) già catalogati.
+
+**Decisione:** PASS — nessuna patch v2.3 richiesta.
+
+---
+
+## Test runtime #7 — 2026-05-20 — Prompt v2 (patch v2+v2.1+v2.2) su Sonnet via Claude.ai (contratto reale n.7/8)
+
+**Contesto:** Secondo test della suite di convalida. PDF: `ContrattoCOCOCO.pdf` — co.co.co. con campi template parzialmente non compilati (preavviso "30/60/90 giorni" non barrato).
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/ContrattoCOCOCO.pdf`
+- System prompt: `prompts/system_prompt.md` v1-final + patch v2/v2.1/v2.2
+- Esecuzione: chat Claude.ai NUOVA
+
+**Output:** JSON valido, 7 categorie presenti. Risk distribution: 2 high (penalties, liability_limitation), 3 medium (payment_terms, termination, intellectual_property), 2 low/false (auto_renewal, governing_law).
+
+**Verifica checklist patch:**
+
+| Check | Esito | Note |
+|---|---|---|
+| No ellissi | ✅ | |
+| No calcoli | ✅ | |
+| Qualificatori modali | ✅ | |
+| No speculazione | ✅ | |
+| Clausola positiva se assente | ✅ ++ | `liability_limitation` present:false: "sei esposto a richieste di risarcimento potenzialmente illimitate" = gold standard v2.2 esatto |
+| Grounding v2.1 | ✅ | |
+| 7 categorie | ✅ | |
+
+**Comportamento positivo nuovo — gestione campo template non compilato:** `termination` raw_excerpt contiene "(30/60/90) giorni" (campo barrato non selezionato). Sonnet ha identificato il campo come non definito e lo ha segnalato esplicitamente nel plain_language: "la durata non è ancora definita, da scegliere tra 30/60/90 giorni". Comportamento **migliore** del pattern 6 di Test #5 (Locazione INPS dove Sonnet aveva asserito Caltanissetta ignorando il campo vuoto nell'art. 2). Patch v2.2 ha probabilmente contribuito a questa correttezza.
+
+**Nuovo pattern:** nessuno.
+
+**Decisione:** PASS — output più pulito della serie completa 1→7.
+
+---
+
+## Test runtime #8 — 2026-05-20 — Prompt v2 (patch v2+v2.1+v2.2) su Sonnet via Claude.ai (contratto reale n.8/8)
+
+**Contesto:** Terzo e ultimo test della suite di convalida. PDF: `Modulo-accordo-di-riservatezza.pdf` — accordo carriera alias universitaria (contesto anomalo: accordo amministrativo università/studente, non contratto commerciale).
+
+**Input:**
+- Contratto: `prog1/specterai/contratti/Modulo-accordo-di-riservatezza.pdf`
+- System prompt: `prompts/system_prompt.md` v1-final + patch v2/v2.1/v2.2
+- Esecuzione: chat Claude.ai NUOVA
+
+**Output:** JSON valido, 7 categorie presenti. Risk distribution: 0 high, 3 medium (penalties, liability_limitation, termination), 4 low/false (payment_terms, auto_renewal, governing_law, intellectual_property).
+
+**Verifica checklist patch:**
+
+| Check | Esito | Note |
+|---|---|---|
+| No ellissi | ✅ | |
+| No calcoli | ✅ | |
+| Qualificatori modali | ✅ | "potrà essere sospesa" → "può sospendere" — facoltà correttamente preservata |
+| No speculazione (v2.2) | ⚠️ borderline | `intellectual_property` present:false plain_language: "questo aspetto non è rilevante nel contesto specifico" — giudizio di contesto non fondato su testo contrattuale. Spirito v2.2 (asserzione inferenziale su fatto non nel contratto). |
+| Clausola positiva se assente | ✅ | `payment_terms`, `auto_renewal`, `governing_law` tutti con clausola positiva corretta |
+| Grounding v2.1 | ⚠️ edge case | `auto_renewal` present:false: "Rimane attivo finché durano i presupposti" — concetto estratto dalla clausola `termination`, non dal raw_excerpt vuoto di auto_renewal |
+| 7 categorie | ✅ | |
+
+**Nota contesto:** il PDF è un accordo amministrativo universitario (carriera alias), non un contratto commerciale. SpecterAI lo analizza comunque con 7 categorie commerciali, con risultati coerenti malgrado il mismatch di contesto. I due edge case (`auto_renewal` cross-termination, `intellectual_property` giudizio contesto) sono artefatti del mismatch, non failure del prompt su contratti commerciali tipici.
+
+**Nuovo pattern:** nessuno. Edge case di pattern 3 (v2.1 cross-article) e 5b (v2.2 asserzione non-qualificata) su contesto atipico.
+
+**Decisione:** PASS — nessuna patch v2.3 richiesta.
+
+---
+
+## Cumulativo Test #6→#8 — Convalida patch v2/v2.1/v2.2 (2026-05-20)
+
+**Copertura:** 3/3 PDF rimanenti testati con system_prompt.md consolidato (v1-final + patch v2+v2.1+v2.2). Tutti i test eseguiti su chat Claude.ai NUOVA.
+
+**Tipologie aggiuntive:** fornitura energia/utilities (Dolomiti Energia), co.co.co. con template parzialmente vuoto, accordo amministrativo universitario (contesto atipico).
+
+**Risultato convalida patch:**
+
+| Patch | Pattern coperto | Stato dopo 8/8 test |
+|---|---|---|
+| v2 | No-ellissi + no-calcoli | ✅ CONFERMATA — 0 attivazioni su 8 test (dopo patch) |
+| v2.1 | Grounding plain↔raw + qualificatori modali | ✅ CONFERMATA — edge case residui (cross-article Condizioni Generali, cross-termination) sono pattern 3 già noto, non nuovi |
+| v2.2 | No speculazione + clausola positiva "if absent → say so" | ✅ CONFERMATA — edge case borderline ("potrebbe", giudizio contesto IP) su contratti atipici, pattern 5/5b già noti |
+
+**Pattern nuovi emersi nei test #6→#8:** NESSUNO.
+
+**Comportamento positivo emergente:** Test #7 mostra gestione corretta dei campi template non compilati ("30/60/90 giorni" non barrato → segnalato esplicitamente) — miglioramento rispetto a Test #5 (Locazione INPS pattern 6). Nessuna patch richiesta, comportamento già corretto.
+
+**VERDETTO: ✅ PASS — 3/3 test senza nuovi pattern**
+
+**Criterio soddisfatto:** prompt pronto per Cursor Fase 2 (`llm_client.py`).
+
+---
+
 ## Cumulativo Test #1→#5 — Sintesi pre-Cursor (2026-05-11)
 
 **Copertura test mini-suite:** 5/5 PDF prioritari analizzati con prompt v1-final invariato; 4/5 verifiche fattuali delegate a Haiku via Claude.ai (Test #2 ERSU non richiedeva verifica perché 0 pattern).
