@@ -1,10 +1,19 @@
-from typing import Literal
-from pydantic import BaseModel, model_validator, field_validator
+from typing import Annotated, Literal
+from pydantic import BaseModel, BeforeValidator, model_validator, field_validator
+
+
+def _normalize_excerpt(v: object) -> list[str]:
+    if isinstance(v, str):
+        return [v] if v else []
+    return v  # type: ignore[return-value]
+
+
+RawExcerpt = Annotated[list[str], BeforeValidator(_normalize_excerpt)]
 
 
 class CategoryResult(BaseModel):
     present: bool
-    raw_excerpt: list[str]
+    raw_excerpt: RawExcerpt
     plain_language: str
     risk_level: Literal["low", "medium", "high"]
     question_to_ask: str
