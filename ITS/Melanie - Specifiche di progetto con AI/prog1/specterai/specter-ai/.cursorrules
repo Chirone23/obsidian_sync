@@ -21,6 +21,8 @@ Architettura: stateless, single-request, no database, no user accounts.
 - Nessun commento ovvio. Commenta solo invarianti non evidenti dal codice.
 - Temperature=0, max_tokens=2048 per tutte le chiamate Claude.
 - Il system prompt vive SOLO in prompts/system_prompt.md — non hardcodarlo nel codice.
+- USA SEMPRE Pydantic v2. Vietato: `validator`, `class Config`, `.dict()`, `.parse_obj()`. Obbligatorio: `model_validator`, `model_config`, `.model_dump()`, `.model_validate()`.
+- USA SEMPRE Python 3.12+ syntax. Nessun pattern deprecato pre-3.10.
 
 ## schemas.py — regole specifiche
 - `raw_excerpt` deve essere `list[str]` (non `str`).
