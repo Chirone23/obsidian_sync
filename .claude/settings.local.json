@@ -103,7 +103,8 @@
       "Bash(pip show *)",
       "Bash(where opf *)",
       "PowerShell(opf redact *)",
-      "Bash(sort -k5 -n)"
+      "Bash(sort -k5 -n)",
+      "PowerShell(ls \"C:\\\\Users\\\\Chirone\\\\Documents\\\\Secondo_Cervello\\\\ITS\\\\Melanie - Specifiche di progetto con AI\\\\prog1\\\\\")"
     ]
   }
 }
