@@ -1,9 +1,10 @@
 # Privacy Filter Integration — SpecterAI
 
 **Data decisione:** 2026-05-20
-**Stato:** Design **promosso da feature a requisito GDPR** dopo verifica Perplexity (P1+P2+P3, 2026-05-20)
+**Stato:** Design **promosso a requisito GDPR** + **pivot tecnico: OPF → Hybrid (regex IT + spaCy)** dopo smoke test sul campo
 **Motivazione utente:** *"Non voglio dare dati importanti a chi non li deve avere; ne vale l'affidabilità del progetto."*
 **Motivazione regolatoria (P3):** GDPR Art. 5 (data minimization) + Art. 25 (data protection by design) → redazione PII pre-LLM è *"mandatory in practice"* per SMB italiano che invia contratti a Anthropic. DPA + retention 7gg da **soli** sono **insufficienti**.
+**Motivazione pivot tecnico:** OPF testato su 2 PDF reali, qualità detection IT confermata (P1 OK) ma **velocità inaccettabile per UX MVP**: 55s di pura inferenza su 3KB → ~10 min per contratto medio. Architettura custom MoE+Triton non supporta path ONNX rapido. Decisione: tenere OPF come PoC, pivot a Hybrid (regex deterministico per PII strutturate IT + spaCy `it_core_news_lg` per NER nomi/luoghi).
 **Link a:** [[Progettistica AI MOC]] · [[SESSION_HANDOFF]] · [[Specifica Tecnica v3 - SpecterAI]] · [[PROMPT_LOG]] · [[INCIDENTS]]
 
 ---
@@ -14,7 +15,20 @@ Impedire che PII (nomi, indirizzi, email, IBAN, codici fiscali, date sensibili, 
 
 ---
 
-## Tool selezionato (primario)
+## ⚠️ PIVOT — Decisione finale tool
+
+**Dopo smoke test 2026-05-20:** pivot da OPF a **stack Hybrid italiano** (vedi sezione "Smoke Test Results" più sotto).
+
+**Tool finale selezionato (D — Hybrid pragmatico):**
+- **Regex deterministico** per PII strutturate italiane: CF (codice fiscale 16 char), P.IVA (11 cifre), IBAN (`IT` + 25 char), telefono (+39…), email
+- **spaCy `it_core_news_lg`** per NER nomi propri + luoghi/indirizzi
+- **Latency target:** <1s per contratto (vs ~10min con OPF)
+
+**OPF mantenuto come:** PoC dimostrativo + fallback opzionale per detection categorie più sfumate (post-MVP). Codice resta in `C:\Users\Chirone\Desktop\Progetti\privacy-filter`.
+
+---
+
+## Tool inizialmente valutato (PoC)
 
 **`openai/privacy-filter`** ([github.com/openai/privacy-filter](https://github.com/openai/privacy-filter))
 
@@ -27,6 +41,38 @@ Impedire che PII (nomi, indirizzi, email, IBAN, codici fiscali, date sensibili, 
 | Maturità | ⚠️ Solo 3 commit su main — sperimentale |
 
 **Fallback** (se Step A fallisce su performance): `presidio` di Microsoft — maturo, ma **inferiore in italiano** (vedi sotto P1).
+
+---
+
+## Smoke Test Results (2026-05-20) — OPF on real Italian PDFs
+
+**Setup:**
+- OPF v0.1.0 editable install in `C:\Users\Chirone\Desktop\Progetti\privacy-filter`
+- Modello già scaricato in HF cache (06/05/2026)
+- CLI: `opf redact --device cpu --format json --output-mode typed`
+- Hardware: Ryzen 5 PRO 5650U (Zen3, no GPU dedicata), 16GB RAM
+
+**Test #1 — NDA Politecnico (template)**
+- Chars: 3283 — Tempo: **83.5s** (cold + inference)
+- Latency modello: 57.0s
+- Span rilevati: **0** ✅ atteso (template con campi `___________`)
+
+**Test #2 — Locazione INPS slice (3K con PII reali)**
+- Chars: 3000 — Tempo: **64.7s**
+- Latency modello: 55.4s
+- Span rilevati: **6** ✅ → `account_number: 4` (incl. CF `80078750587`), `private_address: 2` (Via Senatore Alessi 14, Via Maggiore Pietro Toselli 5)
+
+**Qualità detection IT:** ✅ Confermata P1 — OPF cattura PII italiane reali (CF + indirizzi)
+
+**Velocità:** ❌ **Inaccettabile per MVP** — throughput ~46 char/s
+- Estrapolazione: contratto medio (26K) ≈ 9-10 min; denso (50K) ≈ 18 min
+- 90% del tempo è pura inferenza modello (non I/O)
+- bfloat16 emulato su Zen3 (Zen4+ per nativo) penalizza ulteriormente
+
+**Tentativo Path A (ONNX) abbandonato:**
+- OPF source senza riferimenti a onnx — architettura custom MoE+Triton, non `AutoModelForTokenClassification` standard
+- Cartella `/onnx` su HF dedicata a Transformers.js (browser), non onnxruntime Python
+- Custom inference script richiederebbe ore (replicare Viterbi decoding + span extraction post-hoc)
 
 ---
 
@@ -62,7 +108,51 @@ Impedire che PII (nomi, indirizzi, email, IBAN, codici fiscali, date sensibili, 
 
 ---
 
-## Architettura — Map-back Pattern
+## Architettura finale — Hybrid Map-back Pattern (D)
+
+**Pipeline `privacy_filter.py` (post-pivot):**
+
+```
+text_raw ──► regex_layer_pii (deterministico)
+                  │
+                  ├─ Codice Fiscale (16 alfanum, RGX validato Agenzia Entrate)
+                  ├─ Partita IVA (11 cifre + checksum Luhn IT)
+                  ├─ IBAN (IT + 25 alfanum, checksum mod-97)
+                  ├─ Email (RFC 5322 light)
+                  ├─ Telefono italiano (+39, 39, 0…, 3…)
+                  └─ Account/numeri conto generici
+                  │
+                  ▼
+            text_partial_redacted
+                  │
+                  ▼
+           spaCy NER it_core_news_lg
+                  │
+                  ├─ PERSON (nomi propri)
+                  ├─ LOC / GPE (luoghi, indirizzi)
+                  └─ ORG (organizzazioni — opzionale, configurabile)
+                  │
+                  ▼
+            text_fully_redacted + pii_mapping
+                  │
+                  ▼
+         [resto pipeline identica a sotto]
+```
+
+**Vantaggi vs OPF:**
+- ⚡ **<1s per contratto** (vs ~10 min)
+- 🎯 **100% determinismo** sulle categorie regex (CF/IVA/IBAN sono pattern matematici, no probabilità)
+- 🔒 **Coverage GDPR**: cattura le PII *più sensibili* per SMB italiano (identificatori fiscali/bancari)
+- 🇮🇹 **NER italiano nativo** (spaCy IT è maturo, addestrato su corpus IT)
+- 📦 **Zero LLM nel filtro** → no provider dipendenze, no cold start, no allucinazioni nel filtro stesso
+
+**Trade-off accettato:**
+- Coverage entità "fuzzy" (es. soprannomi, ruoli con nome nascosto) inferiore a OPF
+- spaCy NER su nomi rari/stranieri può perdere → mitigato da regex pattern già catturati prima
+
+---
+
+## Architettura legacy — Map-back Pattern (OPF, abbandonato)
 
 ```
 PDF ─► pdf_processor.py ─► contratto_raw.txt

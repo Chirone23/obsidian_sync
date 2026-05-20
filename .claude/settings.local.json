@@ -99,7 +99,11 @@
       "Bash(ls execution/)",
       "Bash(ls script/)",
       "Bash(start *)",
-      "Bash(gh repo *)"
+      "Bash(gh repo *)",
+      "Bash(pip show *)",
+      "Bash(where opf *)",
+      "PowerShell(opf redact *)",
+      "Bash(sort -k5 -n)"
     ]
   }
 }
