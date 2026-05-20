@@ -1,0 +1,11 @@
+---
+description: SpecterAI — metadati regex in regex_layer.py
+globs: "**/regex_layer.py"
+alwaysApply: false
+---
+
+# regex_layer.py
+
+- Esegui **prima** del filtro PII: date (`gg/mm/aaaa` e varianti), importi (`€` + numero), scadenze testuali (es. "entro X giorni").
+- Output: `{"dates": list[str], "amounts": list[str], "deadlines": list[str]}`.
+- Nessuna chiamata LLM — solo `re` stdlib.

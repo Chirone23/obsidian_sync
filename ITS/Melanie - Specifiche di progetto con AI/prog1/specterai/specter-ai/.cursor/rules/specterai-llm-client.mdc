@@ -1,0 +1,13 @@
+---
+description: SpecterAI — pipeline Claude in llm_client.py
+globs: "**/llm_client.py"
+alwaysApply: false
+---
+
+# llm_client.py
+
+- Pipeline: `redact()` → carica `system_prompt.md` → Claude → `restore()` su tutti i `raw_excerpt` dell'output JSON.
+- Retry **max 1** se JSON malformato.
+- Valida con `ContractAnalysis.model_validate()` — no JSON grezzo accettato.
+- System prompt: `Path("prompts/system_prompt.md").read_text()` — usa solo il blocco tra triple backtick del SYSTEM PROMPT.
+- Se `language_detected` non è `"italian"` o `"english"`, solleva `ValueError`.

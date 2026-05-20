@@ -1,0 +1,12 @@
+---
+description: SpecterAI — estrazione PDF con pdf_processor.py
+globs: "**/pdf_processor.py"
+alwaysApply: false
+---
+
+# pdf_processor.py
+
+- Usa `fitz` (PyMuPDF). Testo pagina per pagina, join con `"\n"`.
+- Tronca a **40.000** caratteri **dopo** l'estrazione (non prima).
+- Se il PDF è scansionato (testo estratto `< 100` caratteri), solleva eccezione esplicita.
+- Nessun OCR nel MVP.

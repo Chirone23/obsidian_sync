@@ -1,0 +1,14 @@
+---
+description: SpecterAI — redazione PII in privacy_filter.py
+globs: "**/privacy_filter.py"
+alwaysApply: false
+---
+
+# privacy_filter.py
+
+- **Hybrid:** regex deterministico (CF, P.IVA, IBAN, email, telefono IT) → poi spaCy NER `it_core_news_lg` per PERSON / LOC / ORG.
+- `redact(text: str) -> tuple[str, dict]` — testo redatto + mapping `placeholder → valore`.
+- `restore(text: str, mapping: dict) -> str`.
+- Placeholder: `[PII_TYPE_N]` (es. `[PERSON_1]`, `[IBAN_1]`).
+- Mapping solo in RAM per la singola analisi — mai su disco.
+- **Fail-closed:** in caso di errore del filtro, eccezione — mai inviare PII in chiaro.

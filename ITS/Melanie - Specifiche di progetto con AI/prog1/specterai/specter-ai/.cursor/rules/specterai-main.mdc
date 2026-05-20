@@ -1,0 +1,12 @@
+---
+description: SpecterAI — FastAPI e upload in main.py
+globs: "**/main.py"
+alwaysApply: false
+---
+
+# main.py
+
+- Un solo endpoint: `POST /analyze`, `multipart/form-data`, campo `file`.
+- Valida MIME `application/pdf`, dimensione file ≤ **10 MB**.
+- Risposta: `report.html` via Jinja2 (non JSON grezzo al client).
+- Errori: PDF scansionato → **422** + messaggio chiaro; API down → **503** + header `Retry-After`.

@@ -1,0 +1,43 @@
+---
+description: SpecterAI — contesto progetto, stack e standard trasversali
+alwaysApply: true
+---
+
+# SpecterAI — Core
+
+## Progetto
+AI Contract Analyzer per non-avvocati italiani.
+
+**Stack:** Python 3.12, FastAPI, PyMuPDF, Anthropic Claude API (claude-sonnet-4-6), Pydantic v2, Jinja2.
+
+**Architettura:** stateless, single-request, no database, no user accounts.
+
+## Ordine moduli (build)
+1. `schemas.py` — Pydantic, source of truth
+2. `pdf_processor.py` — PyMuPDF, testo PDF, troncamento 40k
+3. `privacy_filter.py` — PII (regex IT + spaCy `it_core_news_lg`) prima LLM
+4. `regex_layer.py` — date/importi/scadenze (pre-filtro)
+5. `llm_client.py` — redact → API → restore su `raw_excerpt`
+6. `main.py` — FastAPI `POST /analyze`
+7. `templates/` — Jinja2 `index.html`, `report.html`
+
+## Regole generali
+- Un modulo = una responsabilità; non mescolare livelli.
+- Nessun `print()` in produzione — `logging` stdlib.
+- Type hints su tutte le funzioni pubbliche.
+- Commenti solo per invarianti non evidenti.
+- Claude: `temperature=0`, `max_tokens=2048`.
+- System prompt **solo** in `prompts/system_prompt.md` — non hardcodare nel codice.
+
+## Pydantic v2 e Python
+- Vietato: `validator`, `class Config`, `.dict()`, `.parse_obj()`.
+- Obbligatorio: `model_validator`, `model_config`, `.model_dump()`, `.model_validate()`.
+- Sintassi Python 3.12+; niente pattern pre-3.10 deprecati.
+
+## Non modificare
+- `prompts/system_prompt.md`
+- `requirements.txt` (pin) senza motivo esplicito
+- `tests/contratti/` (PDF di test)
+
+## Segreti
+`.env` con `ANTHROPIC_API_KEY` — mai in git.
