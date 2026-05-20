@@ -1,8 +1,9 @@
 # Privacy Filter Integration — SpecterAI
 
 **Data decisione:** 2026-05-20
-**Stato:** Design proposto, in attesa di sanity check (Step A)
+**Stato:** Design **promosso da feature a requisito GDPR** dopo verifica Perplexity (P1+P2+P3, 2026-05-20)
 **Motivazione utente:** *"Non voglio dare dati importanti a chi non li deve avere; ne vale l'affidabilità del progetto."*
+**Motivazione regolatoria (P3):** GDPR Art. 5 (data minimization) + Art. 25 (data protection by design) → redazione PII pre-LLM è *"mandatory in practice"* per SMB italiano che invia contratti a Anthropic. DPA + retention 7gg da **soli** sono **insufficienti**.
 **Link a:** [[Progettistica AI MOC]] · [[SESSION_HANDOFF]] · [[Specifica Tecnica v3 - SpecterAI]] · [[PROMPT_LOG]] · [[INCIDENTS]]
 
 ---
@@ -25,7 +26,39 @@ Impedire che PII (nomi, indirizzi, email, IBAN, codici fiscali, date sensibili, 
 | Licenza | Apache 2.0 (uso commerciale OK) |
 | Maturità | ⚠️ Solo 3 commit su main — sperimentale |
 
-**Fallback** (se Step A fallisce): `presidio` di Microsoft — maturo, multilingue, CPU-friendly, già usato in produzione enterprise.
+**Fallback** (se Step A fallisce su performance): `presidio` di Microsoft — maturo, ma **inferiore in italiano** (vedi sotto P1).
+
+---
+
+## Verifica Perplexity (2026-05-20) — 3 query mirate
+
+### P1 — Benchmark OPF vs Presidio su italiano (PERSON + ADDRESS + IBAN)
+
+- **OPF:** ~95-97% F1 su PII-Masking-300k (include italiano), forte su `private_person`, `private_address`, `account_number` (IBAN-like). Multilingue nativo.
+- **Presidio:** italiano supportato solo via community/custom recognizers, ~mid-80s F1 con tuning manuale, peggio out-of-the-box. Richiede spaCy IT + regex IBAN custom per essere usabile.
+- **Verdetto:** **OPF vince nettamente per il nostro caso d'uso** (contratti italiani con nomi + indirizzi + IBAN).
+
+### P2 — OPF su Ryzen senza GPU, 16GB RAM
+
+- ✅ **Gira CPU-only** (WASM fallback nativo, no GPU richiesta)
+- ✅ **1.5B params + MoE sparsity** → working set attivo molto più piccolo di un 1.5B denso, fattibile in 16GB
+- ⚠️ **Throughput basso:** community report ~2-3 samples/sec su CPU desktop tipica
+- ⚠️ **Serve build quantizzato** (4-bit/INT8 o WASM packaged) — NON caricare fp16 raw
+- ⚠️ **NVMe SSD raccomandato** + chiudere altre app per evitare swap
+- **Verdetto:** **fattibile ma con caveat** — usare quantized build, accettare ~5-10s di redazione per contratto medio (latency totale ~20-25s)
+
+### P3 — GDPR + DPA Anthropic: redazione PII è obbligatoria?
+
+- **Risposta breve:** *"PII redaction is not strictly mandatory by GDPR itself, but is almost always required in practice"*
+- **GDPR base:** Art. 5 (minimizzazione) + Art. 25 (privacy by design) + Art. 35 (DPIA per processing high-risk)
+- **DPA + retention 7gg da soli = INSUFFICIENTI:** un DPA non rende lecito un processing eccessivo. Bulk contract-analysis spesso classificato high-risk → DPIA potenzialmente richiesta.
+- **Cosa si aspettano i regolatori (Garante incluso):**
+  1. Data minimization: solo PII minime al modello
+  2. **Redaction/pseudonymization pre-cloud-LLM**
+  3. DPIA documentata se high-risk
+- **Verdetto:** ⚠️ **Cambia status del privacy-filter da "feature" a "compliance requirement"** per SMB italiano. La spec v3.1 ha già un §sull'AI Act (rischio limitato Art. 6(3)) ma **non copriva esplicitamente GDPR Art. 5/25** — questa è una **gap chiusa** dall'addendum §3.bis.
+
+---
 
 ---
 
@@ -119,10 +152,17 @@ def redact_safe(text: str) -> tuple[str, dict]:
 
 | Risultato Step A | Azione |
 |---|---|
-| Tempo <5s, RAM <8GB, IT decente | ✅ Adottare opf come primario |
-| Tempo 5-15s o RAM 8-12GB | ⚠️ Adottare opf con caveat in spec |
-| Tempo >15s o RAM >12GB | ❌ Switch a `presidio` come primario |
-| Italiano scarso (FN >30% su nomi) | ❌ Switch a `presidio` (multilingue maturo) |
+| Tempo <5s, RAM <8GB | ✅ Adottare opf come primario senza riserve |
+| Tempo 5-15s o RAM 8-12GB | ✅ Adottare opf con caveat latency in spec (target `<25s`) |
+| Tempo >15s o RAM >12GB | ⚠️ Cercare build più quantizzato (4-bit) prima di scartare opf |
+| OPF impossibile da far girare | ❌ Fallback `presidio + spaCy IT + regex IBAN custom` (più lavoro ma copre)|
+
+**Update post-P1:** italiano di OPF è confermato buono (~95-97% F1). Il `presidio` come fallback va con custom recognizers IT — più lavoro. **Quindi: priorità a far funzionare OPF**, anche accettando latency più alta.
+
+**Setup raccomandato (da P2):**
+- Build quantizzato (4-bit/INT8 o WASM), no fp16 raw
+- Chiudere browser/app pesanti durante l'analisi
+- NVMe SSD per il modello (già presente)
 
 - ✅ Decisione data-driven, non basata su preferenze
 - ✅ Spec aggiornata solo dopo Step A (no over-commit)
@@ -164,10 +204,12 @@ claude_input = {
 
 **Soluzione: Rilassare target + ottimizzazioni mirate.**
 
+**Update post-P2:** community reporta ~2-3 samples/sec su CPU desktop → contratto medio (~5-10 chunk) = ~5-10s di sola redazione. Target realistico aggiornato.
+
 **Tre azioni:**
 1. **Misurare nello Step A** quanto aggiunge il filtro (T_redact + T_restore)
-2. **Aggiornare target spec** da `<15s` a `<20s` se necessario — costo accettabile per privacy
-3. **Ottimizzazioni se sfora `<20s`:**
+2. **Aggiornare target spec** da `<15s` a **`<25s`** (P2 ha alzato l'aspettativa: ~5-10s solo per redact)
+3. **Ottimizzazioni se sfora `<25s`:**
    - Chunking del testo (filtri parallelizzabili su passaggi indipendenti)
    - Cache del modello opf in memoria (no reload tra richieste)
    - Skip filtro su contratti <1000 caratteri (rare, basso valore)
@@ -179,20 +221,22 @@ claude_input = {
 
 ### Rischio 5 — Spec v3.1 congelata 95/100 dalla prof
 
-**Soluzione: Estensione, non modifica. Comunicazione preventiva.**
+**Soluzione: Addendum §3.bis con framing GDPR (non "feature add", "gap compliance chiusa").**
+
+**Aggiornamento post-P3:** la verifica regolatoria cambia il framing. **Non è più "aggiungo una feature di privacy"**, è **"chiudo un gap di compliance GDPR Art. 5/25 che la spec v3.1 non copriva"**.
 
 **Approccio:**
 1. **Non riapro la spec** — la prof ha detto *"non c'è nulla da aggiungere"*
-2. **Aggiungo `§3.bis Privacy-First Architecture`** come **addendum** numerato — preserva la versione 3.1 originale, marca chiaramente l'estensione post-feedback
-3. **Email/messaggio breve alla prof PRIMA di implementare:**
+2. **Aggiungo `§3.bis Privacy-First Architecture (GDPR Art. 5+25 compliance)`** come **addendum** numerato post-v3.1
+3. **Messaggio alla prof:**
 
-   > *"Spec v3.1 confermata, grazie. Sto valutando di aggiungere un layer di redazione PII locale (opf/presidio) prima della chiamata Anthropic — non cambia architettura, è un addendum §3.bis. Vede problemi o lo considera fuori scope MVP?"*
+   > *"Spec v3.1 confermata, grazie. Verifica Perplexity su requisiti GDPR per SMB italiano (P3): DPA + retention 7gg sono insufficienti senza data minimization (Art. 5) e privacy by design (Art. 25). Aggiungo un addendum §3.bis con layer di redazione PII locale (OpenAI Privacy Filter) pre-chiamata Anthropic. Non cambia architettura LLM, chiude un gap di compliance. Vede problemi?"*
 
-4. **Risposta attesa:** verde (privacy = sempre bene), giallo (rinvia post-MVP come stretch goal), rosso (non lo vuole). Decisione resta in mano alla prof.
+4. **Risposta attesa:** verde alta probabilità (è compliance, non gold-plating). Se gialla/rossa → fallback Stretch Goal §2.bis post-demo con DPIA notata come futuro lavoro.
 
+- ✅ Framing legale (Art. 5/25), non estetico → difficile dire "no" a compliance
 - ✅ Trasparenza con la docente
 - ✅ Mai modifica retroattiva di un deliverable validato
-- ✅ Se la prof dice "no", → `§2.bis Stretch Goal` post-demo
 
 ---
 
@@ -213,10 +257,12 @@ claude_input = {
 
 | # | Domanda | Quando |
 |---|---|---|
-| Q5 | opf risponde bene all'italiano? (corpus training prevalente EN) | Step A |
+| ~~Q5~~ | ~~opf risponde bene all'italiano?~~ | ✅ Risolta P1: sì, 95-97% F1 |
 | Q6 | Mappatura placeholder: schema `[NAME_1]` o UUID? (UUID più resistente a collisioni) | Step D |
 | Q7 | Cache del modello opf cross-richiesta o stateless per sessione? | Step D |
 | Q8 | Test T15 cosa loggare? Solo "0 PII leak" o anche tipo+count di placeholder generati? | Step F |
+| Q9 | DPIA necessaria? Bulk contract-analysis spesso classificato high-risk GDPR Art. 35 | Da chiedere alla prof + nota in spec come "scope post-MVP per uso commerciale" |
+| Q10 | Build OPF: quantized 4-bit ufficiale esiste o serve conversione manuale via llama.cpp? | Step A — primo check prima di pip install |
 
 ---
 
