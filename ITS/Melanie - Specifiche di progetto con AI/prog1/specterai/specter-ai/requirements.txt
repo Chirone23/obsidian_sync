@@ -7,3 +7,4 @@ jinja2==3.1.4
 python-multipart==0.0.9
 python-dotenv==1.0.1
 spacy==3.7.6
+# it_core_news_sm: python -m spacy download it_core_news_sm (usa sm, non lg — lg va in timeout su Windows)
