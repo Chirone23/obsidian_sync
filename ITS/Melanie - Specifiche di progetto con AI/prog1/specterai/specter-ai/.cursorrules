@@ -1,0 +1,77 @@
+# SpecterAI — Cursor Rules
+
+## Progetto
+AI Contract Analyzer per non-avvocati italiani.
+Stack: Python 3.12, FastAPI, PyMuPDF, Anthropic Claude API (claude-sonnet-4-6), Pydantic v2, Jinja2.
+Architettura: stateless, single-request, no database, no user accounts.
+
+## Struttura moduli (ordine di build)
+1. schemas.py        — Pydantic models, source of truth per tutti gli altri moduli
+2. pdf_processor.py  — PyMuPDF: estrazione testo da PDF, troncamento 40k char
+3. privacy_filter.py — Redazione PII (regex IT + spaCy it_core_news_lg) prima della chiamata LLM
+4. regex_layer.py    — Estrazione date/importi/scadenze come metadati strutturati (pre-filtro)
+5. llm_client.py     — Chiamata Claude API: redact → API → restore PII nei raw_excerpt
+6. main.py           — FastAPI: endpoint POST /analyze, gestione upload PDF
+7. templates/        — Jinja2: index.html (upload), report.html (risultato)
+
+## Regole generali
+- Ogni modulo ha una sola responsabilità. Non mescolare logica di livelli diversi.
+- Nessun print() in produzione — usa logging stdlib.
+- Type hints su tutte le funzioni pubbliche.
+- Nessun commento ovvio. Commenta solo invarianti non evidenti dal codice.
+- Temperature=0, max_tokens=2048 per tutte le chiamate Claude.
+- Il system prompt vive SOLO in prompts/system_prompt.md — non hardcodarlo nel codice.
+
+## schemas.py — regole specifiche
+- `raw_excerpt` deve essere `list[str]` (non `str`).
+- Ogni span di raw_excerpt: min_length=20, nessuno contiene "[...]".
+- Validator post-init: controlla ellissi marker in ogni span.
+- `risk_level`: Literal["low", "medium", "high"].
+- `language_detected`: Literal["italian", "english"].
+- Il modello top-level si chiama `ContractAnalysis`.
+- Il modello per categoria si chiama `CategoryResult`.
+
+## pdf_processor.py — regole specifiche
+- Usa `fitz` (PyMuPDF). Estrai testo pagina per pagina, join con "\n".
+- Tronca a 40.000 caratteri dopo l'estrazione (non prima).
+- Solleva eccezione esplicita se il PDF è scansionato (testo estratto < 100 char).
+- Nessun OCR nel MVP.
+
+## privacy_filter.py — regole specifiche
+- Stack Hybrid: regex deterministico per CF/P.IVA/IBAN/email/telefono IT, poi spaCy NER it_core_news_lg per PERSON/LOC/ORG.
+- `redact(text: str) -> tuple[str, dict]` — restituisce testo redatto + mapping placeholder→valore.
+- `restore(text: str, mapping: dict) -> str` — ripristina i valori reali.
+- Placeholder format: `[PII_TYPE_N]` (es. `[PERSON_1]`, `[IBAN_1]`).
+- Il mapping non viene mai scritto su disco. Vive solo in RAM per la durata della singola analisi.
+- Fail-closed: se il filtro fallisce, solleva eccezione — mai mandare PII in chiaro.
+
+## regex_layer.py — regole specifiche
+- Estrae PRIMA del filtro PII: date (gg/mm/aaaa e varianti), importi (€ + numero), scadenze testuali ("entro X giorni").
+- Restituisce dict `{"dates": list[str], "amounts": list[str], "deadlines": list[str]}`.
+- Nessuna chiamata LLM qui. Solo re stdlib.
+
+## llm_client.py — regole specifiche
+- Pipeline: `redact()` → carica system_prompt.md → chiama Claude API → `restore()` su tutti i campi raw_excerpt dell'output JSON.
+- Retry max 1 volta se il JSON è malformato.
+- Valida l'output con `ContractAnalysis.model_validate()` — non accettare JSON grezzo.
+- Carica il system prompt da file: `Path("prompts/system_prompt.md").read_text()` — estrai solo il blocco dentro i triple backtick del SYSTEM PROMPT.
+- Solleva `ValueError` se `language_detected` non è "italian" o "english".
+
+## main.py — regole specifiche
+- Un solo endpoint: `POST /analyze` che accetta `multipart/form-data` con campo `file`.
+- Valida: MIME type `application/pdf`, dimensione ≤ 10MB.
+- Risponde con `report.html` renderizzato via Jinja2, non con JSON grezzo.
+- Gestione errori: PDF scansionato → 422 + messaggio chiaro; API down → 503 + Retry-After.
+
+## templates/ — regole specifiche
+- index.html: form upload semplice, disclaimer AI visibile prima del tasto invia.
+- report.html: mostra le 7 categorie, top_3_risks, disclaimer in fondo. CSS inline OK per MVP.
+- Nessun framework CSS esterno. HTML + CSS vanilla.
+
+## File da NON modificare
+- prompts/system_prompt.md — source of truth del prompt, non toccare.
+- requirements.txt — versioni pinnate, non aggiornare senza motivo.
+- tests/contratti/ — PDF di test, non spostare.
+
+## .env (non committare mai)
+ANTHROPIC_API_KEY=sk-ant-...
