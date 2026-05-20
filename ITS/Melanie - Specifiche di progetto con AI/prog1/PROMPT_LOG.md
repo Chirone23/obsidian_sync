@@ -783,6 +783,18 @@ In Test #4 Sonnet aveva inferito "foro probabile Milano" **con qualificatore esp
 
 ---
 
+## Segnali da monitorare (post-convalida 2026-05-20)
+
+> Non sono pattern confermati — non richiedono patch ora. Sono **leading indicator**: se si ripresentano in Test plan §8 (Lez. 5) o in produzione, promuoverli a patch v2.3+.
+
+| # | Segnale | Test origine | Soglia di promozione a patch |
+|---|---|---|---|
+| S-01 | **"potrebbe" come marker speculativo implicito** — `governing_law` Test #6: *"la legge potrebbe prevedere un foro diverso"*. Non è nell'elenco letterale dei marker vietati da v2.2 ("potrebbe essere" sì, "potrebbe" da solo no), ma nello spirito del vincolo. Il fatto citato è tecnicamente vero (tutela consumatori esiste), quindi non è allucinazione — ma introduce incertezza non grounded nel testo. | Test #6 Dolomiti Energia | 2+ occorrenze in §8 o segnalazione utente |
+| S-02 | **Gestione positiva campi template non compilati** — Test #7: Sonnet segnala correttamente `(30/60/90) giorni` come campo non barrato, invitando l'utente a verificare prima della firma. Comportamento opposto al pattern 6 (Test #5 Locazione INPS dove asseriva ubicazione da campo vuoto). Non richiede patch — da confermare come comportamento stabile nel test plan §8. | Test #7 co.co.co. template | Se Test §8 mostra regressione (campo vuoto → asserzione) → T15-bis |
+| S-03 | **Contesto atipico: accordi non commerciali** — Test #8 (carriera alias universitaria) produce output formalmente corretto ma con edge case su categorie non applicabili (es. `intellectual_property` con giudizio di contesto "non rilevante"). SpecterAI non ha gate di rifiuto per contratti non commerciali — in produzione un utente potrebbe caricare qualsiasi documento. | Test #8 accordo universitario | Se frequente in demo/produzione → aggiungere gate "tipologia contratto" in `pdf_processor.py` o disclaimer contestuale |
+
+---
+
 ## Cumulativo Test #1→#5 — Sintesi pre-Cursor (2026-05-11)
 
 **Copertura test mini-suite:** 5/5 PDF prioritari analizzati con prompt v1-final invariato; 4/5 verifiche fattuali delegate a Haiku via Claude.ai (Test #2 ERSU non richiedeva verifica perché 0 pattern).
