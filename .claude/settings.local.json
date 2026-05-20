@@ -109,7 +109,8 @@
       "PowerShell(python -c \"import spacy; nlp = spacy.load\\('it_core_news_lg'\\); print\\('spaCy OK:', nlp.lang\\)\" 2>&1)",
       "PowerShell(python -m spacy download it_core_news_lg 2>&1 | Select-Object -Last 4)",
       "PowerShell(python -m spacy download it_core_news_lg --timeout 300 2>&1 | Select-Object -Last 6)",
-      "PowerShell(claude *)"
+      "PowerShell(claude *)",
+      "PowerShell(cd \"C:\\\\Users\\\\Chirone\\\\Documents\\\\Secondo_Cervello\\\\ITS\\\\Melanie - Specifiche di progetto con AI\\\\prog1\\\\specterai\\\\specter-ai\" && Start-Process powershell -ArgumentList \"-NoExit\", \"-Command\", \"uvicorn main:app --reload --port 8000\" && Start-Sleep 3 && python -c \"import urllib.request; r = urllib.request.urlopen\\('http://localhost:8000/'\\); print\\('GET / status:', r.status\\)\")"
     ]
   }
 }

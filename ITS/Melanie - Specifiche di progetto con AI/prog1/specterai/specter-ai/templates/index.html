@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpecterAI — Analizza il tuo contratto</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #222; }
+    .container { max-width: 600px; margin: 80px auto; padding: 0 20px; }
+    h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: #666; margin-bottom: 40px; font-size: 1rem; }
+    .card { background: #fff; border-radius: 12px; padding: 36px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .disclaimer { background: #fff8e1; border-left: 4px solid #f59e0b; padding: 14px 16px; border-radius: 4px; font-size: 0.875rem; color: #444; margin-bottom: 28px; line-height: 1.5; }
+    .upload-area { border: 2px dashed #d1d5db; border-radius: 8px; padding: 32px; text-align: center; margin-bottom: 20px; cursor: pointer; transition: border-color 0.2s; }
+    .upload-area:hover { border-color: #6366f1; }
+    .upload-area input[type=file] { display: none; }
+    .upload-label { display: block; cursor: pointer; }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .upload-text { color: #6b7280; font-size: 0.9rem; }
+    .file-name { margin-top: 10px; font-size: 0.85rem; color: #6366f1; font-weight: 500; }
+    button { width: 100%; padding: 14px; background: #6366f1; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #4f46e5; }
+    button:disabled { background: #a5b4fc; cursor: not-allowed; }
+    .hint { margin-top: 14px; font-size: 0.8rem; color: #9ca3af; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SpecterAI</h1>
+    <p class="subtitle">Analisi contratti per non-avvocati</p>
+    <div class="card">
+      <div class="disclaimer">
+        ⚠️ Caricando il contratto accetti che il testo venga elaborato localmente e inviato ad Anthropic via HTTPS per l'analisi AI.
+        <strong>Non caricare contratti con dati sanitari, biometrici o di minori.</strong>
+        Le PII (nomi, codici fiscali, IBAN) vengono anonimizzate prima dell'invio.
+      </div>
+      <form method="post" action="/analyze" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+          <label class="upload-label">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Clicca per selezionare un PDF</div>
+            <div class="upload-text" style="margin-top:4px">Max 10MB · Solo testo selezionabile (no scansioni)</div>
+            <div class="file-name" id="fileName"></div>
+            <input type="file" id="fileInput" name="file" accept=".pdf" required
+                   onchange="document.getElementById('fileName').textContent = this.files[0]?.name || ''">
+          </label>
+        </div>
+        <button type="submit" id="submitBtn">Analizza contratto</button>
+        <p class="hint">L'analisi richiede circa 15–30 secondi</p>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+      var btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Analisi in corso…';
+    });
+  </script>
+</body>
+</html>
