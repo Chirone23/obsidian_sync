@@ -85,3 +85,4 @@ Materia ITS — AI Projects Development, specifiche di progetto con AI.
 
 - [[idea1]] — Idea 1: Product Intelligence Analyzer (concept validato)
 - [[Review Spec v2 - Gap e Roadmap Pre-Consegna]] — review critica SpecterAI v2: 5 gap, roadmap fix 4-6h pre-consegna
+- [[prog1/Privacy Filter Integration]] — SpecterAI: design integrazione `openai/privacy-filter` (map-back PII), 5 rischi risolti, sanity check Step A pendente

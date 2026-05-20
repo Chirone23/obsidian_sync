@@ -98,7 +98,8 @@
       "Bash(Sort-Object)",
       "Bash(ls execution/)",
       "Bash(ls script/)",
-      "Bash(start *)"
+      "Bash(start *)",
+      "Bash(gh repo *)"
     ]
   }
 }
