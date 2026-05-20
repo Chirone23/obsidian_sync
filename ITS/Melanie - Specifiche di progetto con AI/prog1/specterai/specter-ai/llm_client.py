@@ -22,10 +22,11 @@ def _load_system_prompt() -> str:
 
 def _call_claude(system_prompt: str, user_message: str) -> str:
     result = subprocess.run(
-        ["claude", "-p", user_message,
+        ["claude", "-p",
          "--system-prompt", system_prompt,
          "--model", _MODEL,
          "--output-format", "json"],
+        input=user_message,
         capture_output=True,
         text=True,
         encoding="utf-8",
