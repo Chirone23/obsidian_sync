@@ -1,18 +1,18 @@
 # 02 — Processo Creativo & Strategia LLM — Factory Ottica
 
-**Versione:** 1.0
+**Versione:** 1.1
 **Data:** 2026-05-21
-**Status:** 🔵 Attivo — da eseguire partendo da Fase 1
+**Status:** Attivo — da eseguire partendo da Fase 1
 
 ---
 
 ## Flusso del processo creativo
 
 ```
-Discovery (✅ v1.1)
+Discovery (completata v1.1)
   → 02_Specifica_Tecnica.md       ← Fase 1  (PROSSIMO)
     → 02_Design_Brief.md          ← Fase 3a
-      → Generazione HTML/CSS      ← open-design skill  ⬅ CUORE TECNICO
+      → Esecuzione open-design    ← Fase 3a-bis (Haiku)
         → Port WordPress theme PHP ← Fase 3c
           → Deploy InfinityFree + catalogo demo
             → Pitch pack
@@ -24,7 +24,7 @@ Discovery (✅ v1.1)
 
 ## Strategia LLM per fase
 
-### Fase 1 — `02_Specifica_Tecnica.md`
+### Fase 1 — Specifica Tecnica
 
 | Parametro | Valore |
 |---|---|
@@ -36,21 +36,36 @@ Task strutturato su template già esistente ([[Template - Specifica Tecnica]]). 
 
 ---
 
-### Fase 3a — Design Brief + generazione open-design ⚡
+### Fase 3a — Scrittura Design Brief
 
 | Parametro | Valore |
 |---|---|
 | **Modello** | `claude-opus-4-7` |
-| **Think** | **extended** (`budget_tokens: 16000`) |
-| **Effort** | **max** |
+| **Think** | extended (`budget_tokens: 16000`) |
+| **Effort** | max |
+
+Task: scrivere `02_Design_Brief.md` partendo da §8.4-8.7 del Discovery.
 
 **Perché Opus + extended thinking:**
-- Il brief copre 6 sezioni (Home, Shop, Single Product, Cart, Contatti, Servizi)
+- 6 sezioni da progettare (Home, Shop, Single Product, Cart, Contatti, Servizi)
 - 3 CTA gerarchiche per scheda prodotto
 - Configuratore 3-step lenti
 - Override template WooCommerce
-- Vincoli di palette viola brand (`#A98BD9` / `#8B5FBF`) + token design da §8.4 del Discovery
-- Questi vincoli si contraddicono a vicenda → il thinking risolve le tensioni prima di scrivere CSS
+- Vincoli palette viola brand (`#A98BD9` / `#8B5FBF`) + token design da §8.4 Discovery
+- I vincoli si contraddicono a vicenda — il thinking risolve le tensioni prima di scrivere il brief
+
+---
+
+### Fase 3a-bis — Esecuzione open-design (generazione HTML/CSS)
+
+| Parametro | Valore |
+|---|---|
+| **Modello** | `claude-haiku-4-5-20251001` |
+| **Think** | off |
+| **Effort** | medium |
+
+Task: eseguire `/open-design` con input `02_Design_Brief.md` → produce HTML+CSS production-ready.
+Haiku è il modello interno della skill open-design — non cambiare.
 
 **Regola:** max 2-3 iterazioni del brief, poi fallback Astra+Elementor (da [[00_Piano_Azione]] §Rischi).
 
