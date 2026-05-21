@@ -54,58 +54,60 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
     mapping: dict[str, str] = {}
     counters: dict[str, int] = {}
 
-    def replace(match: re.Match, label: str) -> str:
-        val = match.group(0)
+    def _make_placeholder(label: str, val: str) -> str:
         counters[label] = counters.get(label, 0) + 1
         placeholder = f"[{label}_{counters[label]}]"
         mapping[placeholder] = val
         return placeholder
 
-    def replace_cf(match: re.Match) -> str:
-        cf_val = match.group(1)
-        counters['CF'] = counters.get('CF', 0) + 1
-        placeholder = f"[CF_{counters['CF']}]"
-        mapping[placeholder] = cf_val
-        prefix_len = match.start(1) - match.start(0)
-        return match.group(0)[:prefix_len] + placeholder
-
-    def replace_if_valid_piva(match: re.Match) -> str:
-        val = match.group(0)
-        if not validate_piva_luhn(val):
-            return val
-        return replace(match, "PIVA")
-
-    def replace_if_valid_iban(match: re.Match) -> str:
-        val = match.group(0)
-        if not validate_iban_it(val):
-            return val
-        return replace(match, "IBAN")
-
-    text = _CF_RE.sub(replace_cf, text)
-    text = _PIVA_RE.sub(replace_if_valid_piva, text)
-    text = _IBAN_RE.sub(replace_if_valid_iban, text)
-    text = _EMAIL_RE.sub(lambda m: replace(m, "EMAIL"), text)
-    text = _PHONE_RE.sub(lambda m: replace(m, "TEL"), text)
-
+    # Passo 1 — spaCy NER sul testo ORIGINALE.
+    #
+    # Deve precedere le regex. Se le regex girassero prima, i placeholder
+    # inseriti (es. [CF_1]) modificherebbero gli offset e i byte count
+    # del testo: un'entità spaCy che inizia a offset 5 nel testo originale
+    # potrebbe finire a cavallo di un placeholder nel testo modificato,
+    # producendo placeholder annidati tipo [PER[CF_1]_2].
+    #
+    # Con spaCy prima: offset sempre validi, nessun placeholder nel testo
+    # al momento della sostituzione → corruzione impossibile per costruzione.
     if _SPACY_AVAILABLE:
         doc = _nlp(text)
-        # Processa entità in ordine inverso per non spostare gli offset
-        _placeholder_re = re.compile(r'^\[?[A-Z]+_\d+\]?$')
-        entities = [(ent.start_char, ent.end_char, ent.label_) for ent in doc.ents
-                    if ent.label_ in ("PER", "PERSON", "LOC", "GPE", "ORG")]
-        for start, end, label in sorted(entities, reverse=True):
-            val = text[start:end]
-            # Salta se è già un placeholder o parte di uno
-            if not val.strip() or _placeholder_re.match(val.strip()):
+        entities = [
+            (ent.start_char, ent.end_char, ent.label_, ent.text)
+            for ent in doc.ents
+            if ent.label_ in ("PER", "PERSON", "LOC", "GPE", "ORG")
+        ]
+        # Reverse per preservare gli offset delle sostituzioni successive
+        for start, end, label, val in sorted(entities, key=lambda e: e[0], reverse=True):
+            if not val.strip():
                 continue
-            # Salta se cade dentro una sequenza [...] già inserita
-            before = text[max(0, start-1):start]
-            if before == "[":
-                continue
-            counters[label] = counters.get(label, 0) + 1
-            placeholder = f"[{label}_{counters[label]}]"
-            mapping[placeholder] = val
-            text = text[:start] + placeholder + text[end:]
+            text = text[:start] + _make_placeholder(label, val) + text[end:]
+
+    # Passo 2 — Regex deterministiche sul testo post-NER.
+    #
+    # I pattern non matchano dentro placeholder [LABEL_N]: cercano strutture
+    # specifiche (16-char CF alfanumerico, 11 cifre Luhn, IT+27-char, @, +39)
+    # che non compaiono nelle stringhe "[LABEL_N]".
+    def _replace(match: re.Match, label: str) -> str:
+        return _make_placeholder(label, match.group(0))
+
+    def _replace_cf(match: re.Match) -> str:
+        prefix_len = match.start(1) - match.start(0)
+        return match.group(0)[:prefix_len] + _make_placeholder("CF", match.group(1))
+
+    def _replace_piva(match: re.Match) -> str:
+        val = match.group(0)
+        return _make_placeholder("PIVA", val) if validate_piva_luhn(val) else val
+
+    def _replace_iban(match: re.Match) -> str:
+        val = match.group(0)
+        return _make_placeholder("IBAN", val) if validate_iban_it(val) else val
+
+    text = _CF_RE.sub(_replace_cf, text)
+    text = _PIVA_RE.sub(_replace_piva, text)
+    text = _IBAN_RE.sub(_replace_iban, text)
+    text = _EMAIL_RE.sub(lambda m: _replace(m, "EMAIL"), text)
+    text = _PHONE_RE.sub(lambda m: _replace(m, "TEL"), text)
 
     return text, mapping
 
