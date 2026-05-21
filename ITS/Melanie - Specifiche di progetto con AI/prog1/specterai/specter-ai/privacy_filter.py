@@ -10,6 +10,29 @@ except OSError:
     )
 
 
+def validate_piva_luhn(piva: str) -> bool:
+    """Algoritmo Luhn IT per Partita IVA (11 cifre)."""
+    if not re.fullmatch(r'\d{11}', piva):
+        return False
+    odd_sum = sum(int(piva[i]) for i in range(0, 10, 2))
+    even_sum = 0
+    for i in range(1, 10, 2):
+        doubled = int(piva[i]) * 2
+        even_sum += doubled if doubled <= 9 else doubled - 9
+    check = (10 - (odd_sum + even_sum) % 10) % 10
+    return check == int(piva[10])
+
+
+def validate_iban_it(iban: str) -> bool:
+    """Checksum mod-97 per IBAN italiano (27 caratteri, inizia con IT)."""
+    iban = iban.upper().replace(" ", "")
+    if not re.fullmatch(r'IT\d{2}[A-Z0-9]{23}', iban):
+        return False
+    rearranged = iban[4:] + iban[:4]
+    numeric = "".join(str(ord(c) - 55) if c.isalpha() else c for c in rearranged)
+    return int(numeric) % 97 == 1
+
+
 # Regex deterministici per PII strutturate italiane
 _CF_RE = re.compile(r'\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b', re.IGNORECASE)
 _PIVA_RE = re.compile(r'\b\d{11}\b')
@@ -29,9 +52,21 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
         mapping[placeholder] = val
         return placeholder
 
+    def replace_if_valid_piva(match: re.Match) -> str:
+        val = match.group(0)
+        if not validate_piva_luhn(val):
+            return val
+        return replace(match, "PIVA")
+
+    def replace_if_valid_iban(match: re.Match) -> str:
+        val = match.group(0)
+        if not validate_iban_it(val):
+            return val
+        return replace(match, "IBAN")
+
     text = _CF_RE.sub(lambda m: replace(m, "CF"), text)
-    text = _PIVA_RE.sub(lambda m: replace(m, "PIVA"), text)
-    text = _IBAN_RE.sub(lambda m: replace(m, "IBAN"), text)
+    text = _PIVA_RE.sub(replace_if_valid_piva, text)
+    text = _IBAN_RE.sub(replace_if_valid_iban, text)
     text = _EMAIL_RE.sub(lambda m: replace(m, "EMAIL"), text)
     text = _PHONE_RE.sub(lambda m: replace(m, "TEL"), text)
 
