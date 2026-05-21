@@ -31,6 +31,7 @@ python execution/opencode_delegate.py --model openrouter/z-ai/glm-4.5-air:free "
 - **Composizione di artefatti strutturati a partire da un template** (es. le 4 query NotebookLM)
 - Estrazione di dati da testo grezzo (regex/parsing semantico)
 - Task batch ripetitivi (es. processa N file applicando la stessa trasformazione)
+- **Vault triage** — identificare la cartella target per un topic generico (evita letture massive di file)
 
 ## Quando NON delegare (RESTA IN SESSIONE)
 
@@ -93,6 +94,43 @@ Ogni query deve:
 2) chiedere estrazione testo da slide/immagini
 3) richiedere formato strutturato
 4) per "deep_dive": personalizzare sul contesto MOC fornito
+```
+
+---
+
+## Pattern Ibrido — Vault Triage
+
+Caso d'uso modello: trovare la cartella giusta nel vault senza leggere file a caso quando il topic è generico.
+
+### Flusso
+
+1. **Claude Code (sessione)**
+   - Riceve topic generico dall'utente
+   - NON legge file: delega subito il triage a OpenCode
+
+2. **Delega a OpenCode**
+   - Input: struttura cartelle vault + topic
+   - Output richiesto: solo il path della cartella più rilevante (es. `moc/`)
+   - Costo: ~0 token di sessione, modello free
+
+3. **Claude Code (sessione)**
+   - Fa Glob/Grep mirato solo nella cartella restituita
+   - Procede con il task originale
+
+### Template prompt per OpenCode
+
+```
+Vault Obsidian struttura:
+- moc/       → Mappe di Contenuto (centro del sistema)
+- ITS/       → Progetti ITS
+- idee/      → Idee grezze
+- knowladge/ → Conoscenza generale
+- skill/     → Guide, playbook operativi
+- daily/     → Note giornaliere
+
+Topic: {topic}
+
+Rispondi con il solo path della cartella più rilevante. Nessun altro testo.
 ```
 
 ---
