@@ -2,7 +2,7 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
 **Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
-**Ultima sessione:** 2026-05-20 (MVP completo e testato — fix INC-004 WinError 206, test 6/8 PDF verificati)
+**Ultima sessione:** 2026-05-21 (sessione fix_specter-AI — 6 batch fix production-hardening da code review)
 **Prossima sessione:** Lezione 5 — Test plan §8 (T1-T12) + aggiornamento PROMPT_LOG/INCIDENTS con dati reali
 **Spec corrente:** v3.1 — **confermata dalla prof come finale** (file: `Specifica Tecnica v3 - SpecterAI.md`, changelog 18 righe)
 
@@ -522,6 +522,91 @@ Ogni sessione di building produce:
 - **Git:** commits
 
 Supervisione critica durante Fase 4-5 (Claude integration): monitora INC-001/2/3, aggiorna INCIDENTS quando si manifestano.
+
+---
+
+---
+
+## Fix Applicati — Sessione fix_specter-AI (2026-05-21)
+
+Fonte: `CODE_REVIEW_SPECTERAI_20260521.md` (review Opus, 333 righe).
+Tutti i fix sono stati implementati, testati e pushati in questa sessione.
+
+### Commit prodotti
+
+| Commit | Descrizione | File |
+|---|---|---|
+| `3b81fd1` | Batch 1 quick-win: timeout, async, env var, model_copy, disclaimer | llm_client.py, main.py, schemas.py, report.html |
+| `b61baef` | Luhn PIVA + mod-97 IBAN validation (spec compliance) | privacy_filter.py |
+| `ec862f8` | Regex PII context-aware (CF, phone, importi) | privacy_filter.py, regex_layer.py |
+| `1c86e81` | LLM client JSON parsing strutturato + backoff esponenziale | llm_client.py |
+| `dc4275a` | Hardening UX: truncation warning, upload size pre-check, spaCy fallback | pdf_processor.py, main.py, privacy_filter.py, report.html |
+| `999071f` | spaCy ordering bug fix — Option A (spaCy before regex) + test unitari | privacy_filter.py, tests/test_privacy_filter.py |
+
+### Dettaglio fix per file
+
+**`llm_client.py`**
+- `timeout=300` su `subprocess.run` (anti-DoS)
+- `_MODEL` da env var `CLAUDE_MODEL` con fallback `claude-sonnet-4-6`
+- `_restore_excerpts` usa `model_copy(update=...)` invece di mutazione in-place
+- `_parse_response()`: `json.JSONDecoder().raw_decode()` dal primo `{` — ignora testo extra pre/post JSON
+- Loop 3 tentativi con `time.sleep(2**(attempt-1))` [1s, 2s]:
+  - `TimeoutExpired`/`RuntimeError` → retry stesso messaggio
+  - `JSONDecodeError`/`ValidationError` → 1 solo retry con prompt restrittivo
+  - `ValueError` altri → propaga immediatamente
+- `analyze()` → `await asyncio.to_thread(analyze, ...)` in main.py (event loop non bloccato)
+
+**`privacy_filter.py`**
+- `validate_piva_luhn()` — Luhn IT ufficiale (posizioni dispari/pari, mod-10)
+- `validate_iban_it()` — rearrange + lettere→numeri + mod-97
+- `redact()`: PIVA e IBAN redatti solo se checksum valido
+- CF regex context-aware: matcha solo con keyword `codice fiscale/CF/C.F.` + case-sensitive uppercase sul CF
+- Phone: prefisso `+39`/`0039` obbligatorio (elimina falsi positivi su protocolli e numeri civici)
+- **spaCy ordering bug fix**: spaCy gira sul testo ORIGINALE (Passo 1), regex sul post-NER (Passo 2). Eliminazione della corruzione `[PER[CF_1]_2]` — impossibile per costruzione
+- spaCy wrapped in `try/except (OSError, ImportError)` → `_SPACY_AVAILABLE = False` se non disponibile, solo regex attiva
+
+**`schemas.py`**
+- Campo `disclaimer` rimosso dal modello Pydantic (era hardcoded in un campo che l'LLM avrebbe dovuto ripetere)
+
+**`pdf_processor.py`**
+- `extract_text()` restituisce `(text, truncated: bool)` invece di solo `str`
+
+**`main.py`**
+- Pre-check `Content-Length` header prima di leggere tutto il body
+- Lettura chunked con limite (413 invece di 422 se supera MAX_SIZE)
+- `truncation_warning` passato al template se PDF troncato a 40K chars
+
+**`templates/report.html`**
+- Banner giallo se PDF troncato ("Contratto lungo: analizzate le prime 40.000 parole.")
+- Disclaimer hardcoded nel template (rimosso da Pydantic)
+
+**`regex_layer.py`**
+- Commento `loose validation, downstream-safe` sui pattern importi (alimentano solo metadati LLM, non redazione PII)
+
+**`tests/test_privacy_filter.py`** *(nuovo)*
+- 4 test unitari per il bug spaCy ordering:
+  1. `test_no_nested_placeholders` — no `[PER[CF_1]_2]`
+  2. `test_spacy_receives_original_text` — verifica che `_nlp` riceva testo senza placeholder
+  3. `test_cf_and_piva_redacted_regex_only` — regex-only senza spaCy
+  4. `test_restore_roundtrip` — redact + restore = originale
+
+### Stato codice post-fix
+
+| Bug critico (review) | Stato |
+|---|---|
+| No subprocess timeout (DoS) | ✅ FIXED — timeout=300 |
+| Event loop bloccato | ✅ FIXED — asyncio.to_thread |
+| PIVA false positive (no Luhn) | ✅ FIXED — validate_piva_luhn + validate_iban_it |
+| CF pattern debole | ✅ FIXED — context-aware + uppercase-only |
+| spaCy offset bug (placeholder corrotti) | ✅ FIXED — spaCy first, regex second |
+| JSON parsing fragile (regex greedy) | ✅ FIXED — raw_decode |
+| Retry senza backoff | ✅ FIXED — backoff 1s/2s |
+| MAX_CHARS silenzioso | ✅ FIXED — truncated flag + warning UI |
+| Upload legge tutto prima del check | ✅ FIXED — chunked read con limite |
+| spaCy crasha senza graceful fallback | ✅ FIXED — _SPACY_AVAILABLE flag |
+| Modello hardcoded | ✅ FIXED — CLAUDE_MODEL env var |
+| model_copy vs mutazione in-place | ✅ FIXED |
+| disclaimer in campo Pydantic | ✅ FIXED — spostato in template |
 
 ---
 
