@@ -173,3 +173,6 @@ I Big Tech operano come **entità sovranazionali** immuni alle leggi tradizional
 - [[Back-end MOC]] — Server-side, API, database
 - [[Automation MOC]] — Webhooks, API communication pattern
 - [[Knowledge MOC]] — Context Engineering, AI frameworks
+
+- [[ITS/Alessandro D'Alessandro - Front-end/progetti personali/Factory Ottica/00_Piano_Azione|Factory Ottica — Piano d'Azione]] — Demo WooCommerce per pitch vendita sito
+- [[ITS/Alessandro D'Alessandro - Front-end/progetti personali/Factory Ottica/02_Processo_Creativo|Factory Ottica — Processo Creativo & Strategia LLM]] — Flusso fasi + modello/think/effort per ogni step
