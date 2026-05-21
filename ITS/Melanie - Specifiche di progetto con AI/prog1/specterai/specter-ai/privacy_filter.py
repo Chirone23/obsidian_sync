@@ -33,12 +33,17 @@ def validate_iban_it(iban: str) -> bool:
     return int(numeric) % 97 == 1
 
 
-# Regex deterministici per PII strutturate italiane
-_CF_RE = re.compile(r'\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b', re.IGNORECASE)
+# Regex deterministici per PII strutturate italiane.
+# CF: context-aware — matcha solo se preceduto da keyword identificativa.
+# Il CF stesso è case-sensitive uppercase (nessun IGNORECASE globale).
+_CF_RE = re.compile(
+    r'(?i:codice\s+fiscale|C\.?F\.?)\s*[:/-]?\s*([A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z])\b'
+)
 _PIVA_RE = re.compile(r'\b\d{11}\b')
 _IBAN_RE = re.compile(r'\bIT\d{2}[A-Z0-9]{23}\b', re.IGNORECASE)
 _EMAIL_RE = re.compile(r'\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b')
-_PHONE_RE = re.compile(r'(?:\+39|39)?[\s\-]?(?:0\d{1,4}[\s\-]?\d{4,8}|3\d{2}[\s\-]?\d{6,7})\b')
+# Prefisso +39/0039 obbligatorio: evita falsi positivi su numeri civici e protocolli.
+_PHONE_RE = re.compile(r'(?:\+39|0039)[\s\-]?(?:0\d{1,4}[\s\-]?\d{4,8}|3\d{2}[\s\-]?\d{6,7})\b')
 
 
 def redact(text: str) -> tuple[str, dict[str, str]]:
@@ -52,6 +57,14 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
         mapping[placeholder] = val
         return placeholder
 
+    def replace_cf(match: re.Match) -> str:
+        cf_val = match.group(1)
+        counters['CF'] = counters.get('CF', 0) + 1
+        placeholder = f"[CF_{counters['CF']}]"
+        mapping[placeholder] = cf_val
+        prefix_len = match.start(1) - match.start(0)
+        return match.group(0)[:prefix_len] + placeholder
+
     def replace_if_valid_piva(match: re.Match) -> str:
         val = match.group(0)
         if not validate_piva_luhn(val):
@@ -64,7 +77,7 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
             return val
         return replace(match, "IBAN")
 
-    text = _CF_RE.sub(lambda m: replace(m, "CF"), text)
+    text = _CF_RE.sub(replace_cf, text)
     text = _PIVA_RE.sub(replace_if_valid_piva, text)
     text = _IBAN_RE.sub(replace_if_valid_iban, text)
     text = _EMAIL_RE.sub(lambda m: replace(m, "EMAIL"), text)

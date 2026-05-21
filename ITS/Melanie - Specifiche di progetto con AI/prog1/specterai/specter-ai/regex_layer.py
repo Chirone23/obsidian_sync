@@ -7,6 +7,8 @@ _DATE_PATTERNS = [
     r'\bentro\s+il\s+\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{4}\b',
 ]
 
+# loose validation, downstream-safe: questi pattern alimentano solo i metadati
+# passati all'LLM come contesto, non vengono usati per redazione PII.
 _AMOUNT_PATTERNS = [
     r'€\s*\d[\d\.,]+',
     r'\d[\d\.,]+\s*€',
