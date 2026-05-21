@@ -8,7 +8,8 @@ from schemas import ContractAnalysis
 
 
 _SYSTEM_PROMPT_PATH = Path(__file__).parent / "prompts" / "system_prompt.md"
-_MODEL = "claude-sonnet-4-6"
+import os
+_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 
 def _load_system_prompt() -> str:
@@ -30,6 +31,7 @@ def _call_claude(system_prompt: str, user_message: str) -> str:
         capture_output=True,
         text=True,
         encoding="utf-8",
+        timeout=300,
     )
     if result.returncode != 0:
         raise RuntimeError(f"Claude CLI error: {result.stderr[:300]}")
@@ -41,9 +43,11 @@ def _call_claude(system_prompt: str, user_message: str) -> str:
 
 
 def _restore_excerpts(analysis: ContractAnalysis, mapping: dict) -> ContractAnalysis:
-    for cat in analysis.categories.values():
-        cat.raw_excerpt = [restore(span, mapping) for span in cat.raw_excerpt]
-    return analysis
+    restored_categories = {
+        key: cat.model_copy(update={"raw_excerpt": [restore(span, mapping) for span in cat.raw_excerpt]})
+        for key, cat in analysis.categories.items()
+    }
+    return analysis.model_copy(update={"categories": restored_categories})
 
 
 def analyze(contract_text: str, metadata: dict) -> ContractAnalysis:

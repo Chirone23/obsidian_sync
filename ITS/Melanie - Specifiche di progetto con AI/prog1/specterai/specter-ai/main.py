@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 
 from fastapi import FastAPI, File, Request, UploadFile
@@ -46,7 +47,7 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
     metadata = extract_metadata(contract_text)
 
     try:
-        result = analyze(contract_text, metadata)
+        result = await asyncio.to_thread(analyze, contract_text, metadata)
     except RuntimeError:
         return HTMLResponse(
             "<h2>Servizio temporaneamente non disponibile.</h2><p>Riprova tra qualche minuto.</p><a href='/'>Torna indietro</a>",

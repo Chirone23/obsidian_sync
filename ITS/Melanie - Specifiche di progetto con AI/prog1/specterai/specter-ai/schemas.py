@@ -36,7 +36,6 @@ class ContractAnalysis(BaseModel):
     language_detected: Literal["italian", "english"]
     categories: dict[str, CategoryResult]
     top_3_risks: list[str]
-    disclaimer: str = "Questo report non costituisce consulenza legale. Prima di firmare, consulta un professionista qualificato."
 
     @field_validator("top_3_risks")
     @classmethod
