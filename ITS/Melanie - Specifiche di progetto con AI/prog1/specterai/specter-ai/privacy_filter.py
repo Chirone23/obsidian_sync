@@ -1,13 +1,17 @@
+import logging
 import re
 
 try:
     import spacy
     _nlp = spacy.load("it_core_news_sm")
-except OSError:
-    raise RuntimeError(
-        "Modello spaCy 'it_core_news_sm' non trovato. "
-        "Esegui: python -m spacy download it_core_news_sm"
+    _SPACY_AVAILABLE = True
+except (OSError, ImportError):
+    logging.warning(
+        "spaCy o il modello 'it_core_news_sm' non disponibili — "
+        "NER disabilitato, solo redazione regex attiva."
     )
+    _nlp = None
+    _SPACY_AVAILABLE = False
 
 
 def validate_piva_luhn(piva: str) -> bool:
@@ -83,24 +87,25 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
     text = _EMAIL_RE.sub(lambda m: replace(m, "EMAIL"), text)
     text = _PHONE_RE.sub(lambda m: replace(m, "TEL"), text)
 
-    doc = _nlp(text)
-    # Processa entità in ordine inverso per non spostare gli offset
-    _placeholder_re = re.compile(r'^\[?[A-Z]+_\d+\]?$')
-    entities = [(ent.start_char, ent.end_char, ent.label_) for ent in doc.ents
-                if ent.label_ in ("PER", "PERSON", "LOC", "GPE", "ORG")]
-    for start, end, label in sorted(entities, reverse=True):
-        val = text[start:end]
-        # Salta se è già un placeholder o parte di uno
-        if not val.strip() or _placeholder_re.match(val.strip()):
-            continue
-        # Salta se cade dentro una sequenza [...] già inserita
-        before = text[max(0, start-1):start]
-        if before == "[":
-            continue
-        counters[label] = counters.get(label, 0) + 1
-        placeholder = f"[{label}_{counters[label]}]"
-        mapping[placeholder] = val
-        text = text[:start] + placeholder + text[end:]
+    if _SPACY_AVAILABLE:
+        doc = _nlp(text)
+        # Processa entità in ordine inverso per non spostare gli offset
+        _placeholder_re = re.compile(r'^\[?[A-Z]+_\d+\]?$')
+        entities = [(ent.start_char, ent.end_char, ent.label_) for ent in doc.ents
+                    if ent.label_ in ("PER", "PERSON", "LOC", "GPE", "ORG")]
+        for start, end, label in sorted(entities, reverse=True):
+            val = text[start:end]
+            # Salta se è già un placeholder o parte di uno
+            if not val.strip() or _placeholder_re.match(val.strip()):
+                continue
+            # Salta se cade dentro una sequenza [...] già inserita
+            before = text[max(0, start-1):start]
+            if before == "[":
+                continue
+            counters[label] = counters.get(label, 0) + 1
+            placeholder = f"[{label}_{counters[label]}]"
+            mapping[placeholder] = val
+            text = text[:start] + placeholder + text[end:]
 
     return text, mapping
 

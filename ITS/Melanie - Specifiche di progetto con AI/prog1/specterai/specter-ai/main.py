@@ -28,16 +28,29 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
             status_code=422,
         )
 
-    pdf_bytes = await file.read()
-
-    if len(pdf_bytes) > MAX_SIZE:
+    # Pre-check da Content-Length header per rifiutare subito senza leggere tutto
+    content_length = request.headers.get("content-length")
+    if content_length and int(content_length) > MAX_SIZE:
         return HTMLResponse(
             "<h2>Errore: il file supera i 10MB.</h2><a href='/'>Torna indietro</a>",
-            status_code=422,
+            status_code=413,
         )
 
+    # Legge in chunk con limite per non caricare file enormi in memoria
+    chunks: list[bytes] = []
+    total = 0
+    async for chunk in file:
+        total += len(chunk)
+        if total > MAX_SIZE:
+            return HTMLResponse(
+                "<h2>Errore: il file supera i 10MB.</h2><a href='/'>Torna indietro</a>",
+                status_code=413,
+            )
+        chunks.append(chunk)
+    pdf_bytes = b"".join(chunks)
+
     try:
-        contract_text = extract_text(pdf_bytes)
+        contract_text, truncated = extract_text(pdf_bytes)
     except ValueError as e:
         return HTMLResponse(
             f"<h2>PDF non leggibile</h2><p>{e}</p><a href='/'>Torna indietro</a>",
@@ -62,5 +75,10 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
 
     return templates.TemplateResponse(
         "report.html",
-        {"request": request, "analysis": result, "filename": file.filename},
+        {
+            "request": request,
+            "analysis": result,
+            "filename": file.filename,
+            "truncation_warning": "Contratto lungo: analizzate le prime 40.000 parole." if truncated else None,
+        },
     )

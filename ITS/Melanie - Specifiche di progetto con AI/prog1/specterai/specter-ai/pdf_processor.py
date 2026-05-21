@@ -23,4 +23,5 @@ def extract_text(pdf_bytes: bytes) -> str:
             "SpecterAI richiede un PDF con testo selezionabile."
         )
 
-    return text[:MAX_CHARS]
+    truncated = len(text) > MAX_CHARS
+    return text[:MAX_CHARS], truncated
