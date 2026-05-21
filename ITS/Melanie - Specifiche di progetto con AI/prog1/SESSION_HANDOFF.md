@@ -156,6 +156,32 @@ specter-ai/
 
 ---
 
+## 🔍 Code Review Critica (post-MVP, sessione 2026-05-21)
+
+**File:** `CODE_REVIEW_SPECTERAI_20260521.md` (333 righe)
+
+**Scope:** Review di qualità production-grade su 6 moduli Python (schemas.py, pdf_processor.py, regex_layer.py, privacy_filter.py, llm_client.py, main.py).
+
+**Risultati:**
+- ✅ **Giudizio:** MVP pre-beta — architettura solida, 3 bug critici in produzione
+- ✅ **5 pregi:** validator Pydantic (schemas), separazione privacy layer, rifiuto PDF vuoti, retry logic, HTTPstatus mapping
+- ⚠️ **6 problemi critici:** PIVA false positive (no Luhn), CF pattern debole, spaCy offset bug, no subprocess timeout (DoS), JSON parsing fragile, event loop bloccato
+- ✅ **10 problemi minori:** phone regex laxa, caricamento spaCy sync, modello hardcoded, retry senza backoff, MAX_CHARS silenzioso, ecc.
+
+**Top 3 fix (ROI massimo):**
+1. `timeout=300` + `await asyncio.to_thread(analyze, ...)` → 5 min, elimina DoS
+2. PIVA Luhn + CF context-aware → 30 min, elimina false positive massicia
+3. JSON parsing robusto (`JSONDecoder.raw_decode`) → 20 min, elimina silent failure
+
+**Mapping spec vs codice:**
+- 5/6 bug erano già documentati in spec (Privacy Filter Integration.md, Specifica Tecnica v3) ma non implementati
+- 3 bug nuovi non nella spec: offset spaCy, event loop block, JSON parsing
+- Conclusione: **spec è più matura del codice**, normale per MVP da corso (priorità end-to-end over robustezza)
+
+**Confidence:** 4/5 (bug critici certi, caveat su testing spaCy runtime)
+
+---
+
 ## Riepilogo Storico Completo
 
 ### Lezione 1 — Case Study & Setup (2026-04-28)
