@@ -1,6 +1,6 @@
 # Direzione Teorica — Gestionale Mezzi
 
-**Versione:** 1.0
+**Versione:** 1.1
 **Data:** 2026-05-24
 **Status:** Definita — pronta per implementazione
 
@@ -89,9 +89,62 @@ Sessioni attive per 7 giorni. Zero complessità aggiuntiva.
 ## Design
 
 - **Stile:** flat, card-based, bordi netti — riferimento visivo: gabiodvzagarolo.lovable.app
-- **Palette:** colori del sito istituzionale dell'ente (da applicare via CSS custom properties)
 - **Logo:** inserito manualmente a tema/plugin pronto
 - **Mobile-first:** form a step progressivi, bottoni touch-friendly, font leggibile su piccolo schermo
+- **Navigazione:** sidebar drawer (hamburger → menu laterale da sinistra)
+- **Login:** pagina WP default `/wp-login.php` — customizzazione rimandata al tema
+
+### Palette
+
+Estratta da gabiodvzagarolo.lovable.app, mappata su CSS custom properties:
+
+```css
+--color-primary:      #2563eb;   /* blu — nav, bottoni principali */
+--color-primary-dark: #575ecf;   /* indigo — hover, focus */
+--color-accent:       #fe7b02;   /* arancione — azioni secondarie, badge */
+--color-bg:           #fcfbf8;   /* crema — sfondo pagine */
+--color-surface:      #ffffff;   /* bianco — card, form, sidebar */
+--color-border:       #e5e7eb;   /* grigio chiaro — bordi, divisori */
+--color-text:         #1b1b1b;   /* quasi nero — testo principale */
+--color-text-muted:   #9ca3af;   /* grigio — testo secondario, label */
+--color-danger:       #dc2626;   /* rosso — elimina, errori */
+--color-warning:      #faa938;   /* ambra — avvisi, bozze in sospeso */
+--color-success:      #16a34a;   /* verde — stato "inviato", conferme */
+```
+
+---
+
+## Inventario schermate
+
+**Comuni (tutti i ruoli)**
+- Dashboard — riepilogo: ultime bozze, ultimi fogli inviati, km veicoli
+- Nuovo foglio di marcia — form di creazione
+- I miei fogli — lista fogli propri (bozze + inviati, pulsante modifica + visualizza)
+- Dettaglio foglio — visualizzazione e modifica singolo foglio (anche dopo invio)
+
+**Direttivo + Amministrazione**
+- Tutti i fogli — lista globale con filtri (conducente, veicolo, anno, stato)
+- Gestione utenti — lista + form crea/modifica/disabilita
+- Gestione veicoli — lista + form crea/modifica/dismetti
+
+**Solo Amministrazione**
+- Log attività — tabella log con filtri
+
+---
+
+## Ordine di costruzione
+
+```
+1. Plugin bootstrap + DB setup
+2. Sidebar drawer + layout base
+3. Dashboard
+4. Gestione veicoli
+5. Gestione utenti
+6. Nuovo foglio di marcia
+7. I miei fogli + Dettaglio foglio
+8. Tutti i fogli
+9. Log attività
+```
 
 ---
 
