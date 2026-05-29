@@ -468,6 +468,7 @@ Invariata rispetto a v3.1 (tutte ✅) + nuove: [x] redazione PII pre-LLM · [x] 
 | Lez. 4 | config.py + setup.py (backend cli/sdk) | ✅ completo |
 | Lez. 5 | Test plan §8 (T1-T15) + PROMPT_LOG/INCIDENTS con dati reali | ⏳ |
 | Lez. 6 | Polish + eventuali stretch + demo | ⏳ |
+| **Lez. 7 (finale)** | **Presentazione di progetto totale** (pitch + evoluzione spec v1→v4 + architettura privacy-first + demo + processo/qualità + limiti) — bozza in [[PRESENTAZIONE_SpecterAI (bozza)]] | ⏳ |
 
 ---
 

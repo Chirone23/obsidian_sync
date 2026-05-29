@@ -96,6 +96,7 @@ specter-ai/
 | **Fase 3 — Interfaccia** | Lez. 5 | `main.py` (endpoint FastAPI) + `templates/index.html` + `templates/report.html` | tutto Fase 1-2 |
 | **Fase 4 — Test e docs** | Lez. 5-6 | Test 5 contratti + edge case + contratto EN + popolamento PROMPT_LOG/INCIDENTS con dati reali | sistema E2E funzionante |
 | **Fase 5 — Rifinitura/demo** | Lez. 6-7 | Polish HTML + eventuali stretch goals (§2.bis spec) + selezione 2-3 contratti demo + presentazione 2 min | sistema testato |
+| **Fase 6 — Presentazione di progetto totale** (ultimissimo step) | finale | Racconto end-to-end: pitch + evoluzione spec v1→v4 + architettura privacy-first + demo + processo/qualità (PROMPT_LOG/INCIDENTS/SPEC_ERRATA) + limiti dichiarati. Bozza: [[PRESENTAZIONE_SpecterAI (bozza)]] | tutto il progetto completato |
 
 **Nota su numerazione lezioni:** la build roadmap §12.bis della spec (scritta prima del Promemoria) mappa Lez. 3/4/5/6; il calendario corso effettivo è Lez. 4/5/6/7 (slittamento +1). Non è un problema spec, solo allineamento al calendario.
 
