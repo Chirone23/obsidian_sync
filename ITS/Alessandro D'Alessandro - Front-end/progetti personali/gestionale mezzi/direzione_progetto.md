@@ -44,6 +44,14 @@ Tre ruoli registrati all'attivazione del plugin:
 | `gm_direttivo` | `direttivo` |
 | `gm_amministrazione` | `amministrazione` |
 
+**Utenti test (password: `test1234`):**
+
+| Username          | Email                 | Nome visualizzato    | Ruolo                |
+| ----------------- | --------------------- | -------------------- | -------------------- |
+| `volontario_test` | volontario@test.local | Volontario Test      | `gm_volontario`      |
+| `direttivo_test`  | direttivo@test.local  | Direttivo Test       | `gm_direttivo`       |
+| `amm_test`        | amm@test.local        | Amministrazione Test | `gm_amministrazione` |
+
 ---
 
 ## Database
@@ -128,7 +136,7 @@ Estratta da gabiodvzagarolo.lovable.app, mappata su CSS custom properties:
 - Gestione veicoli — lista + form crea/modifica/dismetti
 
 **Solo Amministrazione**
-- Log attività — tabella log con filtri
+- Log attività — tabella log con filtri (conducente, azione, intervallo date) + riga espandibile per dettaglio JSON prima/dopo
 
 ---
 
@@ -171,6 +179,86 @@ Estratta da gabiodvzagarolo.lovable.app, mappata su CSS custom properties:
 - Dashboard: fogli in bozza in sospeso, ultimi viaggi, km per veicolo
 - Accesso log attività (solo `gm_amministrazione`)
 - Filtri per conducente, veicolo, anno
+
+#### Pagina Log Attività — Specifiche UI (2026-05-27)
+
+**Layout:** tabella con filtri in cima + paginazione 25 righe.
+
+**Colonne:** ID | Data/Ora | Utente | Azione | [Dettagli ▼]
+
+**Filtri:** dropdown Utente (solo chi ha log), dropdown Azione, Da data, A data.
+
+**Riga espandibile:** bottone "Dettagli ▼" aggiunge un `<tr>` inline sotto la riga con il JSON prima/dopo. Toggle via JS vanilla, JSON già nel DOM come attributo `data-dettaglio` (no AJAX).
+
+**Query principali:**
+```sql
+-- Lista con filtri + paginazione
+SELECT l.*, u.display_name
+FROM wp_gm_log_attivita l
+LEFT JOIN wp_users u ON l.utente_id = u.ID
+WHERE (l.utente_id = %d OR %d = 0)
+  AND (l.azione = %s OR %s = '')
+  AND (l.created_at >= %s OR %s = '')
+  AND (l.created_at <= %s OR %s = '')
+ORDER BY l.created_at DESC
+LIMIT 25 OFFSET %d
+
+-- Count per paginazione
+SELECT COUNT(*) FROM wp_gm_log_attivita l WHERE ...
+
+-- Dropdown utenti (solo chi ha almeno un log)
+SELECT DISTINCT u.ID, u.display_name
+FROM wp_users u
+INNER JOIN wp_gm_log_attivita l ON u.ID = l.utente_id
+ORDER BY u.display_name ASC
+```
+
+**Export CSV:** non previsto nello Step 3, rimandato a Fase 5.
+
+### Fase 3.5 — includes/fogli.php *(logica business fogli)*
+
+File `includes/fogli.php` — controller+model per i fogli di marcia, nessun HTML.
+
+**Funzioni di lettura:**
+- `gm_get_conducenti_list()` — utenti con patente valida (escluse scadute) compatibile con almeno un veicolo attivo
+- `gm_get_veicoli_per_conducente($id)` — veicoli compatibili con le patenti del conducente
+- `gm_get_fogli_utente($utente_id)` — lista fogli dell'utente
+- `gm_get_foglio_by_id($id)` — singolo foglio con join veicolo/conducente
+- `gm_get_foglio_passeggeri($foglio_id)` — IDs passeggeri di un foglio
+
+**CRUD (con transazione MySQL — tutto o niente):**
+- `gm_save_foglio($data, $stato)` — INSERT foglio + passeggeri + log + aggiorna km se `inviata`
+- `gm_update_foglio($id, $data, $stato)` — UPDATE bozza + sostituzione passeggeri
+- `gm_delete_foglio($id)` — DELETE con controllo permessi
+
+**AJAX handlers:**
+- `wp_ajax_gm_get_veicoli` — JSON veicoli per conducente (dropdown dinamico)
+- `wp_ajax_gm_get_km_veicolo` — km_attuali + posti_totali veicolo (auto-fill form)
+
+**Hook template_redirect:**
+- `gm_handle_foglio_form()` — processa POST form (PRG: valida → salva → redirect)
+- `gm_handle_foglio_delete()` — processa POST cancellazione
+
+**Flusso creazione foglio:**
+```
+nuovo-foglio.php (form) → POST → gm_handle_foglio_form() → gm_save_foglio() → redirect i-miei-fogli.php
+```
+
+**Nota patenti scadute:** `gm_get_conducenti_list()` esclude patenti con `data_scadenza < CURDATE()` per la compatibilità veicolo.
+
+---
+
+### includes/log.php *(2026-05-27)*
+
+Unica funzione `gm_log_attivita($azione, $tabella, $record_id, $dettaglio = '')`.
+
+- `$dettaglio` accetta array (convertito in JSON) o stringa — **non** usare `sanitize_textarea_field` che corrompe il JSON
+- `utente_id` nullable per azioni di sistema
+- IP loggato da `$_SERVER['REMOTE_ADDR']`
+
+**Azioni previste:** `LOGIN`, `CREA`, `MODIFICA`, `CANCELLA`, `INVIA_SCHEDA`, `SALVA_BOZZA`
+
+---
 
 ### Fase 5 — Export *(dopo MVP)*
 - PDF stampabile per ogni foglio di marcia

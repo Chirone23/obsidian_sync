@@ -21,6 +21,13 @@
 | INC-002 | 2026-05-13 (Lez. 4) | Claude API timeout | Timeout su batch processing di contratti | High | 🔴 Open |
 | INC-003 | 2026-05-13 (Lez. 4) | JSON parsing / encoding | Caratteri speciali italiani (accenti, €) corrotti nel JSON | High | 🔴 Open |
 | **INC-004** | **2026-05-20** | **llm_client.py — subprocess argv** | **WinError 206 su Windows con testi >40k char passati come argv** | **High** | **✅ RESOLVED** |
+| INC-005 | 2026-05-29 | Gate lingua — `langdetect` | Gate lingua non implementato come da spec: rilevamento post-LLM invece che pre-call deterministico | Medium | ✅ RESOLVED (decisione B) |
+| INC-006 | 2026-05-29 | privacy_filter.py — spaCy NER | Over-redaction e label errate (società→PER, nome comune→ORG, protocollo→PIVA via Luhn) | Low | 🟡 Open (qualità) |
+| **INC-007** | **2026-05-29** | **privacy_filter.py:162 — CF regex falso positivo** | **Pattern CF con `re.IGNORECASE` cattura sequenze lowercase tipo `articolo15bisXY99ZW123A` → clausola legale legittima redatta, LLM analizza `[CF_1]` invece della clausola** | **High** | **🔴 Open** |
+| **INC-008** | **2026-05-29** | **privacy_filter.py:163 — PIVA `\d{11}` senza Luhn context** | **Pattern `\b\d{11}\b` senza context-keyword matcha importi, protocolli, CIG → perdita dati legittimi nel payload LLM** | **High** | **🔴 Open** |
+| **INC-009** | **2026-05-29** | **privacy_filter.py:185-199 — Ordering bug spaCy offset** | **Offset spaCy calcolati su testo pre-regex, applicati post-regex → placeholder corrotti tipo `[PER[CF_1]_2]`, corruzione testo → analisi falsata** | **Critical** | **🔴 Open** |
+| **INC-010** | **2026-05-29** | **llm_client.py:231 — subprocess senza timeout** | **`subprocess.run()` senza `timeout=` → hang indefinito su CLI freeze. 4 richieste concorrenti = DoS completo su uvicorn 4 worker** | **High** | **🔴 Open** |
+| **INC-011** | **2026-05-29** | **main.py:302 — async def con subprocess sincrono** | **Endpoint `async def` chiama subprocess sync 163-268s → blocca event loop FastAPI, zero concorrenza reale anche con worker liberi** | **High** | **🔴 Open** |
 
 ---
 
@@ -378,9 +385,217 @@ Il fix è trasparente: Claude CLI legge da stdin quando `--print` (`-p`) è atti
 - ✅ Il limite Windows per argv è ~32k caratteri (limite variabile per processo); per sicurezza, qualsiasi input >1k char va in stdin
 - ✅ L'errore WinError 206 è fuorviante (sembra un filesystem error) — mapparlo a "payload argv troppo lungo"
 
-**Aggiornamenti Specifica:** Nessuno (fix implementativo, non architetturale — la spec §6 indica correttamente subprocess senza specificare il meccanismo di passaggio)
+**Aggiornamenti Specifica:** Nessuno (fix implementativo, non architetturale). ⚠️ **Correzione 2026-05-29:** la nota originale affermava *"la spec §6 indica correttamente subprocess"* — **inesatto**: la spec §6 mostra l'SDK Anthropic (`client.messages.create`), non subprocess. La divergenza SDK→CLI è ora tracciata in [[SPEC_ERRATA]] ERR-08.
 
 **Status:** ✅ Resolved 2026-05-20 — commit `d2dc4ba`
+
+---
+
+## INC-005 — Gate lingua non implementato come da spec (rilevamento post-LLM)
+
+**Data:** 2026-05-29 (durante test di allineamento codice ↔ spec)
+
+**Componente:** Gate lingua — spec §3/§4/§6 (`langdetect`) vs `llm_client.py`
+
+**Descrizione:** La spec v3.1 prevede un gate deterministico con `langdetect` (no LLM) **prima** della chiamata a Claude: se la lingua non è IT/EN, blocco immediato a costo zero token (motivazione Green-AI §7). Nel codice `langdetect` non è presente (né in `requirements.txt` né importato). La lingua è invece letta dall'output dell'LLM (`analysis.language_detected`) e controllata **dopo** la chiamata (`llm_client.py:103-104`).
+
+**Severità:** Medium (il blocco funzionalmente esiste, ma a valle e a costo token già speso; il razionale Green-AI/routing della spec non vale come scritto).
+
+**Root cause:** in fase di building il rilevamento lingua è stato delegato all'LLM (che già restituisce `language_detected` nello schema), evitando una dipendenza in più. Scelta pragmatica non riportata nella spec.
+
+**Soluzione (decisa 2026-05-29 — opzione B):** si allinea la **spec al codice**. Il gate lingua resta post-LLM (`language_detected` dall'output di Claude); si rinuncia a `langdetect` e al claim Green-AI "blocco a costo zero token" per la lingua. Razionale: lo schema JSON già restituisce `language_detected`, una sola fonte di verità sulla lingua, niente dipendenza extra. Trade-off accettato: si perde il micro-risparmio token sul caso raro di lingua fuori perimetro. T10 invariato come criterio (blocco con messaggio), meccanismo aggiornato (rifiuto a valle).
+
+**Lezioni apprese:** un gate "deterministico pre-API" sulla carta può scivolare a "controllo post-output" in implementazione — verificare che i gate di risparmio token siano davvero a monte della chiamata. Quando la divergenza è benigna, allineare la spec al codice è più onesto che forzare il codice.
+
+**Aggiornamenti Specifica:** §3/§4/§6/§7 da rettificare via [[SPEC_ERRATA]] ERR-09 (gate lingua post-LLM, rimozione `langdetect`).
+
+**Status:** ✅ Resolved 2026-05-29 — decisione B
+
+---
+
+## INC-006 — Over-redaction e label errate nel filtro privacy (spaCy NER)
+
+**Data:** 2026-05-29 (durante verifica empirica ERR-01)
+
+**Componente:** `privacy_filter.py` — spaCy `it_core_news_sm` NER
+
+**Descrizione:** Test di redazione su campione con PII italiane reali. La redazione delle PII sensibili è **corretta e completa** (zero leak; vedi [[SPEC_ERRATA]] ERR-01), ma emergono imprecisioni di etichettatura: società "Acme S.r.l" → `[PER]` (invece di ORG), nome comune "CONSULENZA" → `[ORG]`, parola letterale "IBAN" → `[ORG]`, email catturata da spaCy come `[ORG]` prima della regex email, e un numero di protocollo a 11 cifre (`20260529001`) ha superato il checksum Luhn finendo redatto come `[PIVA]`.
+
+**Severità:** Low — è **over-redaction** (direzione sicura: si redige più del necessario, non meno). Nessuna PII esposta. Effetto collaterale: il testo che Claude legge è più "sporco" di placeholder, e metadati legittimi (es. numeri di protocollo) possono sparire dal contesto.
+
+**Root cause:** (a) spaCy `sm` (modello leggero, scelto per performance Windows — vedi [[feedback_spacy_model]]) ha NER meno preciso su entità di dominio legale/aziendale; (b) il checksum Luhn filtra molti falsi positivi P.IVA ma non tutti — un numero a 11 cifre casuale ha ~10% di probabilità di passare Luhn.
+
+**Soluzione (da valutare, non urgente):** restringere le label spaCy redatte (es. escludere ORG, o gestirlo separatamente), e/o aggiungere contesto-keyword per P.IVA come già fatto per il CF. Per l'MVP corso l'over-redaction è accettabile.
+
+**Lezioni apprese:** un filtro privacy va valutato su **due assi** separati — recall (nessun leak: ✅) e precision (nessuna over-redaction: parziale). Per un MVP privacy-first, alta recall a scapito della precision è il trade-off giusto.
+
+**Aggiornamenti Specifica:** nessuno (qualità implementativa, non architetturale). Vedi [[SPEC_ERRATA]] ERR-01 caveat.
+
+**Status:** 🟡 Open — qualità, accettabile per MVP
+
+---
+
+## INC-007 — CF regex falso positivo (re.IGNORECASE)
+
+**Data:** 2026-05-29 (identificato durante code review Opus 4.7 — `CODE_REVIEW_SPECTERAI_20260521.md`)
+
+**Componente:** `privacy_filter.py:162`
+
+**Descrizione:** Il pattern CF `\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b` compilato con `re.IGNORECASE` cattura qualsiasi sequenza alfanumerica della stessa forma, incluse stringhe lowercase come `articolo15bisXY99ZW123A` che compaiono in clausole legali italiane. Effetto: clausole legali legittime vengono redatte come `[CF_1]`, e Claude analizza il placeholder anziché la clausola reale → analisi falsata.
+
+**Severità:** High — corrupts analisi su contratti con articoli numerati in formato alfanumerico denso
+
+**Root cause:** IGNORECASE attivo senza validazione aggiuntiva. La spec `Privacy Filter Integration.md:118` richiedeva *"RGX validato Agenzia Entrate"* — non implementato. Il codice usa invece una regex morfologica senza context.
+
+**Soluzione (da implementare — fix suggerito nel code review):**
+```python
+# Aggiungere context-keyword obbligatorio prima del match
+_CF_RE = re.compile(
+    r'(?:codice\s+fiscale|C\.?F\.?)\s*[:\-]?\s*([A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z])',
+    re.IGNORECASE
+)
+# + checksum AdE (algoritmo ufficiale) come validazione post-match
+```
+
+**Lezioni apprese:** regex morfologiche per documenti legali devono sempre essere vincolate da context-keyword — il pattern da solo è troppo permissivo su testi densi.
+
+**Aggiornamenti Specifica:** nessuno — è gap implementazione vs spec già scritta correttamente.
+
+**Status:** 🔴 Open — da fixare prima della consegna (blocca correttezza analisi)
+
+---
+
+## INC-008 — PIVA `\d{11}` senza Luhn + context (falso positivo massiccia)
+
+**Data:** 2026-05-29 (identificato durante code review Opus 4.7)
+
+**Componente:** `privacy_filter.py:163`
+
+**Descrizione:** Il pattern PIVA `\b\d{11}\b` matcha qualsiasi sequenza di 11 cifre: importi in centesimi, numeri di protocollo, CIG, codici catastali. Esempio: "protocollo n. 20240015432" viene redatto come `[PIVA_1]`, perdendo un dato identificativo del contratto dal contesto LLM.
+
+**Severità:** High — perdita di dati legittimi nel payload → LLM manca contesto per categorie `payment_terms` e `governing_law`
+
+**Root cause:** spec `Privacy Filter Integration.md:119` esplicitamente richiedeva *"Partita IVA (11 cifre + checksum Luhn IT)"*. Il checksum Luhn è stato implementato in INC-006 per alcuni casi, ma il context-keyword non è stato aggiunto — il match avviene ancora su qualsiasi 11 cifre isolate.
+
+**Soluzione (da implementare):**
+```python
+def _validate_piva_luhn(s: str) -> bool:
+    if len(s) != 11 or not s.isdigit():
+        return False
+    tot = sum(int(s[i]) * (1 if i % 2 == 0 else 2) // 10 +
+              int(s[i]) * (1 if i % 2 == 0 else 2) % 10 for i in range(10))
+    return (10 - tot % 10) % 10 == int(s[10])
+
+# + context-keyword prima del match (come per CF)
+_PIVA_RE = re.compile(
+    r'(?:partita\s+iva|P\.?\s*IVA)\s*[:\-]?\s*(\d{11})',
+    re.IGNORECASE
+)
+```
+
+**Lezioni apprese:** Luhn senza context-keyword riduce i falsi positivi ma non li elimina (~10% dei numeri a 11 cifre casuali passano Luhn). Servono entrambi.
+
+**Aggiornamenti Specifica:** nessuno — gap implementazione.
+
+**Status:** 🔴 Open — da fixare prima della consegna
+
+---
+
+## INC-009 — Ordering bug spaCy: offset post-regex applicati su testo già modificato
+
+**Data:** 2026-05-29 (identificato durante code review Opus 4.7 — problema genuinamente nuovo, non in spec)
+
+**Componente:** `privacy_filter.py:185-199`
+
+**Descrizione:** La pipeline in `redact()` esegue prima le sostituzioni regex (che modificano il testo e cambiano gli offset dei caratteri), poi lancia spaCy NER sul testo risultante. Tuttavia gli offset di spaCy sono calcolati sul testo post-regex, e poi vengono applicati con un loop `sorted(entities, reverse=True)` che modifica il testo a ogni iterazione, invalidando i boundary delle entity successive. Il check `before == "["` a riga 194 è una toppa parziale che non copre tutti i casi. Risultato: placeholder corrotti tipo `[PER[CF_1]_2]`, testo manomesso inviato a Claude.
+
+**Severità:** Critical — corruzione dati, non riproducibile in modo deterministico (dipende dalla densità di PII nel contratto)
+
+**Root cause:** mancanza di un approccio "collect all spans, apply once in reverse order on original text" — il testo viene mutato in-place durante l'iterazione.
+
+**Soluzione (da implementare — pattern corretto):**
+```python
+# 1. Collect tutti gli span (regex + spaCy) su testo originale
+# 2. Ordina per posizione di inizio (reverse)
+# 3. Applica UNA sola passata in reverse — ogni sostituzione non invalida le precedenti
+all_spans = regex_spans + spacy_spans  # (start, end, label, value)
+all_spans.sort(key=lambda x: x[0], reverse=True)
+text_out = original_text
+for start, end, label, value in all_spans:
+    placeholder = _make_placeholder(label)
+    mapping[placeholder] = value
+    text_out = text_out[:start] + placeholder + text_out[end:]
+```
+
+**Lezioni apprese:** mai mutare un testo in-place durante un'iterazione sugli offset di quel testo. Collect-then-apply è il pattern corretto per qualsiasi layered text substitution.
+
+**Aggiornamenti Specifica:** nessuno — bug implementativo, non architetturale.
+
+**Status:** 🔴 Open — **priorità massima** (corruzione silente, non visibile in test semplici)
+
+---
+
+## INC-010 — subprocess.run() senza timeout (DoS / hang indefinito)
+
+**Data:** 2026-05-29 (identificato durante code review Opus 4.7)
+
+**Componente:** `llm_client.py:231`
+
+**Descrizione:** La chiamata `subprocess.run(["claude", "-p", ...], ...)` non specifica `timeout=`. Se Claude CLI hangga (rete, auth scaduta, OOM), il processo resta bloccato indefinitamente. Su FastAPI con 4 worker uvicorn default: 4 richieste in parallelo bastano per saturare tutti i worker e rendere il servizio non raggiungibile — DoS involontario o intenzionale.
+
+**Severità:** High — blocca produzione, anche senza attaccante (es. disconnessione rete durante analisi)
+
+**Root cause:** la spec v3.1 §9 richiedeva *"Claude API timeout → Retry automatico"* ma il `timeout=` parametro di subprocess non è stato aggiunto.
+
+**Soluzione (5 minuti — massimo ROI da code review):**
+```python
+result = subprocess.run(
+    ["claude", "-p", "--system-prompt", ...],
+    input=user_message,
+    capture_output=True,
+    text=True,
+    timeout=300,  # 5 min — abbondante anche per contratti 40k char
+)
+```
+Catturare `subprocess.TimeoutExpired` e trattarlo come errore transitorio (retry 1 volta, poi 503).
+
+**Lezioni apprese:** qualsiasi subprocess su rete/LLM deve avere timeout esplicito. Il default "attendi per sempre" è quasi sempre sbagliato.
+
+**Aggiornamenti Specifica:** nessuno — colma gap implementazione vs spec §9.
+
+**Status:** 🔴 Open — da fixare (1 riga, priorità alta)
+
+---
+
+## INC-011 — async def con subprocess sincrono blocca event loop FastAPI
+
+**Data:** 2026-05-29 (identificato durante code review Opus 4.7 — problema genuinamente nuovo, non in spec)
+
+**Componente:** `main.py:302`
+
+**Descrizione:** L'endpoint `async def analyze_contract(...)` chiama internamente `analyze(contract_text, metadata)` che a sua volta esegue `subprocess.run()` sincrono. In FastAPI, una coroutine `async def` che fa lavoro bloccante occupa l'event loop per tutta la durata — 163-268 secondi per contratto lungo. Durante questo tempo nessun altro endpoint risponde, anche se ci sono worker liberi. Zero concorrenza reale.
+
+**Severità:** High — degrada UX a single-threaded de facto; qualsiasi secondo utente aspetta 3+ minuti anche su server con risorse libere
+
+**Root cause:** FastAPI non sa distinguere "async che fa I/O non bloccante" da "async che fa CPU/subprocess bloccante". La distinzione va fatta esplicitamente con `asyncio.to_thread`.
+
+**Soluzione (10 minuti — massimo ROI insieme a INC-010):**
+```python
+import asyncio
+
+@app.post("/analyze", response_class=HTMLResponse)
+async def analyze_contract(request: Request, file: UploadFile = File(...)):
+    ...
+    result = await asyncio.to_thread(analyze, contract_text, metadata)
+    ...
+```
+`asyncio.to_thread` esegue la funzione sync in un thread pool separato, liberando l'event loop per altre richieste.
+
+**Lezioni apprese:** `async def` in FastAPI non è sufficiente per concorrenza reale se la funzione fa I/O bloccante (subprocess, file sync, DB sync). Serve `asyncio.to_thread` o `run_in_executor` espliciti.
+
+**Aggiornamenti Specifica:** nessuno — best practice FastAPI, non coperta dalla spec.
+
+**Status:** 🔴 Open — da fixare (INC-010 e INC-011 si fixano insieme in 15 minuti totali)
 
 ---
 

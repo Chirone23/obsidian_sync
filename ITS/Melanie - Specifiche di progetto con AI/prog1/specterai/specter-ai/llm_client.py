@@ -1,5 +1,4 @@
 import json
-import os
 import re
 import subprocess
 import time
@@ -7,12 +6,12 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+import config
 from privacy_filter import redact, restore
 from schemas import ContractAnalysis
 
 
 _SYSTEM_PROMPT_PATH = Path(__file__).parent / "prompts" / "system_prompt.md"
-_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 
 def _load_system_prompt() -> str:
@@ -23,11 +22,12 @@ def _load_system_prompt() -> str:
     return match.group(1).strip()
 
 
-def _call_claude(system_prompt: str, user_message: str) -> str:
+def _call_cli(system_prompt: str, user_message: str) -> str:
+    """Backend Claude Code CLI (costo €0, solo su macchina autenticata)."""
     result = subprocess.run(
         ["claude", "-p",
          "--system-prompt", system_prompt,
-         "--model", _MODEL,
+         "--model", config.MODEL,
          "--output-format", "json"],
         input=user_message,
         capture_output=True,
@@ -42,6 +42,40 @@ def _call_claude(system_prompt: str, user_message: str) -> str:
     if data.get("is_error"):
         raise RuntimeError(f"Claude API error: {data}")
     return data["result"]
+
+
+def _call_sdk(system_prompt: str, user_message: str) -> str:
+    """Backend SDK Anthropic (deployabile ovunque, richiede ANTHROPIC_API_KEY).
+
+    Applica i parametri di determinismo della spec §6 (temperature=0, max_tokens)
+    che il path CLI non espone — vedi SPEC_ERRATA ERR-08.
+    """
+    try:
+        import anthropic
+    except ImportError as e:
+        raise RuntimeError("SDK 'anthropic' non installato (pip install anthropic)") from e
+
+    client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY or None)
+    try:
+        response = client.messages.create(
+            model=config.MODEL,
+            max_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+        )
+    except anthropic.APIError as e:
+        # Rete/timeout/rate-limit/5xx → trattati come errore ritentabile dal loop.
+        raise RuntimeError(f"Anthropic SDK error: {e}") from e
+
+    return "".join(block.text for block in response.content if block.type == "text")
+
+
+def _call_claude(system_prompt: str, user_message: str) -> str:
+    """Dispatch sul backend configurato (config.LLM_BACKEND)."""
+    if config.LLM_BACKEND == "sdk":
+        return _call_sdk(system_prompt, user_message)
+    return _call_cli(system_prompt, user_message)
 
 
 def _parse_response(raw_response: str) -> ContractAnalysis:

@@ -1,0 +1,22 @@
+Color Palette - https://gabiodvzagarolo.lovable.app/
+Extracted by PocketUI (pocketui.app/tools/website-color-palette-extractor)
+────────────────────────────────────────────────────────────
+
+#cccccc  rgb(204, 204, 204)  hsl(0, 0%, 80%)
+#3b82f6  rgb(59, 130, 246)  hsl(217, 91%, 60%)
+#575ecf  rgb(87, 94, 207)  hsl(237, 56%, 58%)
+#fcfbf8  rgb(252, 251, 248)  hsl(45, 40%, 98%)
+#9ca3af  rgb(156, 163, 175)  hsl(218, 11%, 65%)
+#2563eb  rgb(37, 99, 235)  hsl(221, 83%, 53%)
+#ec4899  rgb(236, 72, 153)  hsl(330, 81%, 60%)
+#1b1b1b  rgb(27, 27, 27)  hsl(0, 0%, 11%)
+#c5c1b9  rgb(197, 193, 185)  hsl(40, 9%, 75%)
+#dcdad5  rgb(220, 218, 213)  hsl(43, 9%, 85%)
+#fe7b02  rgb(254, 123, 2)  hsl(29, 99%, 50%)
+#fe3f21  rgb(254, 63, 33)  hsl(8, 99%, 56%)
+#f858bc  rgb(248, 88, 188)  hsl(323, 92%, 66%)
+#e5e7eb  rgb(229, 231, 235)  hsl(220, 13%, 91%)
+#f48525  rgb(244, 133, 37)  hsl(28, 90%, 55%)
+#faa938  rgb(250, 169, 56)  hsl(35, 95%, 60%)
+#9333ea  rgb(147, 51, 234)  hsl(271, 81%, 56%)
+#dc2626  rgb(220, 38, 38)  hsl(0, 72%, 51%)
