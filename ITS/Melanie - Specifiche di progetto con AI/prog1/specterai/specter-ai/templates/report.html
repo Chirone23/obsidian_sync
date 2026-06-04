@@ -12,6 +12,9 @@
     h1 { font-size: 1.8rem; font-weight: 700; }
     .filename { color: #6b7280; font-size: 0.9rem; margin-top: 4px; }
     .ai-badge { display: inline-block; background: #ede9fe; color: #7c3aed; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
+    .meta-badges { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .meta-badge { display: inline-flex; align-items: center; gap: 5px; background: #fff; border: 1px solid #e5e7eb; color: #374151; font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .meta-badge .val { color: #7c3aed; }
 
     /* Top 3 rischi */
     .top3 { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
@@ -53,6 +56,10 @@
       <h1>Report di Analisi</h1>
       {% if filename %}<p class="filename">📄 {{ filename }}</p>{% endif %}
       <span class="ai-badge">🤖 Generato da SpecterAI</span>
+      <div class="meta-badges">
+        {% if elapsed_seconds is not none %}<span class="meta-badge">⏱️ Analisi in <span class="val">{{ elapsed_seconds }}s</span></span>{% endif %}
+        {% if model %}<span class="meta-badge">🧠 Modello <span class="val">{{ model }}</span></span>{% endif %}
+      </div>
     </header>
 
     {% if truncation_warning %}

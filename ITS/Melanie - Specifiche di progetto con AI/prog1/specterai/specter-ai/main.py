@@ -1,4 +1,5 @@
 import asyncio
+import time
 from pathlib import Path
 
 from fastapi import FastAPI, File, Request, UploadFile
@@ -39,10 +40,14 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
             status_code=413,
         )
 
-    # Legge in chunk con limite per non caricare file enormi in memoria
+    # Legge in chunk con limite per non caricare file enormi in memoria.
+    # UploadFile non è async-iterabile: si legge con await file.read(size).
     chunks: list[bytes] = []
     total = 0
-    async for chunk in file:
+    while True:
+        chunk = await file.read(1024 * 1024)  # 1MB per volta
+        if not chunk:
+            break
         total += len(chunk)
         if total > MAX_SIZE:
             return HTMLResponse(
@@ -62,6 +67,7 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
 
     metadata = extract_metadata(contract_text)
 
+    start = time.perf_counter()
     try:
         result = await asyncio.to_thread(analyze, contract_text, metadata)
     except RuntimeError:
@@ -76,12 +82,16 @@ async def analyze_contract(request: Request, file: UploadFile = File(...)):
             status_code=500,
         )
 
+    elapsed_seconds = round(time.perf_counter() - start, 1)
+
     return templates.TemplateResponse(
         "report.html",
         {
             "request": request,
             "analysis": result,
             "filename": file.filename,
+            "elapsed_seconds": elapsed_seconds,
+            "model": config.MODEL,
             "truncation_warning": "Contratto lungo: analizzate le prime 40.000 parole." if truncated else None,
         },
     )

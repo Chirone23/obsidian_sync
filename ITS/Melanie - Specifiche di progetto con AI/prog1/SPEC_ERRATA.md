@@ -184,7 +184,9 @@ Più 5 minori (backoff mancante, MAX_CHARS silenzioso, phone regex permissivo, m
 | Dipendenze core | import fastapi/pymupdf/anthropic/pydantic/jinja2 | ✅ (langdetect assente → ERR-09; anthropic presente ma inutilizzato → ERR-08) |
 | spaCy `it_core_news_sm` | `spacy.load` | ✅ caricato |
 
-> Non eseguito in questa sessione: E2E completo via `uvicorn` + PDF reale con chiamata Claude (richiede run interattivo). Già coperto 7/8 PDF nella sessione 2026-05-20 (vedi [[SESSION_HANDOFF]]).
+> ~~Non eseguito in questa sessione: E2E completo via `uvicorn` + PDF reale con chiamata Claude (richiede run interattivo).~~ Già coperto 7/8 PDF nella sessione 2026-05-20 (vedi [[SESSION_HANDOFF]]).
+>
+> **Aggiornamento 2026-06-04 — E2E reale eseguito.** Avvio `uvicorn main:app` + upload HTTP multipart di `ContrattoCOCOCO.pdf` dalla web UI, backend `cli` + modello Haiku (`claude-haiku-4-5-20251001` via env var, senza `.env`). Esito: **200 OK**, report con 3 top-rischi + 7/7 categorie, `language: italian`. Tempi 76–107s (varianza backend cli). ⚠️ Questo primo E2E reale ha fatto emergere **[[INCIDENTS]] INC-012** (`async for chunk in file` su `UploadFile` → 500 su ogni upload): l'upload HTTP non era mai stato testato davvero (la copertura "7/8 PDF" era a monte dell'endpoint). Bug corretto e ri-verificato in pari data.
 
 ---
 

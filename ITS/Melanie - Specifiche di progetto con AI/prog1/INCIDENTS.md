@@ -28,6 +28,7 @@
 | **INC-009** | **2026-05-21** | **privacy_filter.py — Ordering bug spaCy offset** | **Offset spaCy pre-regex applicati post-regex → placeholder corrotti `[PER[CF_1]_2]`** | **Critical** | **✅ RESOLVED** |
 | **INC-010** | **2026-05-21** | **llm_client.py — subprocess senza timeout** | **`subprocess.run()` senza `timeout=` → hang indefinito, DoS su worker uvicorn** | **High** | **✅ RESOLVED** |
 | **INC-011** | **2026-05-21** | **main.py — async def con subprocess sincrono** | **Endpoint `async def` con subprocess sync blocca event loop, zero concorrenza** | **High** | **✅ RESOLVED** |
+| **INC-012** | **2026-06-04** | **main.py — `async for chunk in file` su UploadFile** | **`UploadFile` non è async-iterabile → `TypeError` → 500 su OGNI upload dalla web UI. Primo E2E reale via browser mai funzionato.** | **Critical** | **✅ RESOLVED** |
 
 ---
 
@@ -550,6 +551,54 @@ Il match scatta solo se preceduto da `codice fiscale`/`CF`; il CF stesso resta u
 **Aggiornamenti Specifica:** nessuno — best practice FastAPI, non coperta dalla spec. Vedi [[SPEC_ERRATA]] ERR-06.
 
 **Status:** ✅ Resolved 2026-05-21 — commit `3b81fd1`
+
+---
+
+## INC-012 — `async for chunk in file` su UploadFile (500 su ogni upload web)
+
+**Data:** 2026-06-04 (durante il primo avvio E2E reale dell'app via browser + uvicorn)
+
+**Componente:** `main.py` — endpoint `/analyze`, lettura streaming del file caricato (righe ~42-53)
+
+**Descrizione:** Al primo upload reale di un PDF dalla web UI (`ContrattoCOCOCO.pdf`), il server risponde **500 in ~0,1s**, prima ancora della chiamata LLM. Traceback:
+```
+File "main.py", line 45, in analyze_contract
+    async for chunk in file:
+TypeError: 'async for' requires an object with __aiter__ method, got UploadFile
+```
+`UploadFile` di Starlette/FastAPI **non implementa `__aiter__`**: non è async-iterabile. Il loop `async for chunk in file` (introdotto per leggere il file a chunk con limite 10MB) solleva `TypeError` su **qualsiasi** file caricato. Conseguenza: la pipeline web `/analyze` non ha **mai** processato un upload con successo — ogni PDF dava 500.
+
+**Severità:** Critical — il percorso utente principale (carica PDF dal browser → report) era completamente rotto. Restava nascosto perché i test E2E precedenti (vedi [[SESSION_HANDOFF]], "7/8 PDF" del 2026-05-20) erano stati eseguiti chiamando la logica di analisi a monte dell'endpoint, **non** via upload HTTP multipart reale.
+
+**Root cause:** assunzione errata che `UploadFile` fosse async-iterabile come uno stream. L'API corretta per leggere a chunk è `await file.read(size)` in loop (oppure iterare `file.file`, lo SpooledTemporaryFile sottostante, in modo sincrono).
+
+**Fix applicato (2026-06-04):** sostituito il loop `async for` con lettura a chunk via `await file.read()`, mantenendo identico il limite 10MB:
+```python
+chunks: list[bytes] = []
+total = 0
+while True:
+    chunk = await file.read(1024 * 1024)  # 1MB per volta
+    if not chunk:
+        break
+    total += len(chunk)
+    if total > MAX_SIZE:
+        return HTMLResponse("...supera i 10MB...", status_code=413)
+    chunks.append(chunk)
+pdf_bytes = b"".join(chunks)
+```
+
+**Fix verificato (E2E reale, backend cli + Haiku):**
+- `ContrattoCOCOCO.pdf` → **200 OK**, report HTML completo (3 top-rischi + 7/7 categorie), `language: italian`.
+- Tempi osservati: 76,8s / 81,0s / 107,2s su run successivi (varianza intrinseca del backend `cli` Claude Code, non retry — log puliti, 1 tentativo).
+
+**Lezioni apprese:**
+- ✅ `UploadFile` non è async-iterabile: leggere con `await file.read(size)`, mai `async for`.
+- ✅ **Testare il percorso E2E vero** (upload HTTP multipart), non solo la funzione `analyze()` a valle: un bug nell'I/O dell'endpoint resta invisibile se si testa solo il core. La copertura "7/8 PDF" non includeva l'upload reale.
+- ✅ Un 500 immediato (~0,1s) prima della latenza LLM è un segnale che l'errore è nell'I/O/validazione, non nel modello.
+
+**Aggiornamenti Specifica:** nessuno (bug implementativo, non architetturale). Aggiornata la nota E2E in [[SPEC_ERRATA]] (Test di verifica): E2E via uvicorn + PDF reale ora **eseguito** il 2026-06-04.
+
+**Status:** ✅ Resolved 2026-06-04
 
 ---
 
