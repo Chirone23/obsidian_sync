@@ -46,3 +46,11 @@ created: 2026-06-07
 **Stato progetto:**
 **Prossimo passo immediato:**
 ```
+
+## SESSION-02 — Ricerca modello + Prompts di avvio
+**Data:** 2026-06-07  
+**Cosa è stato fatto:** Definita configurazione modello per i nodi LLM (claude-opus-4-8, thinking adaptive, effort high/xhigh). Creato file `Prompts di Avvio.md` con 5 prompt copiabili (T-001→T-005), ognuno autosufficiente con contesto, criteri pass/fail e configurazione modello.  
+**Risultati test eseguiti:** Nessuno — zero gate eseguiti  
+**Problemi incontrati:** Nessuno  
+**Stato progetto:** Piano completo, prompts pronti, Weft non ancora installato  
+**Prossimo passo immediato:** Installare Weft CLI + Restate, scegliere `script_riferimento.py` da `execution/`, eseguire T-001
