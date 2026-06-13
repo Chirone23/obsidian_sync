@@ -55,6 +55,7 @@ La prosa **non è mai passiva**: dimostra una tesi (conviene aderire / serve mod
 | **Commento tecnico** | Contesto normativo + data della fonte | Esegesi per sezioni numerate + esempi di calcolo | Sintesi pratica / implicazione operativa |
 | **Articolo divulgativo** | Domanda o aggancio al lettore | Spiegazione semplificata + soglie + esempi concreti | "Perché conviene / cosa si rischia" |
 | **Email/comunicazione** | `Oggetto:` esplicito · "Gentile Cliente," | Punto normativo + sanzioni/scadenze + check-list | "Lo Studio resta a disposizione…" + firma Studio |
+| **Profilo/manifesto** | Prima persona ("Sono…", "Chi sono") | Percorso + visione ("compagno di viaggio", non "in cattedra") | Valore umano/relazionale, tocco personale |
 
 ---
 
@@ -88,5 +89,5 @@ Il modello **non genera, non corregge, non "completa" mai** riferimenti normativ
 
 ## Connessioni
 
-- [[Corpus Stile - Tarabella]] — i 10 testi di riferimento
+- [[Corpus Stile - Tarabella]] — sintesi dei 10 testi · [[Corpus Stile - Tarabella (integrali)]] — testi completi
 - [[Specifica Tecnica]] · [[Piano Demo]] · [[Validazione Idea]]

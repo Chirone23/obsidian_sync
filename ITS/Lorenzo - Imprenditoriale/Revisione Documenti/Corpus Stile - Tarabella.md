@@ -3,7 +3,7 @@
 **Tipo:** campione di stile pubblico per la demo Voce & Forma
 **Fonte:** studiotarabellaluca.com (materiale pubblico, GDPR-safe, privo di dati clienti)
 **Composizione:** 4 commenti tecnici (1-4) · 4 divulgativi/profilo (5-8) · 2 email (9-10)
-**Distillato in:** [[voce.md]]
+**Testi integrali:** [[Corpus Stile - Tarabella (integrali)]] · **Distillato in:** [[voce.md]]
 
 > Materiale di natura pubblica, liberamente citabile, privo di dati sensibili. Usato come riferimento di stile per la demo; in produzione sarà sostituito dai documenti reali dello Studio cliente.
 
@@ -41,11 +41,12 @@ Oggetto informativo. Obbligo abbinamento digitale RT-POS dal 1/1/2026 sul portal
 
 ---
 
-> **Nota:** i testi 1-10 sono stati raccolti integrali e puliti in Fase 0. Per esigenze di spazio qui è riportata la sintesi strutturale di ciascuno; i testi integrali sono il materiale operativo della demo (incollati nel contesto del modello in Fase 3). Per ricostruirli: fonte studiotarabellaluca.com, sezione News/Blog.
+> **Nota:** questo file riporta la **sintesi strutturale** di ciascun testo, utile per orientarsi nel corpus. I **testi integrali e puliti** (materiale operativo da incollare nel contesto del modello in Fase 3) sono in [[Corpus Stile - Tarabella (integrali)]]. Fonte originale: studiotarabellaluca.com, sezione News/Blog.
 
 ---
 
 ## Connessioni
 
+- [[Corpus Stile - Tarabella (integrali)]] — i 10 testi completi
 - [[voce.md]] — regole di stile distillate da questo corpus
 - [[Specifica Tecnica]] · [[Piano Demo]]
