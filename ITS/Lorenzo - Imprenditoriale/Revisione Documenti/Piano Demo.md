@@ -95,8 +95,8 @@ Esempio d'uso: `ultrathink and refactor this function`
 
 - [x] Fase 0 — Raccolti ~10 file campione di stile
 - [ ] Fase 0 — Scelto 1 parere-tipo grezzo da riscrivere
-- [ ] Fase 1 — Creato `voce.md` (regole di stile portabili)
-- [ ] Fase 2 — Costruita direttiva/skill Voce & Forma
+- [x] Fase 1 — Creato `voce.md` (regole di stile portabili)
+- [x] Fase 2 — Costruita direttiva/skill Voce & Forma
 - [ ] Fase 3 — Eseguita riscrittura su Sonnet 4.6 (condizioni reali)
 - [ ] Fase 4 — Validato output con rubrica 3 assi + iterato
 
