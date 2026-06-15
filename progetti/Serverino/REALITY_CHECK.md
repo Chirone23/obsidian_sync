@@ -94,6 +94,26 @@ python-telegram-bot (polling)
 
 ---
 
+## 🪜 Scala di Impatto sul Progetto
+
+Dal fattore che condiziona TUTTO il resto, fino a quelli marginali. Affronta dall'alto verso il basso: ogni gradino sopra rende inutile lavorare su quelli sotto.
+
+| # | Fattore | Impatto | Perché sta qui |
+|---|---|---|---|
+| 1️⃣ | **Scelta architettura: Nanobot vs wrapper custom** | 🔴 DECISIVO | Decide ogni altra cosa: codice, deploy, manutenzione, debug, RAM. Finché non decidi questo, tutto il resto è aria. Raccomandazione: wrapper custom. |
+| 2️⃣ | **Model retirement (`deepseek-chat` → `v4-flash`)** | 🔴 DECISIVO | Senza un modello vivo non c'è bot. Data fissa 24/07/2026. Fix banale ma obbligatorio prima di tutto. |
+| 3️⃣ | **RAM 4GB + CPU 6W (vincolo fisico)** | 🟠 ALTO | Tetto invalicabile. Determina cosa puoi farci girare. Più pesante l'architettura (vedi #1), più questo morde. Spinge verso wrapper leggero + niente Docker/MCP-Node. |
+| 4️⃣ | **Sorgente contesto: git filesystem vs MCP Obsidian** | 🟠 ALTO | Feature core. MCP non gira headless → se sbagli qui, il bot non legge il vault. Scelta: leggere `.md` da clone git. |
+| 5️⃣ | **Scope feature: git clone arbitrario da messaggio** | 🟡 MEDIO | È la feature più rischiosa (disk bomb/OOM) e meno utile dell'MVP. Tagliarla semplifica sicurezza, storage e concorrenza in un colpo. |
+| 6️⃣ | **Sicurezza secret + log** | 🟡 MEDIO | Conta solo dopo che il bot esiste e gira. Gestibile con `.env` chmod 600 + sanitize log. |
+| 7️⃣ | **Affidabilità rete (WiFi 1x1, no failover)** | 🟢 BASSO | Fastidio operativo, non blocca. `Restart=always` copre l'80%. |
+| 8️⃣ | **SSD wear da git pull** | 🟢 TRASCURABILE | Pull ogni 7 min ≈ no-op. Non lo tocchi nemmeno. |
+| 9️⃣ | **Budget API** | 🟢 NON-PROBLEMA | ~$0.13/mese. Mai stato un rischio. |
+
+**Regola di lettura:** se sei bloccato, lavora sempre sul gradino più alto non ancora risolto. Ottimizzare il #6 mentre il #1 è indeciso = sprecare token e tempo.
+
+---
+
 ## Fonti
 
 - [HKUDS/nanobot](https://github.com/HKUDS/nanobot)
