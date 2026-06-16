@@ -257,6 +257,7 @@ Draft (IA) → Review umana → Finalize → Archivio in Prompt Library
 - [[NotebookLM Query Playbook]] — estrarre contenuti dai notebook online applicando questi framework
 
 - [[Bracketed Headers - Convention Markdown]] — convenzione di formattazione complementare a C.I.A.R.E.: chiudere ogni heading con gli stessi `#` per delimitare visivamente i blocchi e ridurre il sanguinamento di contesto tra sezioni
+- [[Creazione di scenari con AI]] — Prompt Architecture per Decision Making Strategico: Board Virtuali, What-If, Control Codes, caso TechLogistics
 
 ---
 
