@@ -99,6 +99,28 @@ Questo è il punto del **pappagallo stocastico** applicato agli scenari: l'outpu
 
 ---
 
+## Finding originale — Il drift colpisce la lingua prima della logica
+
+> Osservazione empirica nostra (giugno 2026), non presente nelle fonti. Test su [[Lab - Board Virtuale PMI AI Deployment]] con prompt **in italiano**, 3 round.
+
+Eseguendo la stessa simulazione su 3 round consecutivi è emerso un pattern non documentato nelle fonti sul persona drift:
+
+| Round | Logica / coerenza personaggi | Qualità linguistica |
+|-------|------------------------------|---------------------|
+| 1 | Solida | Pulita |
+| 2 | Solida (CEO usa la carta nascosta in modo tattico) | Qualche slip |
+| 3 | **Migliore di tutte** (risolve il conflitto via parallelizzazione FRIA) | **Rotta** — anglicismi a valanga, parola raddoppiata ("compliance compliance") |
+
+**Tesi:** il drift attacca **la superficie (lingua) prima del ragionamento (logica)**. Il re-anchor sui *fatti* tiene i contenuti in carreggiata, ma non protegge lo *stile* perché non viene mai ri-ancorato.
+
+**Ipotesi sulla causa:** il modello è più forte in inglese. In italiano fa una traduzione continua a runtime; sotto carico (contesto lungo, molti turni) quel layer di traduzione è il primo a cedere → anglicismi e glitch. Gli anglicismi che colano dentro ("parallel track", "boardali", "close-out") sono il segnale che il modello "tira" verso la sua lingua nativa.
+
+**Implicazioni operative:**
+1. Per qualità linguistica costante su simulazioni lunghe, il re-anchor deve includere un **vincolo di stile** (*"rispondi in italiano corretto, zero anglicismi"*), non solo i fatti dei personaggi.
+2. **Test di controllo:** rieseguire la stessa simulazione con **prompt interamente in inglese** per verificare se, lavorando nella lingua nativa del modello, la qualità di superficie regge anche dopo 3 round. Se sì → conferma che il degrado era costo di traduzione, non drift di ragionamento.
+
+---
+
 ## Sintesi operativa — Miglioramenti rispetto al metodo del PDF
 
 | Aspetto | Metodo PDF (base) | Metodo ricerca (avanzato) |
