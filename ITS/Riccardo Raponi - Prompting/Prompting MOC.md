@@ -268,3 +268,4 @@ Raccolta di prompt pronti all'uso strutturati con C.I.A.R.E. → [[Prompt Librar
 | # | Prompt | Dove usarlo | Caso d'uso |
 |---|--------|-------------|------------|
 | 01 | Validazione Lista Fonti/Link | Perplexity (web search) | Verificare che siti/newsletter/canali trovati siano reali, attivi e pertinenti |
+| 02 | Board di 3 Agenti — Team di Sviluppo Ideale | ChatGPT/Claude/Gemini (in inglese) | 3 agenti (tecnica/consegna/budget) dibattono e progettano il team di sviluppo per un progetto |
