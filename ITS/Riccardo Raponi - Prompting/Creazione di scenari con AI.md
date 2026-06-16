@@ -163,5 +163,6 @@ Il piano deve:
 ## Connessioni
 
 - [[Prompting MOC]] — fondamenti, framework C.I.A.R.E., tecniche avanzate
+- [[Ricerca - Scenario Simulation con AI]] — approfondimento web: SimToM, Character Card, persona drift, limiti causali
 - [[Prompt Library]] — template pronti all'uso
 - [[ITS MOC]]
