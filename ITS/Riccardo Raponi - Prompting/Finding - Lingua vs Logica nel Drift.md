@@ -44,12 +44,28 @@ Il degrado italiano era **costo di traduzione, non collasso del ragionamento**. 
 
 ---
 
+## Esperimento 2 — La Strada B funziona? (vincolo di stile in italiano)
+
+Testata anche la Strada B su 3 round: italiano col vincolo di stile esplicito + re-anchor dei fatti.
+
+| Round | Anglicismi (nonostante il vincolo) | Fatti |
+|-------|-----------------------------------|-------|
+| 1 | 2 (*hardening*, *andare live*) | HR garbled ("tre colloqui falliti") |
+| 2 | 4 (*trigger, roadmap, budget, question mark*) + 2 errori | HR **recuperato** → "3 sviluppatori" |
+| 3 | 6-7 (*review, vs, feedback, assignment, timeline, remediation*, "no-X") | fedeli |
+
+**Meccanismo scoperto — "acchiappa la talpa":** la lista nera esplicita **sopprime le parole vietate** (al round 3 niente *trigger/hardening/compliance/deadline*: usa *innesco/messa in sicurezza/conformità/scadenza*), MA la spinta verso l'inglese si **redistribuisce su anglicismi nuovi** non in lista. Il totale **aumenta comunque a ogni round**. Per fermarla servirebbe una lista nera infinita.
+
+**Nota positiva:** il vincolo evita il collasso nel glitch (nessun *"compliance compliance"*), e il re-anchor dei **fatti** funziona (HR torna a "3"). La Strada B sta a metà: meglio del nudo, peggio dell'inglese.
+
+---
+
 ## Implicazioni operative (per l'esame, che è in italiano)
 
-| Strada | Come | Trade-off |
-|--------|------|-----------|
-| **A — Prompt in inglese, traduci il deliverable** | Esegui la simulazione in EN, traduci solo l'output finale (breve, statico → non degrada) | Massima qualità ragionamento; richiede una passata di traduzione umana |
-| **B — Prompt in italiano + re-anchor di stile** | A ogni round aggiungi *"rispondi in italiano corretto, zero anglicismi"* oltre al re-anchor dei fatti | Più comodo; qualità linguistica leggermente inferiore |
+| Strada | Come | Trade-off | Verdetto |
+|--------|------|-----------|----------|
+| **A — Prompt in inglese, traduci il deliverable** | Esegui la simulazione in EN, traduci solo l'output finale (breve, statico → non degrada) | Massima qualità; una passata di traduzione umana | ✅ **consigliata** |
+| **B — Prompt in italiano + vincolo di stile** | Lista nera di anglicismi + re-anchor fatti a ogni round | Mitiga ma non risolve: anglicismi nuovi colano comunque, crescono coi round | ⚠️ usabile solo con editing pesante |
 
 ---
 
