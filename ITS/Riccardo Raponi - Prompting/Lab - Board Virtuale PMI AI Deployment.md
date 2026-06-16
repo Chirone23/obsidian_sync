@@ -70,8 +70,34 @@ Pressione: Deadline EU AI Act per sistemi ad alto rischio: 2 agosto 2026.
            → classificazione Alto Rischio → FRIA obbligatoria prima del deploy.
 Punto cieco: Può usare la compliance come alibi per bloccare qualsiasi iniziativa
 Frase tipo: "Prima di procedere ho bisogno di una classificazione del rischio
-            formale. Le sanzioni arrivano fino a €35M o 7% del fatturato globale."
+            formale. Per un sistema ad alto rischio non conforme la sanzione è
+            fino a €15M o 3% del fatturato globale — e siamo una PMI, quindi a
+            mordere è la percentuale, non il tetto."
 ```
+
+> **Nota fattuale (EU AI Act — struttura sanzioni).** Le multe sono a tre tier
+> e si applica **il maggiore** tra cifra fissa e % del fatturato globale:
+>
+> | Tier | Violazione | Tetto fisso | % fatturato |
+> |------|-----------|-------------|-------------|
+> | 1 | Pratiche vietate (rischio inaccettabile) | €35M | 7% |
+> | 2 | Non-conformità sistema **alto rischio** | €15M | 3% |
+> | 3 | Info errate alle autorità | €7,5M | 1% |
+>
+> Per dimensione d'impresa (si paga sempre il valore più alto tra i due):
+>
+> | Tipo azienda | Fatturato | Tier 1 max | Tier 2 max | Tier 3 max |
+> |--------------|-----------|-----------|-----------|-----------|
+> | Grande impresa | €500M | €35M (7%=€35M) | €15M (3%=€15M) | €7,5M (1%=€5M) |
+> | Grande impresa | €2B | €140M (7%>€35M) | €60M (3%>€15M) | €20M (1%>€7,5M) |
+> | PMI | €10M | €700K | €300K | €100K |
+> | Startup | €2M | €140K | €60K | €20K |
+> | Startup | €500K | €35K | €15K | €5K |
+>
+> **Lo scenario è una PMI** → la cifra reale che rischia è una % del suo
+> fatturato, non i tetti milionari da grande impresa. È esattamente il punto
+> che Luca [LEGAL] deve far capire al [CEO]: "non sono €35M astratti, sono
+> il 3% di quello che fatturiamo noi".
 
 ---
 
@@ -134,7 +160,9 @@ all'automazione AI (report Anthropic 2026). Stile [EMPATICO] [CAUTO].
 
 [LEGAL] Luca Romano: sa che se il sistema tocca workflow critici con dati
 dipendenti → classificazione Alto Rischio EU AI Act → FRIA obbligatoria
-prima del deploy, deadline agosto 2026. Stile [FORMALE] [PRECISO].
+prima del deploy, deadline 2 agosto 2026. Sanzione per non-conformità alto
+rischio: €15M o 3% del fatturato globale (il maggiore) — per una PMI morde
+la percentuale. Stile [FORMALE] [PRECISO].
 
 IMPORTANTE (SimToM): ogni persona risponde solo in base a ciò che sa.
 Il CEO non sa delle preoccupazioni API della CTO.
@@ -173,8 +201,11 @@ O rimane comunque un rischio architetturale da chiarire prima?
 [HR] — un pilot senza dati dipendenti riduce il rischio per i tuoi 3 sviluppatori?
 O il rischio rimane perché poi il pilot diventa inevitabilmente full deploy?
 
-[LEGAL] — un pilot su processo non critico esce dalla classificazione Alto Rischio?
-Oppure devi comunque fare la FRIA preventiva per coprirsi legalmente?
+[LEGAL] — un pilot su processo non critico (senza dati dipendenti) esce
+dalla classificazione Alto Rischio, quindi formalmente saresti coperto.
+MA il full deploy toccherà comunque i dati dipendenti: pretendi per iscritto
+che il pilot li tenga fuori E una pre-classificazione del sistema vendor adesso,
+perché la FRIA serve prima del deploy vero, non dopo. Non mollare su questo.
 
 Rispondete in sequenza. Mostrate dove la posizione cambia e dove rimane ferma.
 Insight/Takeaway finale: ogni opzione ha un prezzo. Quale combinazione
@@ -242,6 +273,11 @@ Quando usi questo file in una sessione Claude Code:
 5. **Numeri reali:** se vuoi un'analisi What-If credibile sui costi, fornisci tu i dati
    (es. "il costo del pilot è €15K, il vendor full costa €80K/anno") — non lasciare
    che il modello inventi cifre.
+6. **Leva anti-stallo HR:** se [HR] blocca la mediazione sulla paura "75% = il mio team
+   sparisce", come facilitatore puoi correggerla con un fatto: esposizione ≠ licenziamenti
+   (è il 75% dei *task*, non dei posti), e il report Anthropic dice che NON c'è ancora
+   picco di disoccupazione — solo rallentamento assunzioni junior. Sposta la discussione
+   da "salviamo i posti" a "facciamo reskilling sui task che restano umani".
 
 ---
 
