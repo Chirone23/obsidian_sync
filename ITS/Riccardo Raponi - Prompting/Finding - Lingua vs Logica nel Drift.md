@@ -19,12 +19,13 @@ Eseguendo la simulazione del Board Virtuale su 3 round in **italiano**, è emers
 
 ## I dati
 
-| | Logica / SimToM | Qualità linguistica |
-|---|---|---|
-| **Italiano — round 1** | solida | pulita |
-| **Italiano — round 2** | solida (CEO usa la carta nascosta in modo tattico) | qualche slip |
-| **Italiano — round 3** | **migliore di tutte** (risolve il conflitto via parallelizzazione FRIA) | **rotta** — anglicismi a valanga + glitch |
-| **Inglese — round 1** | solida (SimToM tiene, HR dice "Three", carta CEO coperta) | **pulita + regie sceniche spontanee** |
+| Round | IT — Logica/SimToM | IT — Lingua | EN — Logica/SimToM | EN — Lingua |
+|---|---|---|---|---|
+| 1 | solida | pulita | solida (HR dice "Three", carta CEO coperta) | pulita + regie sceniche |
+| 2 | solida (CEO usa la carta nascosta) | **primi slip** | solida + calcolo costi esplicito | pulita |
+| 3 | **ottima** (risolve via parallelizzazione FRIA) | **rotta + glitch** ("compliance compliance", "boardali") | **ottima** + economics exit clause | **pulita** (zero degrado) |
+
+**Esperimento completo:** entrambe le versioni eseguite su 3 round identici. La logica regge in entrambe le lingue (anzi migliora coi round). La qualità di superficie **degrada solo in italiano, monotonicamente fino al collasso al round 3**; in inglese resta pulita per tutti e 3 i round.
 
 ---
 
