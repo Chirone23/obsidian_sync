@@ -101,3 +101,24 @@ Estendere — non riscrivere — il blueprint:
 ---
 
 [[progetti/Serverino/README]] • [[progetti/Serverino/REALITY_CHECK]] • [[progetti/Serverino/hardware]]
+
+
+---
+
+## 7. ADDENDUM — Decisioni 2026-06-22
+
+### 7.1 Monitoraggio = livello 2.7, NON 3.0 → rimandato a Phase 2
+Il monitoraggio (trigger su *condizione*: "avvisami se X") è distinto dallo scheduler (trigger su *tempo*). Resta dentro confini dati dall'utente → **non** è l'agente autonomo del livello 3.0. È **2.7**, rimandato a Phase 2. Rimandarlo non apre la porta all'autonomia full: quando servirà, sarà un guardiano con soglia, non un agente che decide i propri goal.
+
+### 7.2 Memoria a due livelli (aggiorna asse "Memoria")
+- **Working memory**: ultimi 10 messaggi (continuità immediata, resettata a `/start`).
+- **Long-term memory**: solo fatti salienti, estratti e compressi in `idee/bot-memory.md` (un fatto per riga). Sostituisce il vecchio "log infinito".
+- **Consolidamento semi-automatico**: il bot propone i fatti da salvare → conferma utente (`/salva`). Mai scrittura autonoma in memoria. Coerente con l'asse "Iniziativa".
+- Il context delle risposte usa la **conversazione**, non l'intera knowledge del vault.
+
+### 7.3 Affidabilità — token reali
+Asse "Affidabilità" rafforzato: niente stime. Token per-chiamata dal campo `usage` di DeepSeek; saldo account da `GET /user/balance`. Vedi [[progetti/Serverino/SPECS]] §18.4.
+
+### 7.4 MVP confermato include
+✅ scheduler+tasks con conferma · ✅ failure notification · ✅ memoria semi-automatica · ✅ token/saldo reali · ✅ `/status`
+⏳ Phase 2: monitoraggio (2.7) · retrieval knowledge (quando il vault cresce) · media/voce

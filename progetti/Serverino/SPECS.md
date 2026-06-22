@@ -745,3 +745,106 @@ Ogni 60s (tick):
 ### 17.5 Retention
 - Le `tasks` NON vengono auto-pulite (sono configurazione, non log).
 - Solo `logs` resta soggetto alla retention 30gg già definita (§1).
+
+
+---
+
+## 18. ADDENDUM — MEMORIA, FAILURE & TOKEN REALI (2026-06-22)
+
+> Estensione MVP. Vedi [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]]. Tre aggiunte: consolidamento memoria semi-automatico, notifica di skill fallita, token reali da DeepSeek.
+
+### 18.1 Memoria a due livelli (sostituisce il `bot-memory.md` "log infinito")
+
+Problema risolto: `bot-memory.md` accumulava l'intero dialogo → cresceva senza limite → riproponeva il problema del context troppo grande. Il `/recap` manuale non veniva mai usato.
+
+**Due livelli distinti:**
+
+| Livello | Contenuto | Dove | Scadenza |
+|---|---|---|---|
+| **Working memory** | Ultimi 10 messaggi della sessione | RAM / context window | Resettata a `/start` |
+| **Long-term memory** | Solo fatti salienti (decisioni, preferenze, fatti sul padrone) | `idee/bot-memory.md` | Persistente tra sessioni |
+
+**Formato long-term — un fatto per riga, non il dialogo:**
+```markdown
+# Bot Memory — Fatti salienti
+
+- [2026-06-22] Chirone preferisce risposte dirette, niente lodi di apertura.
+- [2026-06-22] Serverino target = livello 2.5 (reattivo + scheduler con conferma).
+- [2026-06-20] Budget DeepSeek: free tier 5M token/30gg.
+```
+Niente trascrizione conversazione. Solo l'estratto compresso.
+
+### 18.2 Consolidamento SEMI-automatico (con conferma)
+
+Trigger: a `/start` di una nuova sessione **oppure** dopo N ore di inattività (default 6h).
+
+```
+1. Bot → LLM: analizza la sessione appena chiusa
+   → estrae candidati fatti salienti (max 5)
+2. Bot → Telegram:
+   "💾 Dalla sessione salverei:
+    1. [fatto A]
+    2. [fatto B]
+    3. [fatto C]
+    Salvo? [/salva 1,3] [/salva tutti] [/scarta]"
+3a. User: "/salva 1,3" → APPEND righe 1 e 3 a bot-memory.md
+3b. User: "/salva tutti" → APPEND tutti
+3c. User: "/scarta" → niente
+```
+**Regola:** il bot NON scrive mai in long-term memory senza conferma (stessa filosofia delle task). Coerente con [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]] asse "Iniziativa".
+
+### 18.3 Failure notification (skill che non parte)
+
+Quando una task `attiva` fallisce l'esecuzione:
+```
+Tentativo 1 fallisce → log ERROR, retry al tick dopo
+Tentativo 2 fallisce → log ERROR, retry al tick dopo
+Tentativo 3 fallisce → UPDATE tasks SET stato='sospesa'
+                     → Telegram: "⚠️ Task #12 'meteo+agenda' sospesa
+                        dopo 3 errori: <messaggio errore>.
+                        /riprendi 12 per riattivarla."
+```
+Vale anche per skill chiamate da **chat** che lanciano eccezione: il bot risponde con l'errore sanitizzato, non resta muto.
+
+### 18.4 Token & saldo — fonti REALI, non stime
+
+Due fonti distinte, entrambe autorevoli (rimuovere ovunque la parola "estimate"):
+
+**A) Per-chiamata — dal campo `usage` della risposta DeepSeek** (già in §6.2):
+```
+response.usage.prompt_tokens     → tokens_in   (reale)
+response.usage.completion_tokens → tokens_out  (reale)
+```
+Questi NON sono stimati: vengono da DeepSeek. La tabella `stats` (§1) li registra già — togliere il linguaggio "estimate" da §14.
+
+**B) Saldo account — endpoint ufficiale DeepSeek:**
+```
+GET https://api.deepseek.com/user/balance
+Headers: Authorization: Bearer {DEEPSEEK_API_KEY}, Accept: application/json
+
+Response:
+{
+  "is_available": true,
+  "balance_infos": [
+    { "currency": "...", "total_balance": "...",
+      "granted_balance": "...", "topped_up_balance": "..." }
+  ]
+}
+```
+- `granted_balance` = crediti gratis (consumati per primi)
+- `topped_up_balance` = credito ricaricato
+- `total_balance` = somma disponibile reale
+
+Usato nel comando `/status` → mostra **credito reale residuo**, non spesa stimata.
+Fonte: https://api-docs.deepseek.com/api/get-user-balance
+
+### 18.5 Comando `/status` (entra nell'MVP)
+```
+🤖 Serverino — stato
+• Uptime: <da systemd>
+• Task attive: <COUNT stato='attiva'>
+• Ultima task girata: <descrizione + timestamp>
+• Token oggi: <tokens_in + tokens_out da stats WHERE date=today>
+• Credito DeepSeek: <total_balance da /user/balance>  ← reale
+• Errori 24h: <COUNT logs WHERE level='ERROR'>
+```
