@@ -92,3 +92,26 @@ La destinazione, non la partenza. Ci si cresce dopo 1-3 anni.
 - [[Job_Market_Analysis_Italia_2026]] — dati job postings reali da LinkedIn
 - [[Imprenditoria MOC]] — business + EU AI Act (rilevante per Solutions Consultant)
 - [[Automation MOC]] — corso Fabio (rilevante per Automation Specialist)
+
+---
+
+## Cluster Industriale / Difesa (aggiunto 22 giugno 2026)
+
+> Ruoli **ML Engineer tradizionale** (computer vision, segnale, dati) — NON GenAI/LLM. Direzione divergente: richiede matematica/statistica + computer vision, non LangChain/RAG.
+
+| Azienda | Cosa fa con l'AI | Settore | Caveat |
+|---|---|---|---|
+| **Leonardo** | AI su satelliti, sorveglianza, droni. Assume a Roma. | Difesa | Spesso serve cittadinanza UE + **NOS** (nulla osta sicurezza). Questione etica AI militare. |
+| **Siemens** | AI/ML + computer vision + GenAI. Apprenticeship Milano. | Industriale civile | Entry-point pulito, nessun vincolo difesa. ✅ |
+| **Rheinmetall** | Stage AI (air defence). Sede Italia non confermata. | Difesa | Dato debole. Stesse restrizioni difesa. |
+
+### Stipendi verificati (fonti dirette)
+- **ML Engineer Italia — media €31.969** (PayScale 2026)
+- **ML Engineer Milano — media €37.000** (Glassdoor 2026)
+- Sono medie su tutti i livelli → coerenti con fascia entry €28-40k
+
+### Nota strategica
+Questo è un **terzo binario** rispetto ai 2 assi sopra (codice-LLM vs business): è ML classico.
+Siemens = entry civile realistico. Leonardo/Rheinmetall = difesa, con barriere d'accesso (NOS) e scelta etica personale ancora aperta.
+
+**Fonti:** [PayScale ML Italia](https://www.payscale.com/research/IT/Job=Machine_Learning_Engineer/Salary) · [Glassdoor ML Milano](https://www.glassdoor.com/Salaries/milan-italy-machine-learning-engineer-salary-SRCH_IL.0,11_IM1058_KO12,37.htm) · [Leonardo careers](https://www.leonardo.com/en/careers/) · [Siemens jobs](http://jobs.siemens.com/careers) · [Rheinmetall AI Intern](https://www.rheinmetall.com/en/job/artificial_intelligence_intern__m_f_d_/1023710)
