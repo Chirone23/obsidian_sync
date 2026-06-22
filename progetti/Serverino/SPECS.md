@@ -1,4 +1,6 @@
 # Serverino Bot — SPECIFICHE ESATTE
+> ⚠️ **PARZIALMENTE SUPERATO (2026-06-22).** Dove questo documento contraddice [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]] §8 (Riconciliazione v2 / opzione B), **vale §8**. In particolare: §3 (state machine → loop asyncio singolo), §4.3 e §18.2 (memoria → `/ricorda` manuale, no consolidamento LLM), §6.2/§8 (`deepseek-chat` → `deepseek-v4-flash`), §18.3 (no retry-3). Vedi tabella ERRATA in DEFINIZIONE §8.3.
+
 
 **Versione:** 1.0 MVP  
 **Data:** 2026-06-15  

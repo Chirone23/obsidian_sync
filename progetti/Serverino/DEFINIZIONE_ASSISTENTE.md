@@ -122,3 +122,47 @@ Asse "Affidabilità" rafforzato: niente stime. Token per-chiamata dal campo `usa
 ### 7.4 MVP confermato include
 ✅ scheduler+tasks con conferma · ✅ failure notification · ✅ memoria semi-automatica · ✅ token/saldo reali · ✅ `/status`
 ⏳ Phase 2: monitoraggio (2.7) · retrieval knowledge (quando il vault cresce) · media/voce
+
+
+---
+
+## 8. RICONCILIAZIONE v2 — opzione B (2026-06-22, FONTE DI VERITÀ)
+
+> Questo §8 **prevale** su qualsiasi contraddizione negli altri file. Nasce dalla valutazione critica esterna del 22/06 (vedi cronologia). Scelta: **opzione B — MVP 2.5 fatto bene**, single loop asyncio. Dove SPECS/bot-architecture dicono altro, vale §8.
+
+### 8.1 Decisioni canoniche (B)
+
+| Tema | Verità v2 |
+|---|---|
+| **Concorrenza** | **UN solo loop asyncio**, NON due thread. Scheduler = `JobQueue` nativa di `python-telegram-bot` v20. Niente Thread A/B su SQLite condiviso. |
+| **Anti doppia-esecuzione** | Colonna `in_esecuzione` (o `lock_until`) sulla task + `PRAGMA busy_timeout`. Una task in corso non viene ripresa dal tick successivo. |
+| **Memoria** | Working = ultimi 10 msg (context). Long-term = `idee/bot-memory.md`, **un fatto per riga**, scrittura SOLO via comando manuale **`/ricorda <testo>`** (append-only, zero LLM). |
+| **Consolidamento LLM** | ❌ TAGLIATO dall'MVP. Era rotto (candidati in RAM + `Restart=always` = fatti persi). → Phase 2. |
+| **Failure handling** | Skill fallisce → **notifica + log**, STOP. Niente retry-3 (amplifica il throttle CPU 6W). Task che fallisce → `sospesa` + alert, una volta. |
+| **Cron** | Solo `"ogni giorno HH:MM"` e `"ogni N ore"`. Niente cron 5-campi, niente dipendenza `croniter`. |
+| **Sorgente contesto** | Filesystem: legge `.md` dal clone git locale del vault. **MCP Obsidian = MORTO** (non gira headless). |
+| **Modello LLM** | `deepseek-v4-flash`. `deepseek-chat` = RITIRATO 24/07/2026. |
+| **Token/saldo** | Per-chiamata: campo `usage` reale. Saldo: `GET /user/balance`. (invariato, OK) |
+| **`/status`** | Nell'MVP. (invariato, OK) |
+| **Monitoraggio** | Phase 2 (2.7). (invariato) |
+
+### 8.2 PRIMA del codice — scegliere UNA skill eseguibile
+Il 2.5 ha senso solo se lo scheduler ha qualcosa da eseguire. **Vincolo:** la prima skill NON deve richiedere OAuth (no Google Calendar nell'MVP). Candidata default: **meteo via API pubblica** (es. Open-Meteo, no key). Decisione skill = prerequisito allo scheduler, non successiva.
+
+### 8.3 ERRATA — cosa correggere/cancellare negli altri file
+
+| File · sezione | Contenuto MORTO | Azione |
+|---|---|---|
+| `bot-architecture` header + Tech Stack | "Knowledge: MCP Obsidian (read-only)" | Cancellare → filesystem git |
+| `bot-architecture` `.env` (riga ~206/229) | `MCP_SERVER_URL=http://localhost:3000` | Cancellare (config di decisione revocata) |
+| `bot-architecture` Message Flow step 7 | "APPEND to bot-memory.md ## timestamp User/Bot" (log infinito) | Sostituire con `/ricorda` append-only |
+| `SPECS §3` STATE MACHINE | Macchina single-thread che torna a IDLE | Riscrivere come loop asyncio singolo (handler chat + JobQueue scheduler nello stesso loop) |
+| `SPECS §4.3` bot-memory "Session Log" + `/recap` | Vecchio modello memoria | Sostituire con modello 2-livelli §18.1 + `/ricorda` |
+| `SPECS §6.2 / §8` | `"model": "deepseek-chat"` | → `deepseek-v4-flash` |
+| `SPECS §14` TOKEN BUDGET | Linguaggio "estimate" sui token | Token sono REALI (campo `usage`), togliere "estimate" |
+| `SPECS §18.2` consolidamento LLM | Memoria semi-auto con conferma `/salva` | TAGLIATO → Phase 2, sostituito da `/ricorda` |
+| `SPECS §18.3` retry-3-then-suspend | Retry automatico | Semplificare: notifica + log, niente retry |
+
+### 8.4 Stato MVP v2 (definitivo)
+✅ chat reattiva (asyncio) · ✅ scheduler via JobQueue (un loop) · ✅ tasks con conferma + `in_esecuzione` · ✅ `/ricorda` manuale · ✅ failure = notifica+log · ✅ token/saldo reali · ✅ `/status` · ✅ UNA skill no-OAuth (meteo)
+⏳ Phase 2: monitoraggio 2.7 · consolidamento LLM · retrieval knowledge · cron avanzato · media/voce · Calendar/OAuth

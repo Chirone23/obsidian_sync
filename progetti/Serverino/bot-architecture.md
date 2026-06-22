@@ -1,4 +1,6 @@
 # Serverino Bot — Architecture MVP
+> ⚠️ **PARZIALMENTE SUPERATO (2026-06-22).** Dove questo documento contraddice [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]] §8 (Riconciliazione v2 / opzione B), **vale §8**. In particolare: header e Tech Stack ("MCP Obsidian" → filesystem git), `.env` (`MCP_SERVER_URL` morto), Message Flow step 7 (log infinito → `/ricorda`), addendum doppio trigger (2 thread → UN loop asyncio con `JobQueue`). Vedi tabella ERRATA in DEFINIZIONE §8.3.
+
 
 **Status:** Design Phase  
 **Version:** 1.0 MVP (text-only chat)  
