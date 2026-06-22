@@ -457,3 +457,63 @@ sudo journalctl -u serverino-bot -f
 ---
 
 [[moc/Index MOC]] • [[progetti/Serverino/hardware]] • [[skill/Bot Deployment Playbook]]
+
+
+---
+
+## ADDENDUM — Doppio trigger: reattivo + proattivo (2026-06-22)
+
+> Estensione al livello 2.5. Vedi [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]] e [[progetti/Serverino/SPECS]] §17. Il design sopra resta valido: qui si aggiunge un secondo trigger al core loop.
+
+### Core loop con due trigger
+
+Il flusso originale gira sempre su input Telegram. Si aggiunge uno scheduler che parte da solo:
+
+```
+main.py (orchestratore)
+ ├─ Thread A — on_message   (Telegram long-polling)
+ │     └─> message handler  → context → DeepSeek → response   [flusso originale]
+ │
+ └─ Thread B — on_schedule  (tick ogni 60s)
+       └─> scheduler.check_due()
+             ├─ SELECT tasks WHERE stato='attiva' AND prossima_esecuzione <= now
+             ├─ per ogni task dovuta: esegui skill → invia a Telegram
+             └─ aggiorna ultima/prossima_esecuzione
+```
+
+I due thread condividono: SQLite (`tasks`, `logs`), il client Telegram (per inviare), il provider DeepSeek (se la skill ne ha bisogno). Accesso DB serializzato (SQLite lock + retry già previsto).
+
+### Struttura file aggiornata (core "Serverino")
+```
+serverino/
+├── main.py              # avvia Thread A + Thread B
+├── core/
+│   ├── channel.py       # Telegram (polling + send)
+│   ├── provider.py      # call_llm() → DeepSeek
+│   ├── context.py       # legge .md dal vault
+│   ├── memory.py        # SQLite: logs + last-N
+│   └── scheduler.py     # NUOVO: tick loop, check_due(), next_cron()
+├── skills/
+│   ├── __init__.py
+│   ├── daily_brief.py   # esempio: meteo + agenda
+│   └── ...              # nuova capability = nuovo file
+├── config.py
+└── systemd/serverino.service
+```
+
+### Mappatura sui 3 principi Nanobot (coerenza col design)
+- **Core sottile** — `scheduler.py` chiama `skills/`, non sa cosa fanno.
+- **Capability via skill** — ogni azione schedulabile è una skill, zero `if` nel core.
+- **Config-driven** — le task vivono in SQLite (runtime), non hardcoded.
+
+### Skill: contratto minimo
+Ogni skill espone una funzione uniforme, così scheduler e chat la chiamano allo stesso modo:
+```python
+def run(payload: dict, ctx: Context) -> str:
+    """Esegue la capability, ritorna testo da inviare a Telegram."""
+```
+- Chiamata da **chat**: l'LLM decide quale skill e con che payload.
+- Chiamata da **scheduler**: la task ha già `azione` + `payload` salvati.
+
+### Confine di sicurezza
+Lo scheduler esegue **solo** task in stato `attiva`. Una task nasce `proposta` e diventa `attiva` solo dopo `/conferma` dell'utente (handshake in [[progetti/Serverino/SPECS]] §17.3). Niente azione proattiva senza approvazione pregressa.

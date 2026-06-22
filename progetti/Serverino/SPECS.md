@@ -668,3 +668,80 @@ ls -lh /home/serverino/Documents/Secondo_Cervello/skill/bot-*.md
 **END OF SPECIFICATIONS**
 
 [[progetti/Serverino/bot-architecture]] • [[skill/Bot Deployment Playbook]]
+
+
+---
+
+## 17. ADDENDUM — SCHEDULER & TASKS (2026-06-22)
+
+> Estensione al livello 2.5. Vedi [[progetti/Serverino/DEFINIZIONE_ASSISTENTE]]. Aggiunge proattività su timer al flusso reattivo. Niente di quanto sopra cambia: questo è additivo.
+
+### 17.1 Table: `tasks`
+```sql
+CREATE TABLE tasks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cron TEXT NOT NULL,              -- formato cron 5 campi, es. "0 8 * * *"
+  descrizione TEXT NOT NULL,       -- cosa fa la task (human-readable)
+  azione TEXT NOT NULL,            -- skill/comando da eseguire (es. "skill:daily_brief")
+  payload TEXT,                    -- JSON opzionale con parametri della task
+  stato TEXT DEFAULT 'proposta',   -- 'proposta' | 'attiva' | 'sospesa'
+  ultima_esecuzione DATETIME,
+  prossima_esecuzione DATETIME,    -- calcolata dal cron, usata per il check O(1)
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_tasks_stato ON tasks(stato);
+CREATE INDEX idx_tasks_prossima ON tasks(prossima_esecuzione) WHERE stato = 'attiva';
+```
+
+**Ciclo di vita stato:**
+```
+proposta ──(conferma utente)──> attiva ──(comando /pausa)──> sospesa
+   │                               │                            │
+   └──(rifiuto utente)──> DELETE   └──(comando /stop)──> DELETE  └──(/riprendi)──> attiva
+```
+
+### 17.2 Scheduler loop (nuovo trigger, accanto al polling Telegram)
+```
+Ogni 60s (tick):
+  now = current_time
+  due = SELECT * FROM tasks
+        WHERE stato = 'attiva' AND prossima_esecuzione <= now
+  per ogni task in due:
+    ├─ esegui task.azione (via skill)
+    ├─ invia risultato a Telegram (chat_id padrone)
+    ├─ UPDATE ultima_esecuzione = now
+    └─ UPDATE prossima_esecuzione = next_cron(task.cron, now)
+```
+
+**Note:**
+- Il tick è 60s → granularità minima 1 minuto (sufficiente, niente task al secondo).
+- `next_cron()` usa una libreria cron (es. `croniter`) — deterministico, non LLM.
+- Se l'esecuzione fallisce: log ERROR, NON aggiorna `ultima_esecuzione`, riprova al tick dopo (max 3 tentativi poi `sospesa` + notifica).
+
+### 17.3 Handshake di conferma (creazione task nuova)
+```
+1. User (Telegram): "ogni giorno alle 8 dammi meteo + agenda"
+2. Bot → LLM: estrae intent → { cron: "0 8 * * *", azione, descrizione }
+3. Bot: INSERT tasks (stato='proposta')
+4. Bot → Telegram: "📋 Nuova task:
+                    'Meteo + agenda ogni giorno alle 08:00'
+                    Confermo e attivo? [/conferma 12] [/annulla 12]"
+5a. User: "/conferma 12" → UPDATE stato='attiva', calcola prossima_esecuzione
+5b. User: "/annulla 12"  → DELETE FROM tasks WHERE id=12
+```
+**Regola dura:** una task `proposta` non viene MAI eseguita. Solo `attiva` entra nello scheduler loop.
+
+### 17.4 Comandi Telegram aggiunti
+| Comando | Effetto |
+|---|---|
+| `/tasks` | Lista task attive (id, cron, descrizione, prossima esecuzione) |
+| `/conferma <id>` | Attiva una task in stato `proposta` |
+| `/annulla <id>` | Elimina una task `proposta` |
+| `/pausa <id>` | `attiva` → `sospesa` |
+| `/riprendi <id>` | `sospesa` → `attiva` |
+| `/stop <id>` | Elimina definitivamente una task |
+
+### 17.5 Retention
+- Le `tasks` NON vengono auto-pulite (sono configurazione, non log).
+- Solo `logs` resta soggetto alla retention 30gg già definita (§1).
