@@ -371,3 +371,12 @@ For issues with:
 ---
 
 Last updated: 2026-06-15
+
+---
+
+## Tool da integrare (Phase 2+)
+
+Vedi [[progetti/Serverino/Tool da integrare]] — candidati per la pipeline ingestion documenti:
+- **OpenWA** (https://www.open-wa.org/) — secondo canale WhatsApp self-hosted
+- **Tesseract OCR** (https://github.com/tesseract-ocr/tesseract) — testo da immagini/scan
+- **MarkItDown** (https://github.com/microsoft/markitdown) — file (PDF/Office/audio) → Markdown per LLM
