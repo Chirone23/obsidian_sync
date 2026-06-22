@@ -122,7 +122,21 @@ Response → Telegram
 
 ---
 
-## Obsidian Integration via MCP
+## Obsidian Integration — Filesystem Direct
+
+**Architecture Change:** ~~MCP Obsidian~~ → Filesystem read (no GUI required)
+
+**Why:** MCP Obsidian requires the Obsidian app running with REST plugin. On Ubuntu Server headless (no GUI), this is impossible. Instead, we read `.md` files directly from the local vault, synced via git.
+
+**Vault Sync Strategy:**
+```
+Local Obsidian vault (Windows)
+    ↓ git auto-sync every 10 min
+GitHub (obsidian_sync repo)
+    ↓ git pull every 7 min (cron in bot)
+Ubuntu VM local path: /home/serverino/obsidian_vault/
+    ↓ bot reads .md files
+```
 
 **Files che il bot legge ogni volta:**
 
@@ -181,7 +195,7 @@ You are a helpful AI assistant with these characteristics:
 ```bash
 # DeepSeek API
 DEEPSEEK_API_KEY=sk_test_...
-DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_MODEL=deepseek-v4-flash
 
 # Telegram
 TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
@@ -206,7 +220,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = int(os.getenv("TELEGRAM_CHAT_ID"))

@@ -284,3 +284,43 @@ Framework a 3 blocchi per ottenere output consistenti e funzionanti dall'AI:
 | Gem | Descrizione |
 |-----|-------------|
 | [[BoardDynamics Gem — System Prompt]] | Analista governance board-CEO — 4 modalità (scenario, analisi, ruolo, brief) — uso ITS + professionale |
+
+---
+
+## Octogent — Orchestrazione Claude Code
+
+**Repo:** hesamsheikh/octogent
+**Setup:** `~/octogent/` — `pnpm -r --parallel --filter @octogent/api --filter @octogent/web dev`
+
+Dashboard locale per gestire visivamente sessioni Claude Code parallele con tentacles, terminali PTY, swarm worker, worktree isolation.
+
+| Abilità | Quando usarla |
+|---------|---------------|
+| [[Octogent]] | Setup e uso del dashboard — avvio, tentacles, terminali, API |
+
+
+---
+
+## Decision-Making & Strategy
+
+Protocolli e metodologie per prendere decisioni migliori prima di committersi.
+
+| Metodologia | Quando usarla |
+|-------------|---------------|
+| [[Premortem]] | Piano, lancio, hire, feature, strategy. Immagina che è fallito 6 mesi da adesso — identifica ogni ragione di fallimento prima di iniziare. |
+
+
+---
+
+## Multi-Agent Systems (2026-06-22)
+
+**Risorsa completa:** [[Multi-Agent Systems/Prompting MOC]] — Stack production-ready per sistemi dove agenti AI si coordinano
+
+**Contenuto:**
+- [[Multi-Agent Systems/Prompt 1 - Research Base|Prompt 1]] — Ricerca framework + pattern
+- [[Multi-Agent Systems/Prompt 2 - Code Examples|Prompt 2]] — Code (communication, context, observability, error handling, event-driven)
+- [[Multi-Agent Systems/Prompt 3 - Production Patterns|Prompt 3]] — Checkpoint durability, rate limiting, cost tracking
+- [[Multi-Agent Systems/Prompt 4 - Testing & PII|Prompt 4]] — Unit testing, PII masking
+- [[Multi-Agent Systems/Blueprint - Architecture|Blueprint]] — Stack completo + decision tables
+
+**Framework:** LangGraph (state machine) | CrewAI (role-based) | Postgres (durability) | Redis (cache/rate/cost) | PII masking

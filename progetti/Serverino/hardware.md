@@ -1,3 +1,4 @@
+
 # Serverino — Hardware Specs
 
 **Status:** ✅ Confermato  

@@ -41,12 +41,17 @@ Respond via Telegram
 
 **Features (MVP):**
 - ✅ Text-only chat via Telegram
-- ✅ Reads `.md` files from Git repos as context
-- ✅ One repo principal (configured) + temporary repos (per message)
-- ✅ Built-in memory (Nanobot)
-- ✅ Auto-pull repos every 7 minutes
+- ✅ Reads `.md` files from ONE configured Git repo (principal)
+- ✅ Auto-pull main repo every 7 minutes
+- ✅ Built-in memory (via `.md` files in vault)
+- ✅ Auto-restart on failure (systemd)
+
+**Explicitly OUT OF SCOPE (MVP):**
+- ❌ Dynamic git clone from user message (disk bomb risk, storage validation complex)
+- ❌ Multi-repo "scope multipli" (Phase 2)
 
 **Future (Phase 2+):**
+- ⏳ Multi-repo support (with whitelist + size limits)
 - ⏳ File/image attachments
 - ⏳ Voice input
 - ⏳ Custom commands (`/status`, `/recap`, etc.)
@@ -73,7 +78,7 @@ nanobot onboard --wizard
 # Configure:
 # - Provider: DeepSeek (api_key: sk_...)
 # - Channel: Telegram (bot_token: ..., chat_id: ...)
-# - Model: deepseek-chat
+# - Model: deepseek-v4-flash
 ```
 
 ### 3. Clone this repo (when available)
@@ -133,7 +138,7 @@ serverino-bot/
   "providers": {
     "deepseek": {
       "apiKey": "sk_your_key_here",
-      "model": "deepseek-chat",
+      "model": "deepseek-v4-flash",
       "temperature": 0.7,
       "maxTokens": 2000
     }

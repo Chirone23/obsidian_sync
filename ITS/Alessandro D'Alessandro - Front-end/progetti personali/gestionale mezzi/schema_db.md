@@ -1,7 +1,13 @@
 # Schema Database — Sistema Schede Interventi / Fogli di Marcia
 
-**Versione:** 1.1  
+**Versione:** 1.2  
 **Ultimo aggiornamento:** Maggio 2026
+
+> **Nota implementazione (WordPress):** la tabella `utenti` non esiste — si usa
+> `wp_users` + `wp_usermeta` (`gm_attivo` per il flag attivo). Le altre tabelle hanno
+> prefisso `wp_gm_`. I ruoli sono ruoli WP custom: `gm_volontario`, `gm_direttivo`;
+> il ruolo "amministrazione" coincide con l'`administrator` di WordPress
+> (il vecchio `gm_amministrazione` è stato eliminato).
 
 ---
 
@@ -31,10 +37,12 @@ L'**amministrazione** è il ruolo di controllo totale. In aggiunta a tutto il re
 
 ## Regole di inclusione delle patenti
 
-Le abilitazioni di guida seguono una gerarchia di inclusione gestita a livello applicativo. Il principio è semplice: chi ha una patente "superiore" può sempre guidare i veicoli che richiedono una patente "inferiore".
+Le abilitazioni di guida seguono una gerarchia di inclusione. Il principio è semplice: chi ha una patente "superiore" può sempre guidare i veicoli che richiedono una patente "inferiore".
 
 - La **Patente C** abilita alla guida di tutti i veicoli di categoria C *e* di tutti i veicoli di categoria B.
 - Il **Patentino MMT** (Macchine Movimento Terra) abilita alla conduzione di macchine operatrici *e* di tutti i veicoli di categoria B.
+
+Questa gerarchia **non è hard-coded nel codice**: vive nella tabella `gm_patente_inclusione` (vedi Tabella 9) come dato. Per cambiarla si toccano le righe, non le query. Le query di compatibilità conducente↔veicolo considerano sia la patente esatta richiesta sia le sue inclusioni.
 
 Questo significa che nel dropdown "Seleziona il conducente", il sistema mostrerà automaticamente solo gli utenti che possiedono l'abilitazione compatibile con il veicolo selezionato, tenendo conto di queste inclusioni.
 
@@ -110,14 +118,12 @@ Tutti i dipendenti hanno un account, indipendentemente dal fatto che guidino o m
 
 Questa è una tabella di collegamento *many-to-many*: un utente può avere più abilitazioni, e ogni abilitazione può appartenere a più utenti. Solo gli utenti con almeno una riga in questa tabella possono comparire nel dropdown "Seleziona conducente" del form.
 
-Il campo `data_scadenza` è particolarmente utile per il patentino MMT, che a differenza delle patenti B e C ha una validità limitata nel tempo e richiede rinnovo periodico.
+> **Modifica v1.2:** le colonne `data_conseguimento` e `data_scadenza` sono state **rimosse**. L'abilitazione è ora un semplice possesso patente/categoria, senza gestione date né filtro scadenze. La tabella contiene solo la coppia utente↔categoria.
 
 | Campo | Tipo | Note |
 |:---|:---|:---|
-| `utente_id` | INTEGER FK | Riferimento a `utenti.id` |
+| `utente_id` | INTEGER FK | Riferimento a `utenti.id` (`wp_users.ID`) |
 | `categoria_id` | INTEGER FK | Riferimento a `categorie_patente.id` |
-| `data_conseguimento` | DATE | Opzionale, per archivio |
-| `data_scadenza` | DATE | Utile per il patentino MMT |
 | PK composta | — | `(utente_id, categoria_id)` — impedisce duplicati |
 
 ---
@@ -196,6 +202,25 @@ Il campo `utente_id` è nullable per gestire le azioni automatiche del sistema s
 
 ---
 
+## Tabella 9 — `patente_inclusione`
+
+Tabella **dati** (non codice) che esprime la gerarchia delle patenti descritta sopra. Ogni riga dice: "chi possiede `patente_id` può guidare anche i veicoli che richiedono `include_patente_id`". Pre-popolata all'attivazione del plugin con `C → B` e `MMT → B`. Per modificare la gerarchia si inseriscono/eliminano righe, senza toccare le query.
+
+| Campo | Tipo | Note |
+|:---|:---|:---|
+| `patente_id` | INTEGER FK | Patente posseduta — rif. `categorie_patente.id` |
+| `include_patente_id` | INTEGER FK | Patente "inclusa" guidabile — rif. `categorie_patente.id` |
+| PK composta | — | `(patente_id, include_patente_id)` — impedisce duplicati |
+
+**Seed iniziale:**
+
+| patente_id | include_patente_id | Significato |
+|:---|:---|:---|
+| C | B | chi ha la C guida anche i veicoli B |
+| MMT | B | chi ha l'MMT guida anche i veicoli B |
+
+---
+
 ## Indici
 
 Gli indici migliorano la velocità delle interrogazioni più frequenti senza modificare la struttura logica del database. Ogni indice è pensato per rispondere a una domanda operativa specifica.
@@ -216,12 +241,12 @@ Gli indici migliorano la velocità delle interrogazioni più frequenti senza mod
 ## Diagramma delle relazioni
 
 ```
-categorie_patente ──< utenti_patenti >── utenti
-        │                                  │  │
-        │                             creato_da│
-categorie_veicolo                    conducente_id
-        │                                  │
-      veicoli ──────────────────── fogli_di_marcia ──< foglio_passeggeri >── utenti
-                                           │
-                                     log_attivita (traccia tutto)
+patente_inclusione >── categorie_patente ──< utenti_patenti >── utenti
+                              │                                   │  │
+                              │                              creato_da│
+                       categorie_veicolo                    conducente_id
+                              │                                   │
+                            veicoli ───────────────── fogli_di_marcia ──< foglio_passeggeri >── utenti
+                                                              │
+                                                        log_attivita (traccia tutto)
 ```

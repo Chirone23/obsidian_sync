@@ -252,11 +252,11 @@ la decisione raccomandata in massimo 2 righe.
 
 ## I 3 OUTPUT DA CONSEGNARE (se usato come esercizio)
 
-| # | Output | Tecnica usata | Valore |
-|---|--------|--------------|--------|
-| 1 | **Il Verbale** — trascrizione del conflitto iniziale (Step 1) | Perspective Prompting + Control Codes + SimToM | Mappa oggettiva dei conflitti tra funzioni |
-| 2 | **L'Analisi del Rischio** — rivalutazione con il pilot (Step 2) | Conditional Prompting (What-If) | Quantifica il trade-off: ritardo ROI vs riduzione rischio |
-| 3 | **La Raccomandazione** — piano in 4 fasi (Step 3) | Step-by-Step CoT + Active Learning | Piano operativo con vincoli di tutti soddisfatti |
+| #   | Output                                                          | Tecnica usata                                  | Valore                                                    |
+| --- | --------------------------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------- |
+| 1   | **Il Verbale** — trascrizione del conflitto iniziale (Step 1)   | Perspective Prompting + Control Codes + SimToM | Mappa oggettiva dei conflitti tra funzioni                |
+| 2   | **L'Analisi del Rischio** — rivalutazione con il pilot (Step 2) | Conditional Prompting (What-If)                | Quantifica il trade-off: ritardo ROI vs riduzione rischio |
+| 3   | **La Raccomandazione** — piano in 4 fasi (Step 3)               | Step-by-Step CoT + Active Learning             | Piano operativo con vincoli di tutti soddisfatti          |
 
 ---
 

@@ -103,7 +103,7 @@ Nanobot uses `~/.nanobot/config.json`:
   "providers": {
     "deepseek": {
       "apiKey": "sk_...",
-      "model": "deepseek-chat"
+      "model": "deepseek-v4-flash"
     }
   },
   "channels": {

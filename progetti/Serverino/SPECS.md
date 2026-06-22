@@ -258,7 +258,7 @@ Formato libero markdown con:
 ```bash
 # DeepSeek API
 DEEPSEEK_API_KEY=sk_...
-DEEPSEEK_MODEL=deepseek-chat
+DEEPSEEK_MODEL=deepseek-v4-flash
 DEEPSEEK_TEMPERATURE=0.7
 DEEPSEEK_MAX_TOKENS=2000
 
@@ -335,7 +335,7 @@ Headers:
 
 Body (JSON):
 {
-  "model": "deepseek-chat",
+  "model": "deepseek-v4-flash",
   "temperature": 0.7,
   "max_tokens": 2000,
   "messages": [

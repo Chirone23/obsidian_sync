@@ -163,7 +163,7 @@ I Big Tech operano come **entità sovranazionali** immuni alle leggi tradizional
 
 ## Progetti Pratici
 
-- [[ITS/Alessandro D'Alessandro - Front-end/progetti/Bibliò MOC]] — Neural Reading Ecosystem
+- [[Bibliò MOC]] — Neural Reading Ecosystem
 
 ---
 

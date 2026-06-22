@@ -1,9 +1,9 @@
 # Serverino VMware Setup — Guida Operativa
 
-**Obiettivo:** Creare VM Ubuntu Server 24.04 su VMware, installare Nanobot, testare bot Telegram.
+**Obiettivo:** Creare VM Ubuntu Server 26.04 LTS su VMware, installare Nanobot, testare bot Telegram.
 
 **Host:** HP EliteBook 835 G8 (16GB RAM, 6-core CPU, Windows 11 Pro)  
-**VM:** serverino-dev (4 vCPU, 6GB RAM, 40GB disk, Ubuntu 24.04)
+**VM:** serverino-dev (4 vCPU, 6GB RAM, 40GB disk, Ubuntu 26.04 LTS)
 
 ---
 
