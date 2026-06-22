@@ -3,7 +3,7 @@
 **Tipo:** Confronto strutturale + adattamento multi-LLM  
 **Data:** 22 giugno 2026  
 **Fonte:** "The Anatomy of a Claude 4.6 Prompt" (Anthropic, maggio 2026)  
-**Collegato a:** [[01_C-I-A-R-E_Pattern]] | [[Prompting MOC]] | [[Prompt Library]]
+**Collegato a:** [[00_Opus_Anatomy_8Steps_Pattern]] | [[01_C-I-A-R-E_Pattern]] | [[Prompting MOC]] | [[Prompt Library]]
 
 ---
 
@@ -283,7 +283,7 @@ Metriche:
 
 ## Connessioni
 
-- [[01_C-I-A-R-E_Pattern]] — il framework di base (Riccardo)
+- [[00_Opus_Anatomy_8Steps_Pattern]] | [[01_C-I-A-R-E_Pattern]] — il framework di base (Riccardo)
 - [[Prompt Library]] — prompt già strutturati per aggiornamento
 - [[Prompting MOC]] — fondamenti
 - [[Lab - Board Virtuale PMI AI Deployment]] — caso complesso per test
