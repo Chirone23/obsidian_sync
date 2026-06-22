@@ -156,3 +156,4 @@ Test a risposta multipla, 7 moduli:
 - [[Skill MOC]] — n8n, Claude Code, automazioni complementari a GHL
 - [[Imprenditoria MOC]] — CRM e sales pipeline nel contesto business
 - [[Back-end MOC]] — API, webhooks, infrastruttura server
+- [[OpenWA - WhatsApp API self-hosted]] — gateway WhatsApp open source, alternativa self-hosted alla Business API di Meta
