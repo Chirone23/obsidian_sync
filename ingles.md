@@ -1,3 +1,0 @@
-- Stephen and Ashlie go to work in an ice cream van in Brighton but find no customers.
-- Ashlie does marketing and Stephen creates strange new ice cream flavors to help sell.
-- They run out of regular ice cream and disappoint a customer who just wanted a normal one.

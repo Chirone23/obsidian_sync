@@ -31,7 +31,8 @@ Niente .md uncommitted a fine sessione.
 
 ## Workflow specializzati (leggi nel vault quando servono)
 
-- **Knowledge Compiler** (articolo/PDF nuovo) → cerca MOC correlato, aggiorna con insight + backlink.
+- **Knowledge Compiler** (articolo/PDF/doc nuovo) → cerca MOC correlato, aggiorna con insight + backlink.
+  Per formati non leggibili nativamente (.docx/.pptx/.xlsx/audio/YouTube): converti prima con `markitdown <file> -o .tmp/out.md`, poi leggi l'output. PDF e immagini si leggono direttamente.
 - **NotebookLM** → vedi [[skill/NotebookLM Query Playbook]] (4 query: Discovery → Deep Dive → Esempi → Contraddizioni).
 - **Delega OpenCode** (task ciuccia-token) → vedi [[skill/OpenCode Delegation Protocol]]. Pattern ibrido: io seleziono contesto, OpenCode compone, io integro.
 
