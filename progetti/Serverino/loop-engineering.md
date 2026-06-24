@@ -25,11 +25,26 @@ Un "loop" qui = **un mini-ciclo Python `genera → verifica → correggi` attorn
 
 Il loop è **reattivo**, lo avvia l'utente. Non è una task schedulata silenziosa.
 
+Due vie di attivazione:
+
 ```
-Tu (Telegram):  /loop <obiettivo> [max-giri opzionale]
-Bot:            avvia loop_runner come coroutine in background
-                → eventuale messaggio di avanzamento a ogni giro
-                → consegna risultato finale  oppure  "fermato a N giri: <perché>"
+A) Comando esplicito:   /loop [--gruppo <nome>] <obiettivo> [max-giri]
+B) Linguaggio naturale: "usa il loop [con il team di programmazione] per X…"
+```
+
+Per B serve uno strato di **routing** prima dell'handler chat:
+```
+messaggio in →
+  ├─ inizia con /loop                  → loop_runner(parse args)
+  ├─ match frase-intento ("usa il loop")→ estrai gruppo + obiettivo → loop_runner
+  └─ altrimenti                        → chat normale (DeepSeek)
+```
+Riconoscimento intento = **match di frase deterministico** (regex su `usa(re)?|utilizza il loop`, `fai un loop`), NON classificazione LLM su ogni messaggio (una chiamata in più per messaggio + rischio loop a sorpresa su CPU 6W). Se l'estrazione dell'obiettivo è ambigua → **conferma prima di avviare** ("Avvio un loop per «X»? sì/no").
+
+```
+Bot:  avvia loop_runner come coroutine in background
+      → eventuale messaggio di avanzamento a ogni giro
+      → consegna risultato finale  oppure  "fermato a N giri: <perché>"
 ```
 
 Questo risolve da solo la tensione con §5: nessuna autonomia a sorpresa, parte **solo quando lo chiami**.
