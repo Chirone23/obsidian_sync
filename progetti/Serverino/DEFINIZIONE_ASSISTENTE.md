@@ -4,7 +4,7 @@
 **Status:** ✅ Definizione condivisa
 **Scopo:** Fissare *cosa deve essere* l'assistente del serverino, prima e sopra l'implementazione. È il documento di riferimento contro cui valutare ogni scelta tecnica.
 
-> Collega: [[progetti/Serverino/DECISIONE_ARCHITETTURA]] • [[progetti/Serverino/bot-architecture]] • [[progetti/Serverino/SPECS]] • [[moc/Index MOC]]
+> Collega: [[progetti/Serverino/DECISIONE_ARCHITETTURA]] • [[progetti/Serverino/bot-architecture]] • [[progetti/Serverino/SPECS]] • [[progetti/Serverino/loop-engineering]] • [[moc/Index MOC]]
 
 ---
 
