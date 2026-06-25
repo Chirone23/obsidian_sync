@@ -147,3 +147,59 @@ Memoria da file singolo → **cartella `bot-memory/`** montata in `/bot-memory`.
 - [ ] Creare `vault/idee/bot-memory.md` vuoto sull'host prima del primo `up` (vedi Decisione B).
 - [ ] `scheduler.py`: dopo esecuzione task → `set_task_schedule` + `release_task_lock`.
 - [ ] Failure di una task = notifica + log + **STOP** (no retry-3, §8 prevale su SPECS §17.2).
+
+---
+
+## Ondata 2.6 — file di contesto NOA + comandi (decisioni di design)
+
+> Il bot si chiama **NOA**; **Serverino** è la macchina che lo ospita.
+
+### File in `bot-memory/` (montata `/bot-memory`)
+- ✅ **`system.md`** — identità + comportamento di NOA. Stance da consulente, triage,
+  vincoli, skill. Sottoinsieme utile preso dai due CLAUDE.md (globale + vault); il resto
+  (3-livelli, git sync, C.I.A.R.E., workflow) scartato come rumore.
+- ✅ **`padrone.md`** — solo fatti su Chirone (nome, Roma=default meteo, lingua, ruolo).
+  Lo stile di risposta vive in `system.md`, non qui (no duplicazione token).
+  Il questionario stilometrico completo è in `creazione/padrone-style-profile.master.md`
+  (FUORI dal mount, non caricato) — per eventuale feature "scrivi come me", Phase 2.
+- ✅ **`memory-rules.md`** — regole memoria (sotto).
+- ⬜ **`memory.md`** — target capture, **non esiste ancora** (creato al 1° uso).
+  host: `creazione/bot-memory/memory.md` · container: `/bot-memory/memory.md`.
+- ⬜ **`skills-menu.md`** (ex memory-moc) — vedi sotto.
+
+### `memory-rules.md` — capture + manutenzione a 2 tier
+- **Capture** (`/ricorda`): NOA analizza la conversazione → propone **schema dettagliato**
+  per topic, un fatto atomico/riga → **Chirone conferma** → scrive. Solo fatti detti,
+  niente inferenze, niente segreti. Formato `- [YYYY-MM-DD] fatto`.
+- **L1 — auto + notifica** (non-semantico, reversibile via git): duplicati esatti,
+  duplicati solo-caso/punteggiatura, normalizzazione formato, stripping segreti.
+  Notifica con motivazione + citazione.
+- **L2 — suggerimento → `/conferma`** (tutto il semantico/distruttivo: fusioni, superati,
+  accorciamenti, cancellazioni non-dup, riscritture, promozione a note del MOC).
+  Batch a fine giornata (default) o immediato. **L3 assorbito in L2.**
+- **`/automemoria off|on`** disattiva la manutenzione (resta solo capture).
+- Backup = git del vault (no copie per-scrittura).
+
+### Comandi vs keyword
+- **`/task`** = UNICO comando esplicito per creare una task pianificata.
+- **Keyword in chat** (`programma`, `programmami`, `pianifica`, `ricordami`) → match
+  **deterministico** in `on_message` (zero LLM finché non c'è match) → instradano al flusso
+  task (`propose_from_text`: intent LLM → JSON → INSERT 'proposta' → `/conferma`).
+- **`/ricorda`** = memoria, invariato e separato dalle task.
+- `/programma` (vecchio comando) → da rinominare/assorbire in `/task` + keyword.
+
+### Skill-list (sostituisce memory-moc)
+- Era: MOC che indicizza i file di memoria. Ora: **menu delle skill** in `script/skills/`
+  con sintesi di cosa fanno (per `/task` e per "cosa sai fare").
+- ⚠️ Verità in codice (`scheduler._skills`, oggi solo `meteo`; `scheduler.py`=infra, non skill).
+  → **generarlo dal codice** per evitare drift (consigliato), o a mano. **Da decidere.**
+- Rinominare config `MOC_FILE` → `SKILLS_FILE=skills-menu.md`. Indice memoria curata rimandato.
+
+### Da fare (codice) — prossima Ondata "memoria proattiva + comandi"
+- [ ] `on_message`: scanner keyword → flusso task; `/task` esplicito.
+- [ ] Riscrivere `/ricorda`: append diretto → analizza→proponi→**conferma** (buffer proposta in **SQLite**, non RAM).
+- [ ] Follow-up orario mancante ("ogni quanto?"): scelta **A stateful** (stato task-in-creazione in SQLite) vs **B one-shot** — **da decidere**.
+- [ ] Manutenzione L1/L2: motore analisi, tabella **`memory_suggestions`** (SQLite, mai RAM — buco §8), job serale, `/automemoria` (stato persistito).
+- [ ] `skills-menu.md` generato + `SKILLS_FILE` in config + `read_context`.
+- [ ] Promemoria giornaliero "sistema `memory.md`".
+- ⚠️ Nota: `/ricordami` vs `/ricorda` resa innocua → `ricordami` è **keyword** (task), non comando.
