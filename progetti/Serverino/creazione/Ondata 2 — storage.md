@@ -8,9 +8,20 @@
 2. ✅ **`handlers/obsidian_reader.py`** — lettura contesto da filesystem + `/ricorda`
 3. ✅ **`handlers/deepseek_api.py`** — client async, usage reale + `/user/balance`
 4. ✅ **`handlers/telegram_handler.py`** — comandi MVP + chat, auth chat_id, DI scheduler
-5. ⏳ `skills/meteo.py`
+5. ✅ **`skills/meteo.py`** — Open-Meteo, no key
 6. ⏳ `skills/scheduler.py`
 7. ⏳ `main.py`
+
+> ⚠️ **LAYOUT A PACKAGE (ordinato):**
+> ```
+> script/
+> ├── config.py  main.py
+> ├── handlers/  __init__.py  storage.py  obsidian_reader.py  deepseek_api.py  telegram_handler.py
+> └── skills/    __init__.py  meteo.py  scheduler.py
+> ```
+> Import: `config` resta top-level (è in `script/`, sul path); i sibling via package
+> (`from handlers.storage import …`, `from skills.meteo import …`). Si lancia `python main.py` da `script/`.
+> Bug risolto: prima gli import flat (`import storage`) non reggevano i moduli dentro sottocartelle.
 
 ---
 

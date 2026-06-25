@@ -21,9 +21,9 @@ from telegram.ext import (
 )
 
 from config import Config
-from deepseek_api import DeepSeekClient
-import obsidian_reader as reader
-import storage
+from handlers.deepseek_api import DeepSeekClient
+from handlers import obsidian_reader as reader
+from handlers import storage
 
 
 class TelegramHandler:
