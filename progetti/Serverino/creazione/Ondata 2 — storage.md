@@ -7,7 +7,7 @@
 1. ✅ **`handlers/storage.py`** — schema SQLite + CRUD
 2. ✅ **`handlers/obsidian_reader.py`** — lettura contesto da filesystem + `/ricorda`
 3. ✅ **`handlers/deepseek_api.py`** — client async, usage reale + `/user/balance`
-4. ⏳ `handlers/telegram_handler.py`
+4. ✅ **`handlers/telegram_handler.py`** — comandi MVP + chat, auth chat_id, DI scheduler
 5. ⏳ `skills/meteo.py`
 6. ⏳ `skills/scheduler.py`
 7. ⏳ `main.py`
@@ -88,6 +88,17 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - `get_balance()`: GET `/user/balance` via httpx (endpoint proprietario, fuori dallo schema OpenAI). `raise_for_status` → errore propagato.
 - Chiave mai loggata. `close()` per shutdown pulito.
 - ⚠️ **Promemoria per `telegram_handler.py`:** compone `messages` (system = persona+padrone, poi storia ≤10 msg) e cattura le eccezioni di `chat()` per il flusso failure.
+
+---
+
+## `telegram_handler.py` — decisioni prese
+- **Classe `TelegramHandler`** con **dependency injection**: riceve `cfg/db/ds/scheduler`. Lo scheduler è duck-typed (`.next_run(cron)`) → niente import di moduli inesistenti.
+- **Auth**: `_authorized()` confronta `effective_chat.id` con `cfg.telegram.chat_id`. Chat non autorizzati → ignorati in silenzio.
+- **Working memory**: `deque(maxlen=context_window_msgs)` in RAM (§8). Persa al restart (accettabile MVP; la long-term sta in `bot-memory.md`).
+- **Chat flow**: `_build_messages` (system=persona+padrone+memoria, poi storia, poi msg) → `ds.chat` → reply + footer token (SPECS §8) → `bump_stats`+`log`. Eccezione → log ERROR + bump errors + messaggio "mi fermo" (no retry, §8).
+- **Comandi task**: `/tasks /pausa /riprendi /stop /annulla` = pure operazioni su `storage`. `/conferma` e `/riprendi` calcolano `prossima_esecuzione` via `_next_run` → scheduler.
+- ⚠️ **Promemoria per `scheduler.py`:** deve esporre `next_run(cron) -> str|None` (ISO). La **creazione** di una task da linguaggio naturale (intent LLM → INSERT 'proposta') NON è qui: vive in scheduler/main.
+- ⚠️ **Promemoria per `main.py`:** istanziare `TelegramHandler(cfg, db, ds, scheduler)` e chiamare `.register(app)`.
 
 ## Debiti / cose da non dimenticare
 - [ ] `main.py`: `reset_locks(conn)` dopo `init_db` (vedi Decisione 1).
