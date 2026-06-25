@@ -3,7 +3,7 @@
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
 **Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
 **Ultima sessione:** 2026-06-24/25 (ottimizzazione latenza 12×, detector PDF corrotti, scaffold SDK warm)
-**Prossima sessione:** Test plan §8 (T1-T15) con dati reali + rifinitura presentazione + fix over-redaction foro (INC-006)
+**Prossima sessione:** Test plan §8 (T1-T15) con dati reali + rifinitura presentazione + OCR fallback Tesseract (INC-006 foro ✅ risolto 2026-06-25)
 **Spec corrente:** **v4** (`Specifica Tecnica v4 - SpecterAI.md`, 2026-05-29) — cambio architetturale (privacy-first §3.bis + backend cli/sdk) motivato in [[SPEC_ERRATA]]. La v3.1 (95/100, confermata prof) resta congelata e preservata come baseline.
 
 ---
@@ -20,7 +20,7 @@
 - **Doc:** nuovo [[CHANGELOG_BUILD_24-06]], INCIDENTS aggiornato (INC-013 nuovo, INC-001 mitigato, INC-006 nuova occorrenza), [[docs/OCR_fallback_decisione]].
 
 **Aperti / da decidere:**
-- **INC-006 over-redaction foro:** sul co.co.co. il privacy_filter oscura "Roma" (città→GPE) → prosa e citazione del Foro si contraddicono. Da indagare (filtro spaCy che mangia le città).
+- ✅ **INC-006 over-redaction foro — RISOLTO 2026-06-25.** Causa provata: spaCy `sm` etichetta `Roma` e `Foro` come `LOC`; la whitelist a `privacy_filter.py:78` redigeva `LOC`/`GPE` in blocco. (Nota: il `restore()` è applicato solo a `raw_excerpt`, non a `plain_language`, e gira **dopo** l'LLM → irrilevante per T15, che misura il payload outbound.) Fix: redazione `LOC`/`GPE` **context-aware** — censura solo se indirizzo (tipo-strada `_STREET_RE` o keyword residenza/sede `_RESIDENCE_RE`); i toponimi nudi (città, foro) passano. Verifica: payload del co.co.co. ora contiene "il Foro competente è quello di Roma" leggibile, 0 PII forti (T15 verde), 4/4 unit test pass. Dettaglio in [[INCIDENTS]] INC-006. Residuo over-redaction ORG/PER (parole comuni mislabel) resta aperto, qualità, accettabile MVP.
 - **Scelta OCR fallback:** Unlimited-OCR scartato (richiede GPU) → orientamento su **Tesseract** (locale, CPU, italiano). Da implementare dietro il detector.
 - Test plan §8 con dati reali (recall/precision/latenza/zero-leak) ancora da eseguire.
 

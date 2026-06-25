@@ -31,7 +31,7 @@
 | **INC-012** | **2026-06-04** | **main.py — `async for chunk in file` su UploadFile** | **`UploadFile` non è async-iterabile → `TypeError` → 500 su OGNI upload dalla web UI. Primo E2E reale via browser mai funzionato.** | **Critical** | **✅ RESOLVED** |
 | **INC-013** | **2026-06-24** | **llm_client.py — extended thinking CLI** | **Analisi ~163s per ~1700 token di ragionamento nascosto del CLI. Disattivato (`MAX_THINKING_TOKENS=0`) → 13s (12×).** | **High (latenza)** | **✅ RESOLVED** |
 | INC-001 | 2026-05-12 (Lez. 3) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🟡 Mitigato (detector 2026-06-24, fix OCR in roadmap) |
-| INC-006 | 2026-05-29 | privacy_filter.py — spaCy NER | Over-redaction (nuova occorrenza 2026-06-24: foro "Roma" oscurato → prosa/citazione contraddittorie nel co.co.co.) | Low | 🟡 Open (qualità) |
+| INC-006 | 2026-05-29 | privacy_filter.py — spaCy NER | Over-redaction. Sotto-caso foro/toponimo (foro "Roma" oscurato → prosa/citazione contraddittorie nel co.co.co.) **risolto 2026-06-25** (redazione LOC/GPE context-aware); residuo ORG/PER aperto | Low | 🟢 foro RESOLVED · 🟡 residuo Open |
 
 ---
 
@@ -435,7 +435,15 @@ Il fix è trasparente: Claude CLI legge da stdin quando `--print` (`-p`) è atti
 
 **Aggiornamenti Specifica:** nessuno (qualità implementativa, non architetturale). Vedi [[SPEC_ERRATA]] ERR-01 caveat.
 
-**Status:** 🟡 Open — qualità, accettabile per MVP
+**Fix parziale applicato (2026-06-25) — sotto-caso "foro/toponimo" risolto:**
+La nuova occorrenza del 2026-06-24 (foro "Roma" oscurato → prosa "foro non leggibile" vs citazione "...quello di Roma": report contraddittorio nel co.co.co. Sapienza) è stata diagnosticata e risolta.
+- **Causa esatta (provata, non dedotta):** spaCy `sm` etichetta `Roma` **e** `Foro` come `LOC`. La whitelist a `privacy_filter.py:78` redigeva `LOC`/`GPE` in blocco → "Roma" diventava `[LOC_n]` nel payload verso Claude. La prosa (`plain_language`) riflette il testo cieco → "non leggibile"; la citazione (`raw_excerpt`) passa per `restore()` (`llm_client.py:131-136`, applicato **solo** a `raw_excerpt`) → mostra "Roma". Da qui l'asimmetria. `restore()` gira **dopo** la chiamata LLM, quindi non tocca il payload e **non c'entra con T15** (che misura il payload outbound).
+- **Distinzione PII corretta:** una città/foro è dato **pubblico** (non PII); un indirizzo di residenza **è** PII (T15 elenca gli indirizzi). spaCy `sm` accorpa entrambi sotto `LOC` → non risolvibile includendo/escludendo `LOC` in blocco.
+- **Fix (context-aware, stesso pattern di CF/PIVA):** `privacy_filter.py` — le entità `LOC`/`GPE` sono redatte **solo** se indirizzo, cioè se il testo dell'entità contiene un tipo-strada (`via|viale|piazza|corso|strada|largo|…`, `_STREET_RE`) **oppure** è preceduta da keyword di residenza/sede (`residente|domicilio|con sede in|…`, `_RESIDENCE_RE`, finestra 30 char). I toponimi nudi (Roma, foro, città) passano.
+- **Verifica:** 4/4 unit test pass; redact su `ContrattoCOCOCO.pdf` → payload contiene "il Foro competente è quello di Roma" (leggibile) e 0 PII forti (nomi/CF/IBAN/email/tel) → T15 verde. Casi sintetici: foro→leggibile, "Via Garibaldi 12, residente in…"→`[LOC]`, IBAN/CF→censurati.
+- **Residuo invariato (over-redaction ORG/PER):** parole comuni mislabel come ORG/PER (es. "Ufficio Stipendi", "Detrazione") restano — rumore di precision preesistente, direzione sicura, fuori dallo scope di questo fix.
+
+**Status:** 🟢 Sotto-caso foro/toponimo **RESOLVED** (2026-06-25) · 🟡 Open residuo over-redaction ORG/PER (qualità, accettabile per MVP)
 
 ---
 

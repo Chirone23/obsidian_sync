@@ -49,6 +49,34 @@ _EMAIL_RE = re.compile(r'\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b')
 # Prefisso +39/0039 obbligatorio: evita falsi positivi su numeri civici e protocolli.
 _PHONE_RE = re.compile(r'(?:\+39|0039)[\s\-]?(?:0\d{1,4}[\s\-]?\d{4,8}|3\d{2}[\s\-]?\d{6,7})\b')
 
+# INC-006 — distinzione toponimo pubblico vs indirizzo (PII).
+# spaCy `sm` etichetta sia "Roma"/"Foro" sia "Via Garibaldi 12" come LOC.
+# Una città/foro è dato pubblico (non PII): va lasciata leggere a Claude,
+# altrimenti la prosa dice "foro non leggibile" mentre la citazione mostra
+# "Roma" (report contraddittorio). Un indirizzo di residenza è invece PII
+# (T15) e va censurato. Distinzione context-aware, stesso pattern di CF/PIVA.
+#
+# Un'entità LOC/GPE è indirizzo se:
+#  (a) il testo dell'entità contiene un tipo-strada (via, piazza, corso…), oppure
+#  (b) è immediatamente preceduta da una keyword di residenza/domicilio/sede.
+# Altrimenti è un toponimo nudo (città, foro) → passa.
+_STREET_RE = re.compile(
+    r'(?i)\b(?:via|viale|v\.?le|piazza|p\.?zza|corso|c\.?so|strada|largo|'
+    r'vicolo|borgo|lungomare|contrada|località|fraz\.?|frazione)\b'
+)
+_RESIDENCE_RE = re.compile(
+    r'(?i)(?:residen|domicili|abita|dimora|con\s+sede|sede\s+(?:legale\s+)?in)\s*$'
+)
+
+
+def _is_address(text: str, start: int, ent_text: str) -> bool:
+    """True se l'entità LOC/GPE è un indirizzo (PII), non un toponimo nudo."""
+    if _STREET_RE.search(ent_text):
+        return True
+    # Finestra di ~30 char prima dell'entità per la keyword di residenza.
+    prefix = text[max(0, start - 30):start]
+    return _RESIDENCE_RE.search(prefix) is not None
+
 
 def redact(text: str) -> tuple[str, dict[str, str]]:
     mapping: dict[str, str] = {}
@@ -75,7 +103,11 @@ def redact(text: str) -> tuple[str, dict[str, str]]:
         entities = [
             (ent.start_char, ent.end_char, ent.label_, ent.text)
             for ent in doc.ents
-            if ent.label_ in ("PER", "PERSON", "LOC", "GPE", "ORG")
+            if ent.label_ in ("PER", "PERSON", "ORG")
+            or (
+                ent.label_ in ("LOC", "GPE")
+                and _is_address(text, ent.start_char, ent.text)
+            )
         ]
         # Reverse per preservare gli offset delle sostituzioni successive
         for start, end, label, val in sorted(entities, key=lambda e: e[0], reverse=True):
