@@ -8,8 +8,10 @@ Failure di una chat = notifica + log + STOP (§8): nessun retry.
 """
 from __future__ import annotations
 
+import json
 import sqlite3
 from collections import deque
+from datetime import datetime
 
 from telegram import Update
 from telegram.ext import (
@@ -24,6 +26,10 @@ from config import Config
 from handlers.deepseek_api import DeepSeekClient
 from handlers import obsidian_reader as reader
 from handlers import storage
+
+# Keyword che, in chat normale, fanno scattare la creazione di una task.
+# Match deterministico (zero LLM finché non c'è match).
+TASK_KEYWORDS = ("programma", "programmami", "pianifica", "ricordami")
 
 
 class TelegramHandler:
@@ -42,13 +48,16 @@ class TelegramHandler:
         app.add_handler(CommandHandler("start", self.start))
         app.add_handler(CommandHandler("status", self.status))
         app.add_handler(CommandHandler("ricorda", self.ricorda))
-        app.add_handler(CommandHandler("programma", self.programma))
+        app.add_handler(CommandHandler("salva", self.salva))
+        app.add_handler(CommandHandler("scarta", self.scarta))
+        app.add_handler(CommandHandler("task", self.task))
         app.add_handler(CommandHandler("tasks", self.tasks))
         app.add_handler(CommandHandler("conferma", self.conferma))
         app.add_handler(CommandHandler("annulla", self.annulla))
         app.add_handler(CommandHandler("pausa", self.pausa))
         app.add_handler(CommandHandler("riprendi", self.riprendi))
         app.add_handler(CommandHandler("stop", self.stop))
+        app.add_handler(CommandHandler("automemoria", self.automemoria))
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.on_message))
 
     # ── Auth ──────────────────────────────────────────────────────────────────
@@ -81,6 +90,12 @@ class TelegramHandler:
         if not self._authorized(update):
             return
         text = update.message.text
+        # Scanner keyword (deterministico): se la frase contiene una parola
+        # chiave-task, instrada alla creazione task invece della chat.
+        parole = set(text.lower().split())
+        if parole & set(TASK_KEYWORDS):
+            await self._propose_task(update, text)
+            return
         try:
             result = await self._ds.chat(self._build_messages(text))
         except Exception as e:  # failure = notifica + log + STOP (§8)
@@ -106,8 +121,8 @@ class TelegramHandler:
         if not self._authorized(update):
             return
         await update.message.reply_text(
-            "Serverino attivo. Comandi: /status /ricorda /programma /tasks "
-            "/conferma /annulla /pausa /riprendi /stop"
+            "NOA attivo. Comandi: /status /ricorda (/salva /scarta) /task /tasks "
+            "/conferma /annulla /pausa /riprendi /stop /automemoria"
         )
 
     async def status(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -134,40 +149,114 @@ class TelegramHandler:
             parse_mode="Markdown",
         )
 
+    _RICORDA_PROMPT = (
+        "Analizza la conversazione recente ed estrai i fatti che vale la pena "
+        "memorizzare a lungo termine sul padrone o sul contesto. Regole: solo cose "
+        "DETTE (niente tue inferenze), un fatto atomico per riga, raggruppati per "
+        "topic, niente segreti/credenziali. Rispondi SOLO con un elenco markdown "
+        "di righe '- <fatto>'. Se non c'è nulla da salvare, rispondi 'NIENTE'."
+    )
+
     async def ricorda(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Capture (memory-rules §1): NOA analizza la conversazione e PROPONE uno
+        schema; nulla viene scritto finché non confermi con /salva."""
         if not self._authorized(update):
             return
-        testo = " ".join(context.args).strip()
-        if not testo:
-            await update.message.reply_text("Uso: /ricorda <fatto da memorizzare>")
+        storia = "\n".join(f"{m['role']}: {m['content']}" for m in self._history)
+        if not storia:
+            await update.message.reply_text("Non c'è ancora conversazione da cui estrarre fatti.")
             return
-        reader.append_memory(self._cfg.memory, testo)
-        storage.log(self._db, "INFO", "memoria aggiunta", {"len": len(testo)})
-        await update.message.reply_text("🧠 Memorizzato.")
+        try:
+            result = await self._ds.chat([
+                {"role": "system", "content": self._RICORDA_PROMPT},
+                {"role": "user", "content": storia},
+            ])
+        except Exception as e:
+            storage.log(self._db, "ERROR", "ricorda: analisi fallita", {"err": str(e)})
+            await update.message.reply_text("⚠️ Errore nell'analisi. Mi fermo.")
+            return
+        schema = result.content.strip()
+        if schema.upper().startswith("NIENTE") or not schema:
+            await update.message.reply_text("Niente di rilevante da salvare.")
+            return
+        draft_id = storage.add_draft(self._db, "memory", json.dumps({"schema": schema}))
+        await update.message.reply_text(
+            f"🧠 Proposta di memoria:\n\n{schema}\n\n"
+            f"Salvo? [/salva {draft_id}] [/scarta {draft_id}]"
+        )
+
+    async def salva(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not self._authorized(update):
+            return
+        did = self._arg_id(context)
+        draft = storage.get_draft(self._db, did) if did is not None else None
+        if not draft or draft["kind"] != "memory":
+            await update.message.reply_text("Nessuna proposta di memoria con questo id.")
+            return
+        schema = json.loads(draft["payload"])["schema"]
+        oggi = datetime.now().strftime("%Y-%m-%d")
+        for riga in schema.splitlines():
+            fatto = riga.strip().lstrip("-").strip()
+            if fatto:
+                reader.append_memory(self._cfg.memory, f"[{oggi}] {fatto}")
+        storage.delete_draft(self._db, did)
+        storage.log(self._db, "INFO", "memoria salvata", {"draft": did})
+        await update.message.reply_text("🧠 Salvato in memoria.")
+
+    async def scarta(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not self._authorized(update):
+            return
+        did = self._arg_id(context)
+        if did is None or not storage.get_draft(self._db, did):
+            await update.message.reply_text("Nessuna proposta con questo id.")
+            return
+        storage.delete_draft(self._db, did)
+        await update.message.reply_text("🗑 Proposta scartata.")
 
     # ── Comandi task ──────────────────────────────────────────────────────────
 
-    async def programma(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    async def task(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Comando esplicito per creare una task. Stessa logica delle keyword."""
         if not self._authorized(update):
             return
         testo = " ".join(context.args).strip()
         if not testo:
             await update.message.reply_text(
-                "Uso: /programma <cosa e quando>\nEs: /programma ogni giorno alle 8 il meteo di Roma"
+                "Uso: /task <cosa e quando>\nEs: /task ogni giorno alle 8 il meteo di Roma"
             )
             return
+        await self._propose_task(update, testo)
+
+    async def _propose_task(self, update: Update, testo: str) -> None:
+        """Estrae l'intent e propone la task. Se manca l'orario, chiede di
+        specificarlo (follow-up one-shot: riscrivi il comando completo)."""
         if self._scheduler is None:
             await update.message.reply_text("Scheduler non disponibile.")
             return
         esito = await self._scheduler.propose_from_text(testo)
         if "errore" in esito:
-            await update.message.reply_text(f"❌ {esito['errore']}")
+            await update.message.reply_text(
+                f"❌ {esito['errore']}\nSpecifica ogni quanto, es: 'ogni giorno alle 8' "
+                f"oppure 'ogni 3 ore'."
+            )
             return
         await update.message.reply_text(
             f"📋 Proposta task #{esito['id']}:\n"
             f"'{esito['descrizione']}' — {esito['cron']}\n"
             f"Confermo? [/conferma {esito['id']}] [/annulla {esito['id']}]"
         )
+
+    async def automemoria(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Attiva/disattiva la manutenzione automatica della memoria (L1/L2)."""
+        if not self._authorized(update):
+            return
+        arg = (context.args[0].lower() if context.args else "")
+        if arg not in ("on", "off"):
+            stato = storage.get_setting(self._db, "automemoria", "on")
+            await update.message.reply_text(f"Manutenzione memoria: {stato}. Uso: /automemoria on|off")
+            return
+        storage.set_setting(self._db, "automemoria", arg)
+        await update.message.reply_text(f"Manutenzione memoria: {arg}.")
 
     async def tasks(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not self._authorized(update):

@@ -17,6 +17,7 @@ from config import load_config
 from handlers import storage
 from handlers.deepseek_api import DeepSeekClient
 from handlers.telegram_handler import TelegramHandler
+from skills import catalog
 from skills.scheduler import Scheduler
 
 
@@ -33,6 +34,9 @@ def main() -> None:
     storage.init_db(db)
     storage.reset_locks(db)  # azzera lucchetti orfani da eventuale crash (Decisione 1)
     storage.log(db, "INFO", "avvio bot")
+
+    # Rigenera il menu skill dal codice (unica fonte di verità, no drift).
+    catalog.write_menu(cfg.memory.skills())
 
     # ── DeepSeek ─────────────────────────────────────────────────────────────
     ds = DeepSeekClient(cfg.deepseek)
@@ -69,7 +73,22 @@ def main() -> None:
 
     app.job_queue.run_daily(retention, time=time(hour=3, minute=0))
 
-    log.info("Serverino in ascolto (un loop asyncio, tick=%ss)", cfg.scheduler_tick_sec)
+    async def promemoria_memoria(_: ContextTypes.DEFAULT_TYPE) -> None:
+        """Promemoria giornaliero: ricorda di riordinare memory.md (se ha contenuto)."""
+        testo = ""
+        try:
+            testo = cfg.memory.memory().read_text(encoding="utf-8").strip()
+        except OSError:
+            pass
+        if testo:
+            await app.bot.send_message(
+                chat_id=cfg.telegram.chat_id,
+                text="🧠 Promemoria: sistema `memory.md` (riordina i fatti del giorno).",
+            )
+
+    app.job_queue.run_daily(promemoria_memoria, time=time(hour=21, minute=0))
+
+    log.info("NOA in ascolto (un loop asyncio, tick=%ss)", cfg.scheduler_tick_sec)
     app.run_polling()
 
 

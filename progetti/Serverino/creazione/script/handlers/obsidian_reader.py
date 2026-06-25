@@ -51,31 +51,19 @@ def parse_links(text: str) -> list[str]:
 
 
 def read_context(mem: MemoryConfig) -> str:
-    """Costruisce il blocco di contesto per il system prompt:
-    default (system/padrone/memory) + MOC + file linkati dal MOC."""
+    """Blocco di contesto per il system prompt: identità (system), padrone,
+    memoria recente e menu delle skill disponibili."""
     parts: list[str] = []
-    visti: set[str] = set()
 
     def aggiungi(path: Path, etichetta: str) -> None:
-        chiave = path.name.lower()
-        if chiave in visti:
-            return
-        visti.add(chiave)
         testo = _read(path)
         if testo:
             parts.append(f"{etichetta}\n{testo}")
 
-    # Default sempre presenti.
     aggiungi(mem.system(), "You are:")
     aggiungi(mem.padrone(), "I am:")
     aggiungi(mem.memory(), "Memoria recente (da /ricorda, non ancora riordinata):")
-
-    # MOC: testo + traversal dei [[link]].
-    moc_testo = _read(mem.moc())
-    if moc_testo:
-        parts.append(f"Indice memoria (MOC):\n{moc_testo}")
-        for nome in parse_links(moc_testo):
-            aggiungi(mem.file(nome), f"[{nome}]")
+    aggiungi(mem.skills(), "Skill disponibili:")
 
     return "\n\n".join(parts)
 

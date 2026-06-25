@@ -52,6 +52,34 @@ CREATE TABLE IF NOT EXISTS tasks (
 CREATE INDEX IF NOT EXISTS idx_tasks_stato ON tasks(stato);
 CREATE INDEX IF NOT EXISTS idx_tasks_prossima
   ON tasks(prossima_esecuzione) WHERE stato = 'attiva';
+
+-- Impostazioni chiave/valore persistite (es. automemoria on/off). Mai RAM.
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
+-- Suggerimenti di manutenzione memoria L2 in attesa di /conferma. Mai RAM
+-- (è il buco §8: candidati in RAM + Restart=always = persi).
+CREATE TABLE IF NOT EXISTS memory_suggestions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tipo TEXT NOT NULL,            -- 'merge' | 'supersede' | 'shorten' | 'delete' | 'rewrite' | 'promote'
+  motivazione TEXT NOT NULL,     -- perché, con citazione del testo coinvolto
+  citazione TEXT NOT NULL,       -- riga/e di memory.md interessate
+  proposta TEXT,                 -- testo risultante proposto (NULL per delete)
+  stato TEXT DEFAULT 'in_attesa',-- 'in_attesa' | 'inviato' | 'confermato' | 'rifiutato'
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_sugg_stato ON memory_suggestions(stato);
+
+-- Bozze in attesa di conferma (proposta /ricorda, draft task da /task). Mai RAM.
+CREATE TABLE IF NOT EXISTS drafts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL,            -- 'memory' | 'task'
+  payload TEXT NOT NULL,         -- JSON: per memory = schema fatti; per task = intent
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_drafts_kind ON drafts(kind);
 """
 
 
@@ -223,4 +251,65 @@ def acquire_task_lock(conn: sqlite3.Connection, task_id: int) -> bool:
 
 def release_task_lock(conn: sqlite3.Connection, task_id: int) -> None:
     conn.execute("UPDATE tasks SET in_esecuzione = 0 WHERE id = ?", (task_id,))
+    conn.commit()
+
+
+# ── settings (chiave/valore) ──────────────────────────────────────────────
+
+def get_setting(conn: sqlite3.Connection, key: str, default: str | None = None) -> str | None:
+    row = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else default
+
+
+def set_setting(conn: sqlite3.Connection, key: str, value: str) -> None:
+    conn.execute(
+        "INSERT INTO settings (key, value) VALUES (?, ?) "
+        "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        (key, value),
+    )
+    conn.commit()
+
+
+# ── memory_suggestions (manutenzione L2) ──────────────────────────────────
+
+def add_suggestion(conn: sqlite3.Connection, tipo: str, motivazione: str,
+                   citazione: str, proposta: str | None = None) -> int:
+    cur = conn.execute(
+        "INSERT INTO memory_suggestions (tipo, motivazione, citazione, proposta) "
+        "VALUES (?, ?, ?, ?)",
+        (tipo, motivazione, citazione, proposta),
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def list_suggestions(conn: sqlite3.Connection, stato: str = "in_attesa") -> list[sqlite3.Row]:
+    return conn.execute(
+        "SELECT * FROM memory_suggestions WHERE stato = ? ORDER BY id", (stato,)
+    ).fetchall()
+
+
+def set_suggestion_state(conn: sqlite3.Connection, sugg_id: int, stato: str) -> None:
+    conn.execute(
+        "UPDATE memory_suggestions SET stato = ? WHERE id = ?", (stato, sugg_id)
+    )
+    conn.commit()
+
+
+# ── drafts (proposte in attesa di conferma) ───────────────────────────────
+
+def add_draft(conn: sqlite3.Connection, kind: str, payload: str) -> int:
+    cur = conn.execute(
+        "INSERT INTO drafts (kind, payload) VALUES (?, ?)", (kind, payload)
+    )
+    conn.commit()
+    return cur.lastrowid
+
+
+def get_draft(conn: sqlite3.Connection, draft_id: int) -> sqlite3.Row | None:
+    return conn.execute("SELECT * FROM drafts WHERE id = ?", (draft_id,)).fetchone()
+
+
+def delete_draft(conn: sqlite3.Connection, draft_id: int) -> None:
+    conn.execute("DELETE FROM drafts WHERE id = ?", (draft_id,))
     conn.commit()

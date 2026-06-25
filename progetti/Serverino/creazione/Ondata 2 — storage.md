@@ -195,11 +195,22 @@ Memoria da file singolo → **cartella `bot-memory/`** montata in `/bot-memory`.
   → **generarlo dal codice** per evitare drift (consigliato), o a mano. **Da decidere.**
 - Rinominare config `MOC_FILE` → `SKILLS_FILE=skills-menu.md`. Indice memoria curata rimandato.
 
-### Da fare (codice) — prossima Ondata "memoria proattiva + comandi"
-- [ ] `on_message`: scanner keyword → flusso task; `/task` esplicito.
-- [ ] Riscrivere `/ricorda`: append diretto → analizza→proponi→**conferma** (buffer proposta in **SQLite**, non RAM).
-- [ ] Follow-up orario mancante ("ogni quanto?"): scelta **A stateful** (stato task-in-creazione in SQLite) vs **B one-shot** — **da decidere**.
-- [ ] Manutenzione L1/L2: motore analisi, tabella **`memory_suggestions`** (SQLite, mai RAM — buco §8), job serale, `/automemoria` (stato persistito).
-- [ ] `skills-menu.md` generato + `SKILLS_FILE` in config + `read_context`.
-- [ ] Promemoria giornaliero "sistema `memory.md`".
-- ⚠️ Nota: `/ricordami` vs `/ricorda` resa innocua → `ricordami` è **keyword** (task), non comando.
+### Ondata 2.7 — implementazione (decisioni messe a terra)
+Decisioni chiuse: **skill-list generato dal codice**; **follow-up orario = B one-shot**.
+
+**Costruito (compila, non testato — manca runtime/secret):**
+- [x] `storage.py`: tabelle `settings`, `memory_suggestions`, `drafts` + CRUD (tutto SQLite, mai RAM).
+- [x] `config.py` + `.env`: `MOC_FILE` → `SKILLS_FILE=skills-menu.md`.
+- [x] `obsidian_reader.read_context`: carica system+padrone+memory+**skills-menu** (no traversal MOC, rimandato).
+- [x] `skills/catalog.py`: `SKILLS` + `render_menu`/`write_menu` (fonte di verità del menu).
+- [x] `telegram_handler`: scanner **keyword** in `on_message` → `_propose_task`; comando **`/task`**;
+  `/ricorda` riscritto (analizza storia → propone schema → `/salva`/`/scarta` su draft SQLite);
+  **`/automemoria on|off`** (stato in `settings`). `/programma` rimosso.
+- [x] `main.py`: `catalog.write_menu` all'avvio; **promemoria giornaliero** "sistema memory.md" (21:00).
+- [x] File creati: `bot-memory/memory.md`, `bot-memory/skills-menu.md`.
+
+**Ancora TODO (rimandato — serve il bot vivo per tararlo):**
+- [ ] **Motore manutenzione L1/L2**: analisi semantica, popolamento `memory_suggestions`, job serale batch, comando per confermare i suggerimenti. Tabella pronta, logica no.
+- [ ] Follow-up orario **A stateful** (upgrade del B attuale).
+- [ ] Traversal MOC / indice memoria curata (quando le note cresceranno).
+- ⚠️ `/ricordami` vs `/ricorda` resa innocua → `ricordami` è **keyword** (task), non comando.

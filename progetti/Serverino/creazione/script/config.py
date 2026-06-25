@@ -42,13 +42,13 @@ class MemoryConfig:
     """Cartella memoria montata in /bot-memory. Contiene il MOC (indice +
     sintesi + [[link]]), i due default (system/padrone) e il file di /ricorda."""
     path: Path
-    moc_file: str
+    skills_file: str
     system_file: str
     padrone_file: str
     memory_file: str
 
-    def moc(self) -> Path:
-        return self.path / self.moc_file
+    def skills(self) -> Path:
+        return self.path / self.skills_file
 
     def system(self) -> Path:
         return self.path / self.system_file
@@ -94,7 +94,7 @@ def load_config() -> Config:
         ),
         memory=MemoryConfig(
             path=Path(os.getenv("MEMORY_DIR", "/bot-memory")),
-            moc_file=os.getenv("MOC_FILE", "memory-moc.md"),
+            skills_file=os.getenv("SKILLS_FILE", "skills-menu.md"),
             system_file=os.getenv("SYSTEM_FILE", "system.md"),
             padrone_file=os.getenv("PADRONE_FILE", "padrone.md"),
             memory_file=os.getenv("MEMORY_FILE", "memory.md"),
