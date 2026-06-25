@@ -4,8 +4,8 @@
 > Collegato a [[DEFINIZIONE_ASSISTENTE]] (§8 = fonte di verità), [[SPECS]], [[REALITY_CHECK]].
 
 ## Stato Ondata 2
-1. ✅ **`handlers/storage.py`** — schema SQLite + CRUD (questo file)
-2. ⏳ `handlers/obsidian_reader.py`
+1. ✅ **`handlers/storage.py`** — schema SQLite + CRUD
+2. ✅ **`handlers/obsidian_reader.py`** — lettura contesto da filesystem + `/ricorda`
 3. ⏳ `handlers/deepseek_api.py`
 4. ⏳ `handlers/telegram_handler.py`
 5. ⏳ `skills/meteo.py`
@@ -60,7 +60,27 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 
 ---
 
+---
+
+## `obsidian_reader.py` — decisioni prese
+
+### Decisione B — dove scrive `/ricorda` (mount `:ro` vs memoria scrivibile)
+- Memoria long-term = `idee/bot-memory.md` **dentro il vault**, così è visibile in Obsidian e va in `obsidian_sync`.
+- Il vault è montato `:ro` → serve un **bind rw del solo file memoria** (non tutto il vault).
+- ⚠️ **Promemoria per `docker-compose.yml`:** aggiungere bind rw su `idee/bot-memory.md`
+  (es. `- ./vault/idee/bot-memory.md:/vault/idee/bot-memory.md:rw`), tenendo il resto `:ro`.
+
+### Scelte tecniche
+- `strip_frontmatter()`: toglie il blocco YAML `--- … ---`; se assente/malformato lascia il testo intatto. Gestisce BOM.
+- File mancante → stringa vuota (`FileNotFoundError` ingoiato). Il bot parte comunque.
+- `read_memory_lines()`: un fatto per riga, salta vuote e bullet `- `.
+- `append_memory()`: append-only, normalizza a-capo interni (un fatto = una riga), zero LLM (§8). Prefissa `- ` per resa Obsidian.
+- Import da `config.VaultConfig` (già esposto: `persona()/padrone()/memory()`).
+
+---
+
 ## Debiti / cose da non dimenticare
 - [ ] `main.py`: `reset_locks(conn)` dopo `init_db` (vedi Decisione 1).
+- [ ] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (vedi Decisione B), resto vault `:ro`.
 - [ ] `scheduler.py`: dopo esecuzione task → `set_task_schedule` + `release_task_lock`.
 - [ ] Failure di una task = notifica + log + **STOP** (no retry-3, §8 prevale su SPECS §17.2).
