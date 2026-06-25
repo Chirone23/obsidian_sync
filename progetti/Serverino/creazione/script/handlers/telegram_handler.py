@@ -42,6 +42,7 @@ class TelegramHandler:
         app.add_handler(CommandHandler("start", self.start))
         app.add_handler(CommandHandler("status", self.status))
         app.add_handler(CommandHandler("ricorda", self.ricorda))
+        app.add_handler(CommandHandler("programma", self.programma))
         app.add_handler(CommandHandler("tasks", self.tasks))
         app.add_handler(CommandHandler("conferma", self.conferma))
         app.add_handler(CommandHandler("annulla", self.annulla))
@@ -114,7 +115,7 @@ class TelegramHandler:
         if not self._authorized(update):
             return
         await update.message.reply_text(
-            "Serverino attivo. Comandi: /status /ricorda /tasks "
+            "Serverino attivo. Comandi: /status /ricorda /programma /tasks "
             "/conferma /annulla /pausa /riprendi /stop"
         )
 
@@ -154,6 +155,28 @@ class TelegramHandler:
         await update.message.reply_text("🧠 Memorizzato.")
 
     # ── Comandi task ──────────────────────────────────────────────────────────
+
+    async def programma(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not self._authorized(update):
+            return
+        testo = " ".join(context.args).strip()
+        if not testo:
+            await update.message.reply_text(
+                "Uso: /programma <cosa e quando>\nEs: /programma ogni giorno alle 8 il meteo di Roma"
+            )
+            return
+        if self._scheduler is None:
+            await update.message.reply_text("Scheduler non disponibile.")
+            return
+        esito = await self._scheduler.propose_from_text(testo)
+        if "errore" in esito:
+            await update.message.reply_text(f"❌ {esito['errore']}")
+            return
+        await update.message.reply_text(
+            f"📋 Proposta task #{esito['id']}:\n"
+            f"'{esito['descrizione']}' — {esito['cron']}\n"
+            f"Confermo? [/conferma {esito['id']}] [/annulla {esito['id']}]"
+        )
 
     async def tasks(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not self._authorized(update):

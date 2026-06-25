@@ -9,7 +9,7 @@
 3. ✅ **`handlers/deepseek_api.py`** — client async, usage reale + `/user/balance`
 4. ✅ **`handlers/telegram_handler.py`** — comandi MVP + chat, auth chat_id, DI scheduler
 5. ✅ **`skills/meteo.py`** — Open-Meteo, no key
-6. ⏳ `skills/scheduler.py`
+6. ✅ **`skills/scheduler.py`** — next_run custom, tick JobQueue, propose LLM
 7. ⏳ `main.py`
 
 > ⚠️ **LAYOUT A PACKAGE (ordinato):**
@@ -110,6 +110,16 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - **Comandi task**: `/tasks /pausa /riprendi /stop /annulla` = pure operazioni su `storage`. `/conferma` e `/riprendi` calcolano `prossima_esecuzione` via `_next_run` → scheduler.
 - ⚠️ **Promemoria per `scheduler.py`:** deve esporre `next_run(cron) -> str|None` (ISO). La **creazione** di una task da linguaggio naturale (intent LLM → INSERT 'proposta') NON è qui: vive in scheduler/main.
 - ⚠️ **Promemoria per `main.py`:** istanziare `TelegramHandler(cfg, db, ds, scheduler)` e chiamare `.register(app)`.
+
+---
+
+## `scheduler.py` — decisioni prese
+- **Formato cron custom** (§8, no croniter): `daily HH:MM` · `every Nh`. `next_run(cron, now=None)` ritorna ISO `"%Y-%m-%d %H:%M:%S"` (combacia coi confronti SQLite di `get_due_tasks`), `None` se formato ignoto.
+- **`tick()`** (callback JobQueue): per ogni task dovuta → `acquire_task_lock` → dispatch skill → invia → `set_task_schedule(ultima, prossima)` → `release_task_lock` (in `finally`).
+- **Failure = log + notifica + STOP** (§8): la task fallita va in `sospesa`, niente retry (≠ SPECS §17.2 "max 3").
+- **Dispatch skill**: registry `{"meteo": _run_meteo}`. `azione` ignota → errore.
+- **Gap chiuso — creazione task**: `propose_from_text()` (LLM → JSON intent → INSERT 'proposta'). Cablata via nuovo comando **`/programma <testo>`** in `telegram_handler` (Decisione A: esplicito, no LLM per ogni messaggio).
+- ⚠️ **Promemoria `main.py`:** istanziare `Scheduler(cfg, db, ds, bot=app.bot)`, passarlo a `TelegramHandler(..., scheduler=...)`, e registrare il tick: `app.job_queue.run_repeating(scheduler.tick, interval=cfg.scheduler_tick_sec)`.
 
 ## Debiti / cose da non dimenticare
 - [ ] `main.py`: `reset_locks(conn)` dopo `init_db` (vedi Decisione 1).
