@@ -6,7 +6,7 @@
 ## Stato Ondata 2
 1. ✅ **`handlers/storage.py`** — schema SQLite + CRUD
 2. ✅ **`handlers/obsidian_reader.py`** — lettura contesto da filesystem + `/ricorda`
-3. ⏳ `handlers/deepseek_api.py`
+3. ✅ **`handlers/deepseek_api.py`** — client async, usage reale + `/user/balance`
 4. ⏳ `handlers/telegram_handler.py`
 5. ⏳ `skills/meteo.py`
 6. ⏳ `skills/scheduler.py`
@@ -78,6 +78,16 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - Import da `config.VaultConfig` (già esposto: `persona()/padrone()/memory()`).
 
 ---
+
+---
+
+## `deepseek_api.py` — decisioni prese
+- **Async** (`AsyncOpenAI`): non blocca il loop unico di ptb.
+- **Nessun retry** (§8): `chat()` fa una sola chiamata, l'errore propaga → il chiamante notifica+logga+STOP.
+- `ChatResult` espone usage REALE (`prompt_tokens`/`completion_tokens`) + `response_time_ms` (perf_counter) + `finish_reason` → alimenta `bump_stats`.
+- `get_balance()`: GET `/user/balance` via httpx (endpoint proprietario, fuori dallo schema OpenAI). `raise_for_status` → errore propagato.
+- Chiave mai loggata. `close()` per shutdown pulito.
+- ⚠️ **Promemoria per `telegram_handler.py`:** compone `messages` (system = persona+padrone, poi storia ≤10 msg) e cattura le eccezioni di `chat()` per il flusso failure.
 
 ## Debiti / cose da non dimenticare
 - [ ] `main.py`: `reset_locks(conn)` dopo `init_db` (vedi Decisione 1).
