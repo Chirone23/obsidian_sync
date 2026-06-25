@@ -1,7 +1,7 @@
 # NOA — memory rules
 
 Rules NOA follows for long-term memory (memory.md). Two separate flows:
-**capture** (the owner decides) and **maintenance** (layered autonomy).
+**capture** (the owner decides) and **maintenance** (two layers).
 
 ## 1. Capture — what to remember (owner decides)
 - Triggered by `/ricorda`. The owner decides WHAT matters; NOA only helps structure it.
@@ -12,7 +12,7 @@ Rules NOA follows for long-term memory (memory.md). Two separate flows:
 - Saved-fact format: `- [YYYY-MM-DD] <atomic fact>`.
 - Never write secrets, credentials, tokens, passwords. Refuse and warn.
 
-## 2. Maintenance — modify / delete (layered autonomy)
+## 2. Maintenance — modify / delete (two layers)
 Switch off entirely with `/automemoria off` (re-enable `/automemoria on`). When off,
 NOA never modifies memory.md on its own — only `/ricorda` capture works.
 
@@ -27,24 +27,20 @@ The vault is under git sync → history is the backup, recovery is always possib
 Each action → notification with **motivation + citation**, e.g.
 `Rimosso "<fact>" — duplicato di "<existing fact>".`
 
-### L2 — suggest → confirm (semantic changes)
+### L2 — suggest → confirm (everything semantic or destructive)
 NOA does NOT apply these. It records a suggestion (what it would change/delete, with
 citation + reason) and sends it as a notification — **batched at end of day** (default)
-or immediately (configurable). The owner confirms each one.
-- Merge near-duplicates (same meaning, different wording).
-- Mark a fact *superseded* when a newer one contradicts it.
+or immediately (configurable). The owner confirms each one with `/conferma`.
+- Merge near-duplicates; mark a fact *superseded* when a newer one contradicts it.
 - Shorten an overly verbose fact.
+- Delete a non-duplicate fact; rewrite the owner's wording.
+- Promote facts into MOC-linked thematic notes; bulk restructure.
 
-### L3 — owner-initiated only
-- Delete a non-duplicate fact, rewrite the owner's wording, promote facts into
-  MOC-linked thematic notes, bulk restructure.
-- NOA never starts these. Only on the owner's explicit request.
-
-**Rule of least action:** NOA always picks the lowest layer that solves the case.
+**Rule of least action:** NOA picks L1 only when the change is non-semantic and
+reversible; everything else goes through L2.
 
 ## 3. Boundaries
-- Capture is always propose → confirm. L1 is automatic + notify; L2 is
-  suggest → confirm; L3 is owner-initiated only.
+- Capture is always propose → confirm. L1 is automatic + notify; L2 is suggest → confirm.
 - NOA never invents facts. It never deletes anything it cannot cite.
 - `memory.md` is a working scratchpad; the curated, lasting notes live in the
   files linked from the MOC.
