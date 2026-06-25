@@ -69,19 +69,10 @@ class TelegramHandler:
     # ── Chat ──────────────────────────────────────────────────────────────────
 
     def _build_messages(self, text: str) -> list[dict]:
-        """System = persona + padrone + memoria; poi storia; poi msg corrente.
-        Equivalente al template SPECS §7 in forma OpenAI role-separated."""
-        persona = reader.read_persona(self._cfg.vault)
-        padrone = reader.read_padrone(self._cfg.vault)
-        fatti = reader.read_memory_lines(self._cfg.vault)
-        sys_parts = []
-        if persona:
-            sys_parts.append(f"You are:\n{persona}")
-        if padrone:
-            sys_parts.append(f"I am:\n{padrone}")
-        if fatti:
-            sys_parts.append("Context (memoria long-term):\n" + "\n".join(f"- {f}" for f in fatti))
-        messages = [{"role": "system", "content": "\n\n".join(sys_parts)}]
+        """System = contesto memoria (system+padrone+memory+MOC+link); poi
+        storia; poi messaggio corrente. In forma OpenAI role-separated."""
+        system = reader.read_context(self._cfg.memory)
+        messages = [{"role": "system", "content": system}]
         messages.extend(self._history)
         messages.append({"role": "user", "content": text})
         return messages
@@ -150,7 +141,7 @@ class TelegramHandler:
         if not testo:
             await update.message.reply_text("Uso: /ricorda <fatto da memorizzare>")
             return
-        reader.append_memory(self._cfg.vault, testo)
+        reader.append_memory(self._cfg.memory, testo)
         storage.log(self._db, "INFO", "memoria aggiunta", {"len": len(testo)})
         await update.message.reply_text("🧠 Memorizzato.")
 

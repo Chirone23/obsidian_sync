@@ -11,12 +11,10 @@ services:
     cpus: 1.0                 # 1 core (il Serverino ne ha 2, qui worst-case)
     # --- Volumi ---
     volumes:
-      # Clone locale del vault, in sola lettura: il bot legge, non scrive qui.
-      - ./vault:/vault:ro
-      # Eccezione (Decisione B): solo bot-memory.md è scrivibile, per /ricorda.
-      # Il mount più specifico vince sul :ro del vault. NB: il file deve ESISTERE
-      # sull'host prima di `up`, altrimenti Docker crea una directory al suo posto.
-      - ./vault/idee/bot-memory.md:/vault/idee/bot-memory.md:rw
+      # Memoria: solo la cartella bot-memory (sorella di script/), in rw.
+      # Il bot legge system/padrone/memory/MOC e /ricorda scrive memory.md
+      # → sync Obsidian (la cartella è dentro il vault). Niente mount vault intero.
+      - ../bot-memory:/bot-memory
       # Persistenza DB e log fuori dal container.
       - ./storage:/app/storage
       - ./logs:/app/logs
