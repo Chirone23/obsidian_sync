@@ -129,10 +129,14 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - **Retention §1**: `run_daily(03:00)` che pulisce i log solo se è il 1° del mese.
 - **Shutdown**: `post_shutdown` sul builder (non per assegnazione, vincolo ptb v21) → `ds.close()` + `db.close()`.
 
-## Debiti / cose da non dimenticare
-- [x] `main.py`: `reset_locks(conn)` dopo `init_db` (Decisione 1). ✅ fatto.
-- [ ] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (Decisione B), resto vault `:ro`. **Ancora aperto** (Ondata 3 / deploy).
+## Ondata 3 — deploy/hardening
+- [x] `main.py`: `reset_locks(conn)` dopo `init_db` (Decisione 1). ✅
+- [x] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (Decisione B), resto vault `:ro`. ✅
+      NB: il file deve **esistere sull'host** prima di `up` (altrimenti Docker crea una dir).
+- [x] `Dockerfile`: `WORKDIR /app` + `COPY . .` + `CMD python -u main.py` → già corretto, nessuna modifica. ✅
+- [x] **`.dockerignore`** aggiunto: tiene `.env`/`storage`/`logs`/`vault`/`__pycache__` fuori dall'immagine
+      (`.gitignore` non protegge il build context Docker). ✅
 - [ ] Test end-to-end: richiede secret reali (DEEPSEEK_API_KEY + TELEGRAM_BOT_TOKEN). Senza, verificabile solo l'avvio/fail pulito di `config`.
-- [ ] `Dockerfile`: verificare che `CMD` punti a `python main.py` con WORKDIR su `script/`.
+- [ ] Creare `vault/idee/bot-memory.md` vuoto sull'host prima del primo `up` (vedi Decisione B).
 - [ ] `scheduler.py`: dopo esecuzione task → `set_task_schedule` + `release_task_lock`.
 - [ ] Failure di una task = notifica + log + **STOP** (no retry-3, §8 prevale su SPECS §17.2).

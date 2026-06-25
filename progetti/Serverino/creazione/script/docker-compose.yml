@@ -13,6 +13,10 @@ services:
     volumes:
       # Clone locale del vault, in sola lettura: il bot legge, non scrive qui.
       - ./vault:/vault:ro
+      # Eccezione (Decisione B): solo bot-memory.md è scrivibile, per /ricorda.
+      # Il mount più specifico vince sul :ro del vault. NB: il file deve ESISTERE
+      # sull'host prima di `up`, altrimenti Docker crea una directory al suo posto.
+      - ./vault/idee/bot-memory.md:/vault/idee/bot-memory.md:rw
       # Persistenza DB e log fuori dal container.
       - ./storage:/app/storage
       - ./logs:/app/logs
