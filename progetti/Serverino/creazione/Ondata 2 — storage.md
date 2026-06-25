@@ -10,7 +10,9 @@
 4. ✅ **`handlers/telegram_handler.py`** — comandi MVP + chat, auth chat_id, DI scheduler
 5. ✅ **`skills/meteo.py`** — Open-Meteo, no key
 6. ✅ **`skills/scheduler.py`** — next_run custom, tick JobQueue, propose LLM
-7. ⏳ `main.py`
+7. ✅ **`main.py`** — wiring loop unico + JobQueue + shutdown
+
+**🎉 Ondata 2 completa.** Tutti i moduli passano `py_compile`.
 
 > ⚠️ **LAYOUT A PACKAGE (ordinato):**
 > ```
@@ -121,8 +123,16 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - **Gap chiuso — creazione task**: `propose_from_text()` (LLM → JSON intent → INSERT 'proposta'). Cablata via nuovo comando **`/programma <testo>`** in `telegram_handler` (Decisione A: esplicito, no LLM per ogni messaggio).
 - ⚠️ **Promemoria `main.py`:** istanziare `Scheduler(cfg, db, ds, bot=app.bot)`, passarlo a `TelegramHandler(..., scheduler=...)`, e registrare il tick: `app.job_queue.run_repeating(scheduler.tick, interval=cfg.scheduler_tick_sec)`.
 
+## `main.py` — decisioni prese
+- Wiring: `config → connect/init_db/reset_locks → DeepSeekClient → app(builder) → Scheduler(bot=app.bot) → TelegramHandler(scheduler) → register → job_queue`.
+- **Un loop solo**: scheduler = `job_queue.run_repeating(tick, interval=scheduler_tick_sec)`, NON un thread.
+- **Retention §1**: `run_daily(03:00)` che pulisce i log solo se è il 1° del mese.
+- **Shutdown**: `post_shutdown` sul builder (non per assegnazione, vincolo ptb v21) → `ds.close()` + `db.close()`.
+
 ## Debiti / cose da non dimenticare
-- [ ] `main.py`: `reset_locks(conn)` dopo `init_db` (vedi Decisione 1).
-- [ ] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (vedi Decisione B), resto vault `:ro`.
+- [x] `main.py`: `reset_locks(conn)` dopo `init_db` (Decisione 1). ✅ fatto.
+- [ ] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (Decisione B), resto vault `:ro`. **Ancora aperto** (Ondata 3 / deploy).
+- [ ] Test end-to-end: richiede secret reali (DEEPSEEK_API_KEY + TELEGRAM_BOT_TOKEN). Senza, verificabile solo l'avvio/fail pulito di `config`.
+- [ ] `Dockerfile`: verificare che `CMD` punti a `python main.py` con WORKDIR su `script/`.
 - [ ] `scheduler.py`: dopo esecuzione task → `set_task_schedule` + `release_task_lock`.
 - [ ] Failure di una task = notifica + log + **STOP** (no retry-3, §8 prevale su SPECS §17.2).
