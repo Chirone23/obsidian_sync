@@ -129,6 +129,13 @@ stato = 'attiva'  AND  prossima_esecuzione <= now  AND  in_esecuzione = 0
 - **Retention §1**: `run_daily(03:00)` che pulisce i log solo se è il 1° del mese.
 - **Shutdown**: `post_shutdown` sul builder (non per assegnazione, vincolo ptb v21) → `ds.close()` + `db.close()`.
 
+## Ondata 2.5 — memoria a cartella+MOC (ridisegno)
+Memoria da file singolo → **cartella `bot-memory/`** montata in `/bot-memory`.
+- `config.py`: `VaultConfig` → **`MemoryConfig`** (`path` + `moc/system/padrone/memory` + `file(name)`); `Config.vault` → `Config.memory`. `.env`: `MEMORY_DIR=/bot-memory` + 4 nomi file.
+- `obsidian_reader.py`: `read_context(mem)` = default (`system.md`+`padrone.md`+`memory.md`) → testo MOC → traversal `[[link]]` (dedup). `parse_links()`. `append_memory` → `memory.md`.
+- **Mount**: solo `../bot-memory:/bot-memory` (rw), eliminato il mount intero del vault `:ro` (meno I/O su 6W). MCP confermato MORTO (no headless).
+- ⏳ **Da fare ancora**: `telegram_handler` (`_build_messages` → `read_context`, `ricorda` → `cfg.memory`); `docker-compose` (nuovo mount); promemoria giornaliero "sistema memory.md".
+
 ## Ondata 3 — deploy/hardening
 - [x] `main.py`: `reset_locks(conn)` dopo `init_db` (Decisione 1). ✅
 - [x] `docker-compose.yml`: bind rw su `idee/bot-memory.md` (Decisione B), resto vault `:ro`. ✅

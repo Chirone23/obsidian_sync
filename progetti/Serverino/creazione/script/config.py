@@ -38,14 +38,20 @@ class TelegramConfig:
 
 
 @dataclass(frozen=True)
-class VaultConfig:
+class MemoryConfig:
+    """Cartella memoria montata in /bot-memory. Contiene il MOC (indice +
+    sintesi + [[link]]), i due default (system/padrone) e il file di /ricorda."""
     path: Path
-    persona_file: str
+    moc_file: str
+    system_file: str
     padrone_file: str
     memory_file: str
 
-    def persona(self) -> Path:
-        return self.path / self.persona_file
+    def moc(self) -> Path:
+        return self.path / self.moc_file
+
+    def system(self) -> Path:
+        return self.path / self.system_file
 
     def padrone(self) -> Path:
         return self.path / self.padrone_file
@@ -53,12 +59,19 @@ class VaultConfig:
     def memory(self) -> Path:
         return self.path / self.memory_file
 
+    def file(self, name: str) -> Path:
+        """Risolve un nome (da [[link]] del MOC) dentro la cartella memoria.
+        Aggiunge .md se assente."""
+        if not name.endswith(".md"):
+            name += ".md"
+        return self.path / name
+
 
 @dataclass(frozen=True)
 class Config:
     deepseek: DeepSeekConfig
     telegram: TelegramConfig
-    vault: VaultConfig
+    memory: MemoryConfig
     db_path: Path
     log_level: str
     context_window_msgs: int
@@ -79,11 +92,12 @@ def load_config() -> Config:
             bot_token=_require("TELEGRAM_BOT_TOKEN"),
             chat_id=int(_require("TELEGRAM_CHAT_ID")),
         ),
-        vault=VaultConfig(
-            path=Path(os.getenv("VAULT_PATH", "/vault")),
-            persona_file=os.getenv("PERSONA_FILE", "skill/bot-persona.md"),
-            padrone_file=os.getenv("PADRONE_FILE", "skill/bot-padrone.md"),
-            memory_file=os.getenv("MEMORY_FILE", "idee/bot-memory.md"),
+        memory=MemoryConfig(
+            path=Path(os.getenv("MEMORY_DIR", "/bot-memory")),
+            moc_file=os.getenv("MOC_FILE", "memory-moc.md"),
+            system_file=os.getenv("SYSTEM_FILE", "system.md"),
+            padrone_file=os.getenv("PADRONE_FILE", "padrone.md"),
+            memory_file=os.getenv("MEMORY_FILE", "memory.md"),
         ),
         db_path=Path(os.getenv("DB_PATH", "/app/storage/bot.db")),
         log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
