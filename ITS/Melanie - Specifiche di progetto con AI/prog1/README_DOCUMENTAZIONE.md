@@ -1,9 +1,9 @@
 # Documentazione SpecterAI — Indice
 
 **Progetto:** SpecterAI (AI Contract Analyzer per Non-Avvocati in Italiano)
-**Fase:** Building Lez. 4 — pronto a partire (prossimo step: checklist pre-building da `valutazione 10-5/ChristianG_Promemoria_Lezione4.md`)
-**Specifica corrente:** [[Specifica Tecnica v3 - SpecterAI]] (v3.1, changelog 18 righe, confermata dalla prof 2026-05-10)
-**Ultimo aggiornamento indice:** 2026-05-11
+**Fase:** Building avanzato — sistema gira E2E via web UI, ottimizzato (latenza 13s su CLI €0), detector PDF corrotti attivo. Prossimo step: test plan §8 + rifinitura presentazione.
+**Specifica corrente:** [[Specifica Tecnica v4 - SpecterAI]] (2026-05-29 — privacy-first §3.bis + backend cli/sdk configurabile; v3.1 congelata come baseline 95/100). Driver della v4 in [[SPEC_ERRATA]].
+**Ultimo aggiornamento indice:** 2026-06-24
 
 ---
 
@@ -24,11 +24,13 @@
 |------|-------|
 | `spec precedenti/Specifica Tecnica v1 - SpecterAI.md` | Prima bozza (2026-04-30) — superata |
 | `spec precedenti/Specifica Tecnica v2 - SpecterAI.md` | Seconda iterazione (2026-05-04) — superata |
-| [[Specifica Tecnica v3 - SpecterAI]] | **Versione corrente v3.1** (2026-05-10) — 18 modifiche tracciate nel changelog §13 |
+| [[Specifica Tecnica v3 - SpecterAI]] | v3.1 (2026-05-10) — 95/100 confermata prof, **congelata come baseline** |
+| [[Specifica Tecnica v4 - SpecterAI]] | **Versione corrente** (2026-05-29) — cambio architetturale: privacy-first §3.bis (GDPR Art. 5/25) + backend cli/sdk configurabile. Driver in [[SPEC_ERRATA]] |
 
 **Storia v3 (changelog completo in §13 della spec):**
 - v3 (2026-05-07): 13 fix da Review v2 + Meta-Review multi-agent + 4 query Perplexity (AI Act riclassificato limited-risk, verifica raw_excerpt, test plan eseguibile, scenari costo Sonnet, gate lingua IT/EN, ecc.)
 - v3.1 (2026-05-10): 3 patch da feedback prof File3 (Stretch Goals §2.bis, dev token strategy §7, Build Roadmap §12.bis) + 2 fix da review Perplexity validation (retention Anthropic 7gg, DPA esplicito) + 3 fix coerenza interna da audit Opus (soglia 0.92, kappa N=35, langdetect)
+- **v4 (2026-05-29):** 2 divergenze codice↔spec risultate **architetturali** (ERR-01 redazione PII pre-LLM, ERR-08 backend cli/sdk) → spec promossa. Vedi [[SPEC_ERRATA]].
 
 ---
 
@@ -45,8 +47,17 @@ Registro strutturato di errori e correzioni: 6 incident risolti (INC-000a/b/c di
 **Aggiornare:** ogni volta che si verifica un errore inatteso durante il building.
 
 ### [[SESSION_HANDOFF]]
-Stato del progetto tra sessioni: ✅ completato · 🔄 in progress · ⏳ prossimi step · blocchi/domande aperte · file modificati. Sezione "Stato attuale" in cima con sintesi post-sessione 2026-05-10.
+Stato del progetto tra sessioni: ✅ completato · 🔄 in progress · ⏳ prossimi step · blocchi/domande aperte · file modificati. Sezione "Stato attuale" in cima.
 **Aggiornare:** all'inizio e alla fine di ogni sessione.
+
+### Changelog di build (sessioni di coding)
+- [[CHANGELOG_BUILD_20-05]] — building + hardening iniziale
+- [[CHANGELOG_BUILD_04-06]] — primo E2E reale via browser + fix INC-012
+- [[CHANGELOG_BUILD_24-06]] — **ottimizzazione latenza 12× (thinking off, INC-013) + detector PDF corrotti + scaffold SDK warm**
+
+### Knowledge tecnica
+- [[docs/OCR_fallback_decisione]] — detector testo corrotto (font ToUnicode rotta) + scelta OCR per il fallback (Tesseract vs Unlimited-OCR)
+- [[parti importanti contratti]] — knowledge di dominio: quali clausole/trappole rilevare per tipo di contratto
 
 ---
 

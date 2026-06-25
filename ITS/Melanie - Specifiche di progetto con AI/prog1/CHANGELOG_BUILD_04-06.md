@@ -66,6 +66,8 @@ Richiesta: mostrare in pagina **quanto** ci mette e **quale modello** gira, per 
 
 **Nota tempi:** il backend `cli` avvia l'intero agente Claude Code ad ogni analisi → lento e variabile a prescindere dal modello (su `cli` non si applicano `max_tokens`/`temperature` della §6 — vedi [[SPEC_ERRATA]] ERR-08). Per garantire <60s servirebbe il backend `sdk` (API diretta, max_tokens=2048). Per questa demo i tempi ~1 minuto sono stati ritenuti accettabili.
 
+> ⚠️ **SUPERATO il 2026-06-24** — questa conclusione si è rivelata sbagliata. La latenza NON era il backend `cli` in sé ma l'**extended thinking** (~1700 token nascosti). Disattivandolo (`MAX_THINKING_TOKENS=0`) le analisi scendono a **13s sul CLI a €0**, senza bisogno dell'`sdk`. Vedi [[INCIDENTS]] INC-013 e [[CHANGELOG_BUILD_24-06]].
+
 ---
 
 ## Connessioni

@@ -77,12 +77,14 @@ PDF → estrazione testo → estrazione metadati (date/importi)
 - **GDPR:** data minimization (Art. 5) + privacy by design (Art. 25) → redazione PII pre-cloud. Commercial Terms Anthropic (no-training) sul path API.
 - **AI Act:** limited-risk (derogazioni Art. 6(3)), solo obblighi di trasparenza già implementati.
 - **Processo documentato:** PROMPT_LOG (iterazioni prompt), INCIDENTS (errori→fix, incl. code review 13 bug), CHANGELOG_BUILD, SPEC_ERRATA.
+- **Performance (storia da raccontare):** analisi inizialmente ~1-4 min → diagnosi a misure isolate (5 ipotesi plausibili tutte sbagliate) → colpevole l'extended thinking del CLI → fix `MAX_THINKING_TOKENS=0` → **13s, 12× più veloce, a €0** (INC-013). Esempio di "misurare prima di ottimizzare".
+- **Robustezza estrazione:** detector di PDF con font corrotti (ToUnicode rotta) → il sistema **rifiuta onestamente** invece di citare mojibake — coerente con l'anti-allucinazione (INC-001).
 
 ## 7. Limiti dichiarati + roadmap  *(onestà metodologica)*
 
 - **Validazione di mercato 3/5:** desk research, **zero user interview** con freelance reali (§11.bis). L'angolo "sub-niche indifesa" è basato su assenza di concorrenza, non su domanda dimostrata.
-- **Limiti tecnici noti:** over-redaction del filtro privacy (INC-006); soglia fuzzy 0.92 da calibrare; single point of failure su Anthropic (mitigato dal backend configurabile).
-- **Roadmap post-MVP:** interviste utenti, smoke test landing, beta 10 utenti; provider EU (Mistral Medium 3) per data residency.
+- **Limiti tecnici noti:** over-redaction del filtro privacy (INC-006, nuova occorrenza: il foro "Roma" oscurato come città → prosa/citazione contraddittorie); soglia fuzzy 0.92 da calibrare; PDF con font ToUnicode rotta non analizzabili senza OCR (oggi rifiutati onestamente, INC-001); single point of failure su Anthropic (mitigato dal backend configurabile).
+- **Roadmap post-MVP:** interviste utenti, smoke test landing, beta 10 utenti; provider EU (Mistral Medium 3) per data residency; **OCR fallback** (Tesseract locale) per i PDF con encoding font corrotto, dietro il detector.
 
 ## 8. Chiusura
 

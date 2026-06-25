@@ -1,8 +1,14 @@
 import json
+import os
 import re
 import subprocess
+import tempfile
 import time
 from pathlib import Path
+
+# cwd "pulita" per il CLI: evita il caricamento di CLAUDE.md/skill del vault a ogni call.
+_CLEAN_CWD = Path(tempfile.gettempdir()) / "specterai_clean_cwd"
+_CLEAN_CWD.mkdir(exist_ok=True)
 
 from pydantic import ValidationError
 
@@ -24,16 +30,23 @@ def _load_system_prompt() -> str:
 
 def _call_cli(system_prompt: str, user_message: str) -> str:
     """Backend Claude Code CLI (costo €0, solo su macchina autenticata)."""
+    # Disattiva l'extended thinking: senza, l'analisi di un contratto generava ~1700
+    # token di ragionamento nascosto → ~163s. Con thinking off scende a ~13s (12x),
+    # JSON valido al primo colpo. L'estrazione clausole è meccanica, non serve thinking.
+    env = {**os.environ, "MAX_THINKING_TOKENS": "0"}
     result = subprocess.run(
         ["claude", "-p",
          "--system-prompt", system_prompt,
          "--model", config.MODEL,
+         "--strict-mcp-config",  # ignora i server MCP utente/progetto: niente spawn a ogni call
          "--output-format", "json"],
         input=user_message,
         capture_output=True,
         text=True,
         encoding="utf-8",
         timeout=300,
+        cwd=str(_CLEAN_CWD),  # cwd vuota: niente CLAUDE.md/skill del vault da caricare
+        env=env,
     )
     if result.returncode != 0:
         raise RuntimeError(f"Claude CLI error: {result.stderr[:300]}")
@@ -44,24 +57,52 @@ def _call_cli(system_prompt: str, user_message: str) -> str:
     return data["result"]
 
 
+# Client SDK persistente: istanziato UNA volta (al boot via warmup(), o lazy alla
+# prima chiamata) e riusato per ogni analisi. È il "processo caldo in attesa":
+# nessun avvio da ripagare per contratto, ogni analisi è una chiamata indipendente.
+_sdk_client = None
+
+
+def _get_sdk_client():
+    """Ritorna il client SDK singleton, creandolo se serve."""
+    global _sdk_client
+    if _sdk_client is None:
+        try:
+            import anthropic
+        except ImportError as e:
+            raise RuntimeError("SDK 'anthropic' non installato (pip install anthropic)") from e
+        _sdk_client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY or None)
+    return _sdk_client
+
+
+def warmup() -> None:
+    """Inizializza il client SDK all'avvio del server (warm). No-op sul backend CLI."""
+    if config.LLM_BACKEND == "sdk":
+        _get_sdk_client()
+
+
 def _call_sdk(system_prompt: str, user_message: str) -> str:
     """Backend SDK Anthropic (deployabile ovunque, richiede ANTHROPIC_API_KEY).
 
     Applica i parametri di determinismo della spec §6 (temperature=0, max_tokens)
     che il path CLI non espone — vedi SPEC_ERRATA ERR-08.
-    """
-    try:
-        import anthropic
-    except ImportError as e:
-        raise RuntimeError("SDK 'anthropic' non installato (pip install anthropic)") from e
 
-    client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY or None)
+    Usa il client persistente (warm) + prompt caching sul system prompt: dal secondo
+    contratto entro ~5 min il prefisso di sistema non viene rielaborato.
+    """
+    import anthropic  # per anthropic.APIError; l'import vero è già avvenuto in _get_sdk_client
+
+    client = _get_sdk_client()
     try:
         response = client.messages.create(
             model=config.MODEL,
             max_tokens=config.MAX_TOKENS,
             temperature=config.TEMPERATURE,
-            system=system_prompt,
+            system=[{
+                "type": "text",
+                "text": system_prompt,
+                "cache_control": {"type": "ephemeral"},  # prompt caching del prefisso di sistema
+            }],
             messages=[{"role": "user", "content": user_message}],
         )
     except anthropic.APIError as e:

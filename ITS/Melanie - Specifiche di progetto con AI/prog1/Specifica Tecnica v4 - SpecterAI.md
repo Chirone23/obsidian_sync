@@ -256,6 +256,8 @@ client.messages.create(
 ```
 (Il path cli passa system prompt e modello alla CLI; i parametri di sampling seguono i default della CLI.)
 
+> **Nota performance (2026-06-24, INC-013):** il path `cli` imposta `MAX_THINKING_TOKENS=0` (oltre a `--strict-mcp-config` e cwd isolata). L'extended thinking, attivo di default, generava ~1700 token di ragionamento nascosto per analisi → ~163s. Disattivato, l'estrazione (task meccanico, non serve thinking) scende a **~13s** mantenendo JSON valido. Questo rende il backend `cli` a €0 sufficiente per la latenza target, senza ricorrere all'`sdk`. Vedi [[INCIDENTS]] INC-013.
+
 ### Token optimization / Green AI
 - `max_tokens=2048`; testo troncato a 40.000 char; system prompt <600 token; nessuna history; temperature=0.
 - Routing: validazione/redazione senza LLM. *(Nota v4: il gate lingua NON è più pre-LLM — il micro-risparmio token su lingue fuori perimetro non si applica, vedi ERR-09.)*
@@ -346,7 +348,7 @@ Scenari sdk: Demo ~0,20–0,40 € · Testing ~0,60 € · MVP pubblico 100/mese
 | Metrica | Soglia |
 |---|---|
 | Copertura 7 categorie | 100% |
-| Latenza E2E (+redazione) | <30s (target <15s) |
+| Latenza E2E (+redazione) | <30s (target <15s) — ✅ **raggiunto su backend `cli` €0**: NDA ~13s, Sonnet ~33s (INC-013, thinking off) |
 | Schema compliance Pydantic | ≥95% al primo tentativo |
 | Excerpt grounding | ≥90% primo tentativo, 100% post-retry |
 | Recall categorie (gold-standard) | ≥0,80 medio |
@@ -428,6 +430,7 @@ Logica di estrazione separata dall'LLM; il backend configurabile (cli/sdk) e il 
 | Rischio | Prob. | Impatto | Mitigazione |
 |---|---|---|---|
 | PDF parsing su layout non standard | Media | Alto | Layer deterministico + errore chiaro |
+| PDF con font ToUnicode rotta (mojibake) | Media | Alto | **Detector testo corrotto** (rifiuto onesto, no citazioni spazzatura); fallback OCR in roadmap (INC-001, [[docs/OCR_fallback_decisione]]) |
 | Claude allucina clausole | Bassa | Alto | Pydantic + grounding fuzzy + retry |
 | **PII in chiaro al cloud** | Bassa | Alto | **Redazione §3.bis + fail-closed + T15** |
 | Over-redaction (precision PII) | Media | Basso | Direzione sicura; INC-006 post-MVP |

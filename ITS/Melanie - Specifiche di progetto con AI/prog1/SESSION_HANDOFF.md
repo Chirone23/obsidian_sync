@@ -2,9 +2,33 @@
 
 **Progetto:** SpecterAI — AI Contract Analyzer per Non-Avvocati (Italiano)
 **Data progetto inizio:** 2026-04-28 (Lezione 1 brainstorming)
-**Ultima sessione:** 2026-05-29 (allineamento spec↔codice, SPEC_ERRATA, config backend cli/sdk, riconciliazione incident)
-**Prossima sessione:** Lezione 5 — Test plan §8 (T1-T12 + T13/T14/T15) + aggiornamento PROMPT_LOG/INCIDENTS con dati reali
+**Ultima sessione:** 2026-06-24/25 (ottimizzazione latenza 12×, detector PDF corrotti, scaffold SDK warm)
+**Prossima sessione:** Test plan §8 (T1-T15) con dati reali + rifinitura presentazione + fix over-redaction foro (INC-006)
 **Spec corrente:** **v4** (`Specifica Tecnica v4 - SpecterAI.md`, 2026-05-29) — cambio architetturale (privacy-first §3.bis + backend cli/sdk) motivato in [[SPEC_ERRATA]]. La v3.1 (95/100, confermata prof) resta congelata e preservata come baseline.
+
+---
+
+## 🟢 SESSIONE 2026-06-24/25 — ottimizzazione latenza + robustezza estrazione
+
+**Contesto:** le analisi erano lente (1-4 min, inaccettabili per contratti pesanti). Obiettivo: ridurre i tempi restando su backend `cli` a €0. Backup pre-modifiche: `specterai/specter-ai_backup_pre-SDK_20260624_1659.zip`.
+
+**Fatto:**
+- **Latenza 12× (INC-013):** diagnosi via misure isolate (chiamata banale 6,3s vs singola analisi 162,9s, JSON valido al 1° colpo → niente retry). Colpevole = **extended thinking** del CLI (~1700 token nascosti). Fix: `MAX_THINKING_TOKENS=0` nel subprocess → **162,9s → 13,3s**. Verificato E2E: NDA 13s, Capitolato 1MB 55s, co.co.co. Sonnet 33s.
+- **Detector PDF corrotti:** `pdf_processor.py` rifiuta i PDF con font ToUnicode rotta (mojibake `Đoŵplessivo`) invece di citare spazzatura. Soglia 1% su densità Latin-Extended (Consip 4,42% vs puliti 0,00%). Consip ora → HTTP 422 in 0,7s, nessuna call LLM sprecata. Fallback OCR in roadmap → [[docs/OCR_fallback_decisione]].
+- **Scaffold SDK warm (dormiente):** client SDK singleton istanziato al boot (`warmup()`) + prompt caching sul system prompt. Non attivato — vincolo €0/CLI confermato. Igiene CLI aggiunta: `--strict-mcp-config` + cwd vuota.
+- **Modello:** confronto Haiku vs Sonnet sullo stesso Consip → **Sonnet per demo** (giudizio sul rischio migliore: penali Alto vs Medio), Haiku per iterare. `.env` su Sonnet.
+- **Doc:** nuovo [[CHANGELOG_BUILD_24-06]], INCIDENTS aggiornato (INC-013 nuovo, INC-001 mitigato, INC-006 nuova occorrenza), [[docs/OCR_fallback_decisione]].
+
+**Aperti / da decidere:**
+- **INC-006 over-redaction foro:** sul co.co.co. il privacy_filter oscura "Roma" (città→GPE) → prosa e citazione del Foro si contraddicono. Da indagare (filtro spaCy che mangia le città).
+- **Scelta OCR fallback:** Unlimited-OCR scartato (richiede GPU) → orientamento su **Tesseract** (locale, CPU, italiano). Da implementare dietro il detector.
+- Test plan §8 con dati reali (recall/precision/latenza/zero-leak) ancora da eseguire.
+
+---
+
+## 🟢 SESSIONE 2026-06-04 — primo E2E reale via browser + fix critico
+
+**Fatto:** primo upload reale via web UI; emerso e corretto **INC-012** (`async for` su `UploadFile` non async-iterabile → 500 su ogni upload). Aggiunti badge tempo/modello nel report per la demo. Dettaglio in [[CHANGELOG_BUILD_04-06]].
 
 ---
 

@@ -7,11 +7,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 import config
+import llm_client
 from llm_client import analyze
 from pdf_processor import extract_text
 from regex_layer import extract_metadata
 
 config.validate()  # fail-fast se backend/chiave non configurati (vedi setup.py)
+llm_client.warmup()  # istanzia il client SDK al boot (warm); no-op sul backend CLI
 
 app = FastAPI()
 templates = Jinja2Templates(directory=str(Path(__file__).parent / "templates"))

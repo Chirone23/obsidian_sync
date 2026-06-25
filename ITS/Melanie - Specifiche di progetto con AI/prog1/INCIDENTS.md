@@ -29,6 +29,9 @@
 | **INC-010** | **2026-05-21** | **llm_client.py — subprocess senza timeout** | **`subprocess.run()` senza `timeout=` → hang indefinito, DoS su worker uvicorn** | **High** | **✅ RESOLVED** |
 | **INC-011** | **2026-05-21** | **main.py — async def con subprocess sincrono** | **Endpoint `async def` con subprocess sync blocca event loop, zero concorrenza** | **High** | **✅ RESOLVED** |
 | **INC-012** | **2026-06-04** | **main.py — `async for chunk in file` su UploadFile** | **`UploadFile` non è async-iterabile → `TypeError` → 500 su OGNI upload dalla web UI. Primo E2E reale via browser mai funzionato.** | **Critical** | **✅ RESOLVED** |
+| **INC-013** | **2026-06-24** | **llm_client.py — extended thinking CLI** | **Analisi ~163s per ~1700 token di ragionamento nascosto del CLI. Disattivato (`MAX_THINKING_TOKENS=0`) → 13s (12×).** | **High (latenza)** | **✅ RESOLVED** |
+| INC-001 | 2026-05-12 (Lez. 3) | PyMuPDF text extraction | PDF parsing errors on scanned/complex PDFs | Critical | 🟡 Mitigato (detector 2026-06-24, fix OCR in roadmap) |
+| INC-006 | 2026-05-29 | privacy_filter.py — spaCy NER | Over-redaction (nuova occorrenza 2026-06-24: foro "Roma" oscurato → prosa/citazione contraddittorie nel co.co.co.) | Low | 🟡 Open (qualità) |
 
 ---
 
@@ -599,6 +602,33 @@ pdf_bytes = b"".join(chunks)
 **Aggiornamenti Specifica:** nessuno (bug implementativo, non architetturale). Aggiornata la nota E2E in [[SPEC_ERRATA]] (Test di verifica): E2E via uvicorn + PDF reale ora **eseguito** il 2026-06-04.
 
 **Status:** ✅ Resolved 2026-06-04
+
+---
+
+## INC-013 — Extended thinking del CLI: analisi ~163s invece di ~13s
+
+**Data:** 2026-06-24
+
+**Componente:** `llm_client.py` — backend Claude Code CLI
+
+**Descrizione:** Le analisi impiegavano 1-4 minuti (NDA corto: 166s). Inaccettabile per i contratti pesanti che l'utente deve processare. Le ipotesi iniziali (cold-start CLI, retry per JSON invalido, server MCP caricati, contesto del vault, lingua del system prompt) si sono rivelate **tutte sbagliate**.
+
+**Severità:** High (latenza — rende l'app inusabile su contratti grandi)
+
+**Root cause:** misure isolate hanno mostrato che (a) una chiamata CLI banale ("ciao") costa solo **6,3s** → il cold-start NON è il problema; (b) una **singola** analisi del contratto con thinking attivo costa **162,9s** con JSON valido al primo colpo → niente retry. Il tempo se ne andava in **~1700 token di extended thinking** (ragionamento nascosto) generati dal CLI prima della risposta. L'estrazione di clausole è un task meccanico/estrattivo che non richiede thinking.
+
+**Soluzione:** passare `MAX_THINKING_TOKENS=0` nell'ambiente del subprocess CLI (`env={**os.environ, "MAX_THINKING_TOKENS": "0"}`). Risultato: **162,9s → 13,3s (12×)**, JSON valido, output anche più completo. Verificato E2E: NDA 13s, Capitolato 1MB 55s. Restando su backend `cli` a €0 (vincolo di progetto, vedi memoria `project-specterai-cli-only`).
+
+Aggiunte anche due misure di igiene a costo zero (non risolutive sulla latenza ma corrette): `--strict-mcp-config` (niente server MCP) e `cwd` su dir vuota (niente CLAUDE.md/skill del vault).
+
+**Lezioni apprese:**
+- ✅ **Misurare prima di ottimizzare:** 5 ipotesi plausibili erano tutte errate. Il floor (chiamata banale) vs la singola call reale hanno isolato il colpevole in 2 misure.
+- ✅ La varianza del CLI (166s vs 267s sullo stesso input) era più grande dei presunti guadagni delle micro-ottimizzazioni → segnale che si stava guardando il posto sbagliato.
+- ✅ Per task estrattivi deterministici, l'extended thinking è puro overhead.
+
+**Aggiornamenti Specifica:** nessun cambio architetturale. Da riflettere nella §6 (parametri/performance) e utile per la presentazione §6-7. Dettagli build in [[CHANGELOG_BUILD_24-06]].
+
+**Status:** ✅ Resolved 2026-06-24
 
 ---
 
