@@ -1,11 +1,12 @@
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/plugins/obsidian-git/data.json
-.trash/
-.DS_Store
-node_modules
-*.swp
-*.swo
-*~
-.env
-.tmp/
+# === Whitelist: traccia SOLO i file .md ===
+# Ignora tutto...
+*
+
+# ...ma attraversa le cartelle (necessario per raggiungere i .md annidati)
+!*/
+
+# ...e ri-includi i file .md
+!*.md
+
+# Mantieni il .gitignore stesso sotto versione
+!.gitignore

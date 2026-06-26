@@ -52,13 +52,13 @@
 
 ## Validazione 5 Dimensioni (framework corso)
 
-| Dimensione | Esito | Note |
-|---|---|---|
-| **Tecnica** | ✅ | Problema ben definito, stack chiaro (PyMuPDF + Claude API), layer deterministico per date/importi |
-| **Economica** | ✅ | Costi inference bassissimi (pochi centesimi/contratto), freemium o pay-per-use |
-| **Complessità** | ✅ | MVP fattibile in 1 mese SE perimetro chiuso (solo PDF digitali, 5-7 categorie red flag, no OCR) |
-| **Rischio e Compliance** | ⚠️ | AI Act HIGH-RISK gestibile: posizionamento come decision-support + disclaimer + human-in-the-loop |
-| **Sostenibilità tecnologica** | ✅ | Provider-agnostic: logica separabile dall'LLM, PyMuPDF open source, switch su GPT-4o se necessario |
+| Dimensione                    | Esito | Note                                                                                               |
+| ----------------------------- | ----- | -------------------------------------------------------------------------------------------------- |
+| **Tecnica**                   | ✅     | Problema ben definito, stack chiaro (PyMuPDF + Claude API), layer deterministico per date/importi  |
+| **Economica**                 | ✅     | Costi inference bassissimi (pochi centesimi/contratto), freemium o pay-per-use                     |
+| **Complessità**               | ✅     | MVP fattibile in 1 mese SE perimetro chiuso (solo PDF digitali, 5-7 categorie red flag, no OCR)    |
+| **Rischio e Compliance**      | ⚠️    | AI Act HIGH-RISK gestibile: posizionamento come decision-support + disclaimer + human-in-the-loop  |
+| **Sostenibilità tecnologica** | ✅     | Provider-agnostic: logica separabile dall'LLM, PyMuPDF open source, switch su GPT-4o se necessario |
 
 **Esito complessivo: idea validata** — un rischio gestibile, un'assunzione da dichiarare.
 
