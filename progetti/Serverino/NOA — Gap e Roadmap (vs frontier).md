@@ -92,14 +92,22 @@ Decisione non ancora presa.
 **Premessa:** MCP sta *a valle* del tool-calling (§2.1). È lo standard di trasporto per esporre strumenti; senza il loop di function-calling NOA non può consumarli.
 
 ### NOA legge la doc della piattaforma per sapere come usarla?
-**No.** Il modello **non** va a leggere la documentazione/sito della piattaforma. Il *server MCP* dichiara i suoi strumenti come funzioni — **nome + descrizione + schema dei parametri** (JSON) — e sono quelle a finire nel contesto del modello. **Quello è il suo unico "manuale".** Descrizioni buone → uso corretto; descrizioni vaghe → NOA brancola.
+**Dipende dalla profondità della piattaforma — e qui la risposta semplice "no" è sbagliata.** Vanno distinti due tipi di "saper usare":
 
-### Il "doc" operativo lo scriviamo noi (direttiva nel vault)
-Lo schema MCP dice *come si chiama* il tool (firma, argomenti), non *quando/perché/con che policy* usarlo. Quel giudizio operativo va messo in una **direttiva in linguaggio naturale** nel vault, che NOA legge come contesto (filosofia "direttive" del CLAUDE.md).
+1. **Meccanico (come si chiama il tool)** → lo dà lo **schema MCP**: nome + descrizione + schema dei parametri. Sufficiente per tool semplici (`meteo(città)`).
+2. **Competenza di dominio (come costruire input validi e buoni)** → serve la **doc della piattaforma**. Indispensabile quando il payload è di fatto *un intero programma* (es. n8n: node-type, forma dei parametri per nodo, sintassi delle espressioni, regole di connessione). Lo schema descrive il *contenitore*, non la *lingua* che ci va dentro.
 
-- **MCP (server)** → il "come chiamare": firma, argomenti, schema.
-- **Direttiva (vault)** → il "quando/perché/policy/edge case".
-- È ibrido: lo schema è automatico, la direttiva la **scriviamo noi** — NOA non la recupera da sola.
+> **Lezione concreta (n8n, 2026-06).** Collegando n8n via MCP, l'agente sapeva *chiamare* `create_workflow` ma non sapeva *comporre* il workflow finché non gli è stata collegata anche la **documentazione n8n** (sempre via MCP). A quel punto le performance sono schizzate. La doc era la conoscenza di dominio mancante.
+
+### Il meccanismo: i docs come fonte *interrogabile* (= retrieval)
+I docs n8n erano dati via MCP **non come secondo set di azioni, ma come fonte di conoscenza cercabile on-demand**. Cioè era **retrieval (§2.3) travestito da MCP**: non "manuale incollato nel prompt" (saturerebbe il contesto), ma "manuale che l'agente interroga quando serve".
+
+### Regola pratica per NOA
+Collegando una piattaforma **profonda** via MCP, pianifica **due** cose, non una:
+- **Server di azioni** → i tool per *fare* (firma, argomenti).
+- **Fonte docs interrogabile** → il loro docs-MCP, oppure i loro docs indicizzati nella memoria retrieval di NOA.
+
+Per piattaforme **semplici** basta lo schema; per il "quando/perché/policy" si aggiunge una **direttiva in linguaggio naturale** nel vault (filosofia "direttive" del CLAUDE.md). La direttiva è la versione leggera; i docs cercabili sono la versione per piattaforme grosse.
 
 ### Implicazioni pratiche
 - Servono **descrizioni di tool buone** lato server (è la vera UX dell'agente).
