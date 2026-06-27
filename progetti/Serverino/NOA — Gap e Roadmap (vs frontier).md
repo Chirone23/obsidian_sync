@@ -31,7 +31,7 @@ NOA **non** è "un Claude più scarso". È un'altra categoria: maggiordomo **per
 ## 2. Cosa gli manca, in ordine di impatto
 
 ### 1. Tool-calling vero — *il buco architetturale più grosso*
-Oggi NOA **non decide** quali strumenti usare: `on_message` fa **match di keyword** (prima parola = skill; "programma/pianifica" = task), altrimenti chatta. La promessa di design "l'LLM sceglie la skill e il payload" **non è implementata**. I frontier fanno *function calling*: il modello ragiona, sceglie il tool, passa gli argomenti, **concatena** chiamate, reagisce ai risultati. È ciò che separa un chatbot da un agente — e il gancio che sblocca il resto: **la ricerca internet è solo un altro tool**.
+Oggi NOA **non decide** quali strumenti usare: `on_message` fa **match di keyword** (prima parola = skill; "programma/pianifica" = task), altrimenti chatta. La promessa di design "l'LLM sceglie la skill e il payload" **non è implementata**. I frontier fanno *function calling*: il modello ragiona, sceglie il tool, passa gli argomenti, **concatena** chiamate, reagisce ai risultati. È ciò che separa un chatbot da un agente — e il gancio che sblocca il resto: **la ricerca internet è solo un altro tool**. Lo standard per collegare strumenti/piattaforme esterne è **MCP** (→ §6), ma MCP è inutile senza questo loop.
 
 ### 2. Ricerca + retrieval
 - *Web search* → zero accesso a internet (mestiere di Perplexity, grounding con citazioni).
@@ -84,6 +84,27 @@ NOA deve diventare più **agente** (fa cose: mail, calendario, ricerche, file) o
 - Strada **oracolo** → parte da **modello migliore + memoria con retrieval** (punti 5 e 3).
 
 Decisione non ancora presa.
+
+---
+
+## 6. Collegamenti MCP — come NOA imparerà a usare le piattaforme
+
+**Premessa:** MCP sta *a valle* del tool-calling (§2.1). È lo standard di trasporto per esporre strumenti; senza il loop di function-calling NOA non può consumarli.
+
+### NOA legge la doc della piattaforma per sapere come usarla?
+**No.** Il modello **non** va a leggere la documentazione/sito della piattaforma. Il *server MCP* dichiara i suoi strumenti come funzioni — **nome + descrizione + schema dei parametri** (JSON) — e sono quelle a finire nel contesto del modello. **Quello è il suo unico "manuale".** Descrizioni buone → uso corretto; descrizioni vaghe → NOA brancola.
+
+### Il "doc" operativo lo scriviamo noi (direttiva nel vault)
+Lo schema MCP dice *come si chiama* il tool (firma, argomenti), non *quando/perché/con che policy* usarlo. Quel giudizio operativo va messo in una **direttiva in linguaggio naturale** nel vault, che NOA legge come contesto (filosofia "direttive" del CLAUDE.md).
+
+- **MCP (server)** → il "come chiamare": firma, argomenti, schema.
+- **Direttiva (vault)** → il "quando/perché/policy/edge case".
+- È ibrido: lo schema è automatico, la direttiva la **scriviamo noi** — NOA non la recupera da sola.
+
+### Implicazioni pratiche
+- Servono **descrizioni di tool buone** lato server (è la vera UX dell'agente).
+- Ogni tool MCP **occupa token** nel system prompt: molti server = contesto gonfio → selezione/caricamento on-demand.
+- Verificare che **`v4-flash` regga il tool-calling** (è OpenAI-compatibile, ma il tier piccolo è più debole nella scelta dello strumento).
 
 ---
 
