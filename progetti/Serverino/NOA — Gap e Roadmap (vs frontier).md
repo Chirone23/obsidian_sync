@@ -76,14 +76,23 @@ Voce e multimodalità **dopo**: alto impatto percepito, ma nessuno dei tre punti
 
 ---
 
-## 5. Bivio aperto (da decidere)
+## 5. Bivio — DECISO: agente (2026-06-27)
 
-NOA deve diventare più **agente** (fa cose: mail, calendario, ricerche, file) o più **cervello/oracolo** (risponde meglio, sa di più, ragiona di più)?
+NOA diventa **agente** (fa cose: mail, calendario, ricerche, file), **non** oracolo.
 
-- Strada **agente** → parte dal punto **1** (tool-calling).
-- Strada **oracolo** → parte da **modello migliore + memoria con retrieval** (punti 5 e 3).
+### Perché (il ragionamento, non solo la conclusione)
+- **Oracolo è una partita persa:** su `v4-flash` NOA sarà sempre peggio che aprire Claude/Perplexity. Non si battono i frontier sul loro terreno con il tier economico, e quel bisogno è già coperto da quegli strumenti.
+- **Agente è il vantaggio strutturale:** proattività, vive nel mio Telegram, conosce il vault, si auto-estende, agisce sui *miei* account con la *mia* autorizzazione. I frontier non lo fanno. Tutto ciò che è già costruito (skill, scheduler, self-build, sandbox) **è architettura da agente**.
+- **Asimmetria che chiude la questione:** in un agente con tool-calling, *"chiedi a un modello più forte / cerca sul web"* è solo **un altro tool**. Quindi agente **ingloba** oracolo (può invocare R1/web quando serve), ma oracolo **non** ingloba agente (un cervello migliore non manda comunque la posta). Un verso solo → non è 50/50.
 
-Decisione non ancora presa.
+### Piano deciso (sequenza)
+1. **Tool-calling loop** — sostituire il dispatch a keyword (`on_message`) con vero function-calling via API tool DeepSeek (OpenAI-compatibile). Skill esistenti + self-build (via `registry`) diventano **tool che il modello sceglie**; il match a keyword sparisce. Unico refactor sui file vivi (`telegram_handler`/`scheduler`).
+2. **Web search** come primo tool nuovo. Provider candidato: **Tavily** (LLM-native, citazioni, costo basso) > Brave/SerpAPI. Reversibile.
+3. **Memoria con retrieval** (embedding sul vault) — serve sia alla memoria sia a rendere usabili i docs delle piattaforme MCP profonde (§6).
+
+**Check obbligatorio a inizio punto 1:** verificare che `v4-flash` regga la *scelta* dei tool; se sbaglia troppo, instradare la sola decisione-tool a un modello DeepSeek un gradino sopra (flash per il resto).
+
+Voce/multimodalità: dopo.
 
 ---
 
