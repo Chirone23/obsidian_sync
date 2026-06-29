@@ -57,6 +57,25 @@ Ricerca via Perplexity (framework [[01_C-I-A-R-E_Pattern|C.I.A.R.E.]] di [[Promp
 
 > **🔑 Munizione per il ribaltamento antitesi→tesi (sez. 6-7):** la fonte più forte dell'antitesi smonta sé stessa. Zhang-Liao 2020 (testuale): *"trust calibration alone is not sufficient to improve AI-assisted decision making"* — mostrare la confidence calibra la fiducia ma **non basta** a migliorare la decisione, dipende dalla conoscenza che l'umano porta dove l'AI sbaglia. È la tesi del saggio detta dall'avversario: la trasparenza sull'incertezza è necessaria, ma il nodo della delega resta. Usare come perno della transizione: si smonta l'antitesi con la sua stessa fonte.
 
+## ✅✅✅ ESEMPIO DI CRONACA — caso Mata v. Avianca (sez. 5 e 6)
+
+Esempio concreto di allucinazione plausibile con danno reale: un avvocato di New York porta in tribunale sentenze inventate dall'AI. Usato circostanziale nel saggio (nessun nome nel testo).
+
+> ⚠️ **Precisione richiesta:** è una **sanzione civile/disciplinare** (5.000 $ + caso respinto + lettere di scuse ai giudici), **non** una condanna penale per false prove. Dirlo accurato all'orale.
+
+**Fatti verificati (verifica incrociata su domini diversi e in concorrenza):**
+- 2023, U.S. District Court SDNY. Avvocato **Steven Schwartz** (studio Levidow, Levidow & Oberman). Causa Roberto Mata vs Avianca (lesione su volo).
+- ChatGPT fabbrica **sei sentenze inesistenti** (Varghese v. China Southern Airlines, Martinez v. Delta, Shaboon v. EgyptAir, Petersen v. Iran Air, Miller v. United, Estate of Durden v. KLM), attribuite a giudici reali con citazioni inventate.
+- Giudice **P. Kevin Castel**, decisione 22 giu 2023: atti respinti, **sanzione 5.000 $** per "subjective bad faith" (Rule 11).
+
+| # | Fonte | Tipo di dominio | Link |
+|---|---|---|---|
+| 1 | Ordinanza Mata v. Avianca, 678 F.Supp.3d 443 (S.D.N.Y. 2023) | Fonte primaria giudiziaria | law.berkeley.edu (PDF) / law.justia.com |
+| 2 | CNN Business, "Lawyer apologizes for fake court citations from ChatGPT" (27 mag 2023) | Giornalismo generalista | cnn.com/2023/05/27/business/chat-gpt-avianca-mata-lawyers |
+| 3 | Association of Corporate Counsel / Seyfarth Shaw / Goldberg Segalla | Analisi legale professionale (concorrenti) | acc.com / seyfarth.com / goldbergsegalla.com |
+
+> Altri domini giornalistici concorrenti che hanno riportato il caso (via Wikipedia): CNBC, Associated Press, ABC News. Convergenza totale sui fatti.
+
 ---
 
 ## 🔴 SCARTATE — bibliografia-fantasma (NON citare)
