@@ -2,6 +2,7 @@
 
 **Formato:** saggio argomentativo, 7 pagine. Argomento centrale → antitesi → tesi. **Niente citazioni.**
 **Origine:** tesi #3 (incertezza epistemica) da [[Angoli e Tesi - Saggio AI]] + domanda autoriale dello studente + ricerca Anthropic "Labor market impacts" (usata come fatto-osservazione, non citata).
+**Bibliografia di supporto (verificata):** [[Fonti Verificate - Saggio AI]]. **Stesura:** [[Saggio AI - Bozza]].
 
 ---
 
