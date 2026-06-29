@@ -59,7 +59,7 @@ Dal [[01_Discovery]] v1.1 sono emersi 4 vincoli/opportunità che governano da qu
 
 Compilare il [[Template - Specifica Tecnica]] di Melani. Sezioni chiave:
 
-- **FA:** catalogo occhiali (vista + sole), schede prodotto con varianti (colore/calibro), carrello → form *"Prenota in negozio"* invece di checkout, pagina servizi, contatti con mappa, blog vuoto-ready.
+- **FA:** catalogo occhiali (vista + sole + lenti a contatto + visita oculistica in negozio), schede prodotto con varianti (colore/calibro), carrello → form *"Prenota in negozio"* invece di checkout, pagina servizi, contatti con mappa, blog vuoto-ready.
 - **NON FA:** pagamenti, gestione magazzino reale, spedizioni, account utente, recensioni utenti.
 - **Vincoli InfinityFree** dal `BRIEF_WordPress_InfinityFree.md`: max 25k inodi, ~128MB memoria, WooCommerce instabile sotto carico → mitigazione = caching aggressivo + pochissimi plugin + ≤20 prodotti demo.
 
@@ -71,6 +71,7 @@ Compilare il [[Template - Specifica Tecnica]] di Melani. Sezioni chiave:
 - 8 montature vista (Ray-Ban, Persol, marche locali plausibili) — immagini da Unsplash/brand press kit
 - 6 occhiali sole
 - 3 servizi come *"prodotti"* WooCommerce (esame vista, controllo lenti, regolazione montatura) — pulsante *"Prenota"* invece di *"Acquista"*
+- facciamo anche un finto primo piano nella home con gli occhiali Ray-Ban meta, occhiali smart, e cerchiamo di venderli
 
 CSV pronto per import via WooCommerce nativo (no plugin extra).
 
