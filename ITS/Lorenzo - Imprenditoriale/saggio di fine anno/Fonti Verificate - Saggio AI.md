@@ -5,15 +5,17 @@ Ricerca via Perplexity (framework [[01_C-I-A-R-E_Pattern|C.I.A.R.E.]] di [[Promp
 
 > ⚠️ Il saggio è **senza citazioni nel testo** (vincolo di [[Struttura - Saggio AI]]). Queste fonti servono come fatti-osservazione e per reggere alla difesa orale d'esame. Bibliografia-fantasma = bocciatura: ricontrollare ogni ID arXiv al momento della trascrizione.
 
+> **Livelli di verifica:** ✅ = identità verificata (link → titolo + autori reali). ✅✅ = anche il *contenuto* verificato (abstract letto, il claim corrisponde a ciò che il paper sostiene). Le fonti senza ✅✅ hanno claim coerente col titolo ma abstract non aperto: blindarle prima dell'esame se diventano portanti.
+
 ---
 
 ## ✅ TESI — incertezza epistemica senza calibrazione
 
 | Autori | Titolo | Sede + Anno | Link | Cosa mostra |
 |---|---|---|---|---|
-| Jiang, Araki, Ding, Neubig | How Can We Know When Language Models Know? On the Calibration of LMs for QA | TACL 2021 | arxiv.org/abs/2012.00955 | La confidenza dei modelli non corrisponde alla correttezza; la selective prediction aiuta. **Fonte più forte sulla calibrazione.** |
+| Jiang, Araki, Ding, Neubig | How Can We Know When Language Models Know? On the Calibration of LMs for QA | TACL 2021 | arxiv.org/abs/2012.00955 | ✅✅ La confidenza dei modelli non corrisponde alla correttezza (testuale: alla domanda "sono calibrati?" la risposta è "un enfatico no"); la selective prediction aiuta. **Fonte più forte sulla calibrazione.** |
 | Guo, Pleiss, Sun, Weinberger | On Calibration of Modern Neural Networks | ICML 2017 | arxiv.org/abs/1706.04599 | Le reti moderne sono mal calibrate e troppo sicure. (Doppio taglio: vedi sotto, è anche counter.) |
-| Manakul, Liusie, Gales | SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection | EMNLP 2023 | arxiv.org/abs/2303.08896 | L'allucinazione è plausibilità che diverge dai fatti, non errore casuale. |
+| Manakul, Liusie, Gales | SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection | EMNLP 2023 | arxiv.org/abs/2303.08896 | ✅✅ L'allucinazione è plausibilità che diverge dai fatti, non errore casuale (testuale: fatti veri → campioni consistenti, allucinati → "diverge and contradict"). |
 | Lin, Hilton, Evans | TruthfulQA: Measuring How Models Mimic Human Falsehoods | ACL 2022 | arxiv.org/abs/2109.07958 | I modelli producono risposte fluenti ma false che seguono i misconcetti comuni. |
 | Varshney et al. | A Survey of Selective Prediction | arXiv 2021 | arxiv.org/abs/2107.05520 | Formalizza l'astensione: rispondere solo quando la confidenza è alta. |
 | Chow | On Optimum Recognition Error and Reject Tradeoff | IEEE Trans. Info Theory 1970 | doi.org/10.1109/TIT.1970.1054434 | Teoria classica: scambiare copertura per affidabilità rifiutando i casi incerti. |
@@ -23,7 +25,7 @@ Ricerca via Perplexity (framework [[01_C-I-A-R-E_Pattern|C.I.A.R.E.]] di [[Promp
 
 | Org | Titolo | Anno | Link | Cosa mostra |
 |---|---|---|---|---|
-| Handa, Tamkin, McCain, Huang, Durmus … Ganguli (Anthropic) | Which Economic Tasks are Performed with AI? Evidence from Millions of Claude Conversations | 2025 | arxiv.org/abs/2503.04761 | **Fonte-perno.** Dati primari su larga scala: l'uso si concentra nel knowledge-work (scrittura, codice, analisi). |
+| Handa, Tamkin, McCain, Huang, Durmus … Ganguli (Anthropic) | Which Economic Tasks are Performed with AI? Evidence from Millions of Claude Conversations | 2025 | arxiv.org/abs/2503.04761 | ✅✅ **Fonte-perno.** Dati primari su larga scala: sviluppo software + scrittura ≈ metà di tutto l'uso; 36% delle occupazioni usa l'AI per ≥1/4 dei task; **57% augmentation / 43% automation**. |
 | Anthropic | Anthropic Economic Index report: Cadences | 2026 | anthropic.com/research/economic-index-june-2026-report | Pattern d'uso per orario/occupazione; output più comuni = spiegazioni, documenti, guida, codice. |
 | Anthropic | Anthropic Economic Index: New building blocks for understanding AI use | 2026 | anthropic.com/research/economic-index-primitives | "Primitive economiche": uso concentrato in un sottoinsieme di task e occupazioni. |
 
@@ -33,15 +35,17 @@ Ricerca via Perplexity (framework [[01_C-I-A-R-E_Pattern|C.I.A.R.E.]] di [[Promp
 
 | Autori | Titolo | Sede + Anno | Link | Cosa mostra |
 |---|---|---|---|---|
-| Guo, Pleiss, Sun, Weinberger | On Calibration of Modern Neural Networks | ICML 2017 | arxiv.org/abs/1706.04599 | Temperature scaling: calibrazione corretta a basso costo, senza riaddestrare. **Perno tecnico dell'antitesi.** |
-| Chen, Yoon, Ebrahimi, Arik, Pfister, Jha | Adaptation with Self-Evaluation to Improve Selective Prediction in LLMs | arXiv 2023 | arxiv.org/abs/2310.11689 | Self-evaluation + astensione migliora la selective prediction. |
-| Ren, Zhao, Vu, Liu, Lakshminarayanan | Self-Evaluation Improves Selective Generation in LLMs | arXiv 2023 | arxiv.org/abs/2312.09300 | L'auto-valutazione produce punteggi correlati alla qualità dell'output. |
-| Le, Miller, Singh, Sonenberg | Improving Model Understanding and Trust with Counterfactual Explanations of Model Confidence | arXiv 2022 | arxiv.org/abs/2206.02790 | Interfaccia: spiegare la confidence con controfattuali aumenta fiducia e comprensione (studio su umani). |
-| Zhang, Liao, Bellamy | Effect of Confidence and Explanation on Accuracy and Trust Calibration in AI-Assisted Decision Making | arXiv 2020 | arxiv.org/abs/2001.02114 | Ponte tecnico↔interfaccia: mostrare la confidence calibra la fiducia umana. |
+| Guo, Pleiss, Sun, Weinberger | On Calibration of Modern Neural Networks | ICML 2017 | arxiv.org/abs/1706.04599 | ✅✅ Temperature scaling: calibrazione corretta a basso costo, senza riaddestrare (testuale: reti moderne "poorly calibrated", temp. scaling "surprisingly effective"). **Perno tecnico dell'antitesi.** |
+| Chen, Yoon, Ebrahimi, Arik, Pfister, Jha | Adaptation with Self-Evaluation to Improve Selective Prediction in LLMs | arXiv 2023 | arxiv.org/abs/2310.11689 | ✅✅ Self-evaluation + astensione migliora la selective prediction (AUROC 74.6%→80.25%; il modello si astiene quando incerto). |
+| Ren, Zhao, Vu, Liu, Lakshminarayanan | Self-Evaluation Improves Selective Generation in LLMs | arXiv 2023 | arxiv.org/abs/2312.09300 | ✅✅ L'auto-valutazione produce punteggi correlati alla qualità dell'output ("correlate better with the overall quality"). |
+| Le, Miller, Singh, Sonenberg | Improving Model Understanding and Trust with Counterfactual Explanations of Model Confidence | arXiv 2022 | arxiv.org/abs/2206.02790 | ✅✅ Interfaccia: spiegare la confidence con controfattuali aumenta fiducia e comprensione (studio su umani: "help users better understand and better trust"). |
+| Zhang, Liao, Bellamy | Effect of Confidence and Explanation on Accuracy and Trust Calibration in AI-Assisted Decision Making | arXiv 2020 | arxiv.org/abs/2001.02114 | ✅✅ Ponte tecnico↔interfaccia: mostrare la confidence calibra la fiducia umana — **MA** (testuale) "trust calibration alone is not sufficient to improve AI-assisted decision making". Vedi nota ribaltamento. |
 | Karny, Baez, Pataranutaporn | Multi-Turn Neural Transparency: Surfacing Neural Activations Improves User Calibration to LLM Behavioral Drift | arXiv 2026 | arxiv.org/abs/2605.15455 | Esporre i segnali interni migliora la calibrazione dell'utente via interfaccia. |
 | Kadavath et al. | Language Models (Mostly) Know What They Know | arXiv 2022 | arxiv.org/abs/2207.05221 | I modelli si autovalutano parzialmente. Counter **debole** (in realtà "Both"): usare come sfumatura, non come avversario forte. |
 
 > **Replica alla tesi (sez. 6 bozza):** il temperature scaling (Guo) calibra la confidence *aggregata*, ma il problema è il segnale *per-risposta* leggibile dall'utente al momento della delega — limite ancora aperto sul lato umano (Zhang, Le).
+
+> **🔑 Munizione per il ribaltamento antitesi→tesi (sez. 6-7):** la fonte più forte dell'antitesi smonta sé stessa. Zhang-Liao 2020 (testuale): *"trust calibration alone is not sufficient to improve AI-assisted decision making"* — mostrare la confidence calibra la fiducia ma **non basta** a migliorare la decisione, dipende dalla conoscenza che l'umano porta dove l'AI sbaglia. È la tesi del saggio detta dall'avversario: la trasparenza sull'incertezza è necessaria, ma il nodo della delega resta. Usare come perno della transizione: si smonta l'antitesi con la sua stessa fonte.
 
 ---
 
