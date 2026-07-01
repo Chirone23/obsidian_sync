@@ -225,3 +225,13 @@ inspect eval inspect_petri/audit \
   --model-role target=openai/gpt-5-mini \
   --model-role judge=anthropic/claude-opus-4-6
 ```
+
+
+---
+
+## Reasoning a Inference-Time — Power Sampling
+
+**Nota di sintesi:** [[../knowledge/Power Sampling - reasoning training-free (Karan & Du 2025)|Power Sampling — reasoning training-free]]
+**Paper integrale:** [[../knowledge/Reasoning with Sampling - Your Base Model is Smarter Than You Think (arXiv 2510.14901)|Reasoning with Sampling (Karan & Du, Harvard 2025)]]
+
+Implementazione avanzata del Pattern 17 (**Reasoning Techniques**) + Pattern 16 (**Resource-Aware Optimization**): invece di addestrare con RL, si spende compute a **inference-time** campionando dalla *power distribution* `p^α` del modello base via MCMC (Metropolis-Hastings). Eguaglia GRPO in-dominio, lo supera fuori dominio, e — a differenza dell'RL — **non collassa la diversità** (pass@k preservato). Costo: ~8.84× token per generazione.

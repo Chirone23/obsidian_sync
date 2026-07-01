@@ -267,3 +267,16 @@ Libri personalizzati AR per bambini. Questa è la documentazione tecnica di arch
 Strumento per testare comportamenti problematici nei modelli AI (inganno, sycophancy, cooperazione con richieste dannose). Architettura a 3 LLM: Auditor simula scenari reali → Target risponde → Judge valuta su 38 dimensioni. Donato da Anthropic a Meridian Labs (no-profit) per indipendenza e credibilità verso governi e ricercatori.
 
 Connessioni: [[Agenti IA Design Patterns MOC]] (Pattern 18 Guardrails + Pattern 19 Evaluation) · [[../moc/Agenti IA Design Patterns MOC|Agenti IA Design Patterns MOC]]
+
+
+---
+
+## Reasoning LLM — Tecniche a Inference-Time
+
+### Power Sampling (Karan & Du, Harvard 2025)
+
+**Nota di sintesi:** [[Power Sampling - reasoning training-free (Karan & Du 2025)]]
+**Paper integrale:** [[Reasoning with Sampling - Your Base Model is Smarter Than You Think (arXiv 2510.14901)]]
+**Codice:** https://github.com/aakaran/reasoning-with-sampling
+
+Algoritmo **training-free** che campiona dalla *power distribution* `p^α` del modello base via **MCMC Metropolis-Hastings**: eguaglia (e spesso supera fuori dominio) l'RL/GRPO senza addestramento, dataset o verifier. Costo reale ~8.84× token a inferenza. Rilevante per [[Agenti IA Design Patterns MOC]] Pattern 17 (Reasoning) e 16 (Resource-Aware / test-time scaling).
